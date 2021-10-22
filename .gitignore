@@ -1,0 +1,6 @@
+.vscode
+._*
+gofuzz/
+configdemo/
+compressfiledemo/
+.DS_Store

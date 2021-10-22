@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package pb;
+
+service ConfigCenter{
+  rpc GET(CfgReq) returns (CfgResp){
+
+  }
+
+  rpc POST(CfgReq) returns (CfgResp){
+
+  }
+
+  rpc DELETE(CfgReq) returns (CfgResp){
+
+  }
+
+  rpc PUT(CfgReq) returns (CfgResp){
+
+  }
+}
+
+message CfgReq{
+  string UserName = 1;
+  repeated string Target = 2;
+  CompressedFile File = 3;
+  repeated CfgVersion CfgVersions = 4;
+}
+
+message CfgVersion{
+  string Version = 1;
+  repeated Environment Envs = 2;
+}
+
+message Environment {
+  string Num = 1;
+  repeated Cluster Clusters = 2;
+}
+
+message Cluster{
+  string ClusterName = 1;
+  repeated Node Nodes = 2;
+}
+
+message Node{
+  string GlobalId = 1;
+  string LocalId = 2;
+  string Template = 3;
+}
+
+message CfgResp{
+  string Status = 1;
+  repeated string SliceData = 2;
+  CompressedFile File = 3;
+}
+
+message CompressedFile{
+  string FileName = 1;
+  bytes FileData = 2;
+}
