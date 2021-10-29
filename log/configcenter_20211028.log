@@ -1,0 +1,8 @@
+2021-10-28T10:56:29.995+0800	DEBUG	ConfigCenter/main.go:33	log init success
+2021-10-28T10:57:43.961+0800	DEBUG	ConfigCenter/main.go:33	log init success
+2021-10-28T10:57:47.699+0800	INFO	gracefully@v0.3.2/context.go:118	received signal	{"signal": "interrupt"}
+2021-10-28T10:57:47.699+0800	DEBUG	gracefully@v0.3.2/context.go:131	execute exit handles	{"count": 1}
+2021-10-28T13:20:59.497+0800	DEBUG	venus/main.go:33	log init success
+2021-10-28T13:22:29.913+0800	DEBUG	venus/main.go:33	log init success
+2021-10-28T13:22:48.107+0800	INFO	gracefully@v0.3.2/context.go:118	received signal	{"signal": "interrupt"}
+2021-10-28T13:22:48.108+0800	DEBUG	gracefully@v0.3.2/context.go:131	execute exit handles	{"count": 1}

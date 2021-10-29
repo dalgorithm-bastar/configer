@@ -1,106 +1,108 @@
 package repository
 
 import (
-	"errors"
-	"github.com/agiledragon/gomonkey/v2"
-	"github.com/configcenter/internal/datasource"
-	"testing"
+    "context"
+    "errors"
+    "testing"
+
+    "github.com/agiledragon/gomonkey/v2"
+    "github.com/configcenter/internal/datasource"
 )
 
 const (
-	etcdConfigLocation = "config/etcdClientv3.json"
+    etcdConfigLocation = "config/etcdClientv3.json"
 )
 
 func TestNewStorage(t *testing.T) {
-	type args struct {
-		dataSourceType string
-		config         string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		// etcd type succeed
-		{
-			name: "etcd type",
-			args: args{
-				dataSourceType: EtcdType,
-				config:         etcdConfigLocation,
-			},
-			wantErr: false,
-		},
-		// etcd type failed
-		{
-			name: "etcd type",
-			args: args{
-				dataSourceType: EtcdType,
-				config:         etcdConfigLocation,
-			},
-			wantErr: true,
-		},
-		// compressed file type succeed
-		{
-			name: "etcd type",
-			args: args{
-				dataSourceType: CompressedFileType,
-				config:         etcdConfigLocation,
-			},
-			wantErr: false,
-		},
-		// compressed file type failed
-		{
-			name: "etcd type",
-			args: args{
-				dataSourceType: CompressedFileType,
-				config:         etcdConfigLocation,
-			},
-			wantErr: true,
-		},
-	}
-	outputsNewEtcdType := []gomonkey.OutputCell{
-		{Values: gomonkey.Params{&datasource.EtcdType{}, nil}},
-		{Values: gomonkey.Params{nil, errors.New("init err")}},
-	}
-	patchesNewEtcdType := gomonkey.ApplyFuncSeq(datasource.NewEtcdType, outputsNewEtcdType)
-	defer patchesNewEtcdType.Reset()
-	outputsNewCompressedFileType := []gomonkey.OutputCell{
-		{Values: gomonkey.Params{&datasource.CompressFileType{}, nil}},
-		{Values: gomonkey.Params{nil, errors.New("init err")}},
-	}
-	patchesNewCompressedFileType := gomonkey.ApplyFuncSeq(datasource.NewCompressedFileType, outputsNewCompressedFileType)
-	defer patchesNewCompressedFileType.Reset()
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := NewStorage(tt.args.dataSourceType, tt.args.config); (err != nil) != tt.wantErr {
-				t.Errorf("NewStorage() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
+    type args struct {
+        dataSourceType string
+        config         string
+    }
+    tests := []struct {
+        name    string
+        args    args
+        wantErr bool
+    }{
+        // etcd type succeed
+        {
+            name: "etcd type",
+            args: args{
+                dataSourceType: EtcdType,
+                config:         etcdConfigLocation,
+            },
+            wantErr: false,
+        },
+        // etcd type failed
+        {
+            name: "etcd type",
+            args: args{
+                dataSourceType: EtcdType,
+                config:         etcdConfigLocation,
+            },
+            wantErr: true,
+        },
+        // compressed file type succeed
+        {
+            name: "etcd type",
+            args: args{
+                dataSourceType: CompressedFileType,
+                config:         etcdConfigLocation,
+            },
+            wantErr: false,
+        },
+        // compressed file type failed
+        {
+            name: "etcd type",
+            args: args{
+                dataSourceType: CompressedFileType,
+                config:         etcdConfigLocation,
+            },
+            wantErr: true,
+        },
+    }
+    outputsNewEtcdType := []gomonkey.OutputCell{
+        {Values: gomonkey.Params{&datasource.EtcdType{}, nil}},
+        {Values: gomonkey.Params{nil, errors.New("init err")}},
+    }
+    patchesNewEtcdType := gomonkey.ApplyFuncSeq(datasource.NewEtcdType, outputsNewEtcdType)
+    defer patchesNewEtcdType.Reset()
+    outputsNewCompressedFileType := []gomonkey.OutputCell{
+        {Values: gomonkey.Params{&datasource.CompressFileType{}, nil}},
+        {Values: gomonkey.Params{nil, errors.New("init err")}},
+    }
+    patchesNewCompressedFileType := gomonkey.ApplyFuncSeq(datasource.NewCompressedFileType, outputsNewCompressedFileType)
+    defer patchesNewCompressedFileType.Reset()
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            if err := NewStorage(context.Background(), tt.args.dataSourceType, tt.args.config); (err != nil) != tt.wantErr {
+                t.Errorf("NewStorage() error = %v, wantErr %v", err, tt.wantErr)
+            }
+        })
+    }
 }
 
 func TestNewStream(t *testing.T) {
-	type args struct {
-		fileMap map[string][]byte
-	}
-	tests := []struct {
-		name string
-		args args
-		want Storage
-	}{
-		{
-			name: "test",
-			args: args{
-				fileMap: map[string][]byte{},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			_ = NewStream(tt.args.fileMap)
-			//if got := NewStream(tt.args.fileMap); !reflect.DeepEqual(got, tt.want) {
-			//	t.Errorf("NewStream() = %v, want %v", got, tt.want)
-			//}
-		})
-	}
+    type args struct {
+        fileMap map[string][]byte
+    }
+    tests := []struct {
+        name string
+        args args
+        want Storage
+    }{
+        {
+            name: "test",
+            args: args{
+                fileMap: map[string][]byte{},
+            },
+        },
+    }
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            _ = NewStream(tt.args.fileMap)
+            //if got := NewStream(tt.args.fileMap); !reflect.DeepEqual(got, tt.want) {
+            //	t.Errorf("NewStream() = %v, want %v", got, tt.want)
+            //}
+        })
+    }
 }

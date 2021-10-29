@@ -2,55 +2,83 @@
 package manage
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	"os"
-	"regexp"
+    "context"
+    "encoding/json"
+    "io/ioutil"
+    "os"
+    "regexp"
 )
 
+//请求体Target字段取值范围
+const (
+    VersionString  = `^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$` //初始化用于版本号校验的正则表达式
+    TemplateString = `templates/`                                          //初始化用于模板文件筛选的正则表达式
+    LockName       = "/lock"                                               //etcd分布式锁名称
+)
+
+var (
+    manager *Manager
+)
+
+type regExpStruct struct {
+    RegExpOfVersion  *regexp.Regexp
+    RegExpOfTemplate *regexp.Regexp
+}
+
+//调度各模块实现请求
+type Manager struct {
+    ctx      context.Context
+    grpcInfo GrpcInfoStruct
+    regExp   regExpStruct
+}
+
 type GrpcInfoStruct struct {
-	Port   string `json:"port"`
-	Socket string `json:"socket"`
+    Port        string `json:"port"`
+    Socket      string `json:"socket"`
+    LockTimeout int    `json:"locktimeout"`
 }
 
 // NewManager 读取grpc配置并初始化manager实例
-func NewManager(grpcConfigLocation string) error {
-	manager = new(Manager)
-	file, err := os.Open(grpcConfigLocation)
-	if err != nil {
-		return err
-	}
-	binaryFlie, err := ioutil.ReadAll(file)
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(binaryFlie, &manager.grpcInfo)
-	if err != nil {
-		return err
-	}
-	versionFormat, err := regexp.Compile(VersionString)
-	if err != nil {
-		return err
-	}
-	templateFormat, err := regexp.Compile(TemplateString)
-	if err != nil {
-		return err
-	}
-	manager.regExp = regExpStruct{
-		RegExpOfVersion:  versionFormat,
-		RegExpOfTemplate: templateFormat,
-	}
-	err = file.Close()
-	if err != nil {
-		return err
-	}
-	return nil
+func NewManager(ctxIn context.Context, grpcConfigLocation string) error {
+    manager = new(Manager)
+    file, err := os.Open(grpcConfigLocation)
+    if err != nil {
+        return err
+    }
+    binaryFlie, err := ioutil.ReadAll(file)
+    if err != nil {
+        return err
+    }
+    err = json.Unmarshal(binaryFlie, &manager.grpcInfo)
+    if err != nil {
+        return err
+    }
+    versionFormat, err := regexp.Compile(VersionString)
+    if err != nil {
+        return err
+    }
+    templateFormat, err := regexp.Compile(TemplateString)
+    if err != nil {
+        return err
+    }
+    manager.regExp = regExpStruct{
+        RegExpOfVersion:  versionFormat,
+        RegExpOfTemplate: templateFormat,
+    }
+    manager.ctx = ctxIn
+    err = file.Close()
+    if err != nil {
+        return err
+    }
+    return nil
 }
 
+// GetManager 获取manager对象，一般用于测试
 func GetManager() *Manager {
-	return manager
+    return manager
 }
 
+// GetGrpcInfo 获取manager对象的grpc信息
 func GetGrpcInfo() *GrpcInfoStruct {
-	return &manager.grpcInfo
+    return &manager.grpcInfo
 }

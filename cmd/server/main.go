@@ -18,5 +18,5 @@ package main
 import "github.com/configcenter/cmd/client/cmd"
 
 func main() {
-	cmd.Execute()
+    cmd.Execute()
 }
