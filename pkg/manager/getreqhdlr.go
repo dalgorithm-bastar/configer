@@ -124,6 +124,7 @@ func getNodeConfig(req *pb.CfgReq) (error, []string, string, []byte) {
     cluster := req.CfgVersions[0].Envs[0].Clusters[0].ClusterName
     tmplobj := req.CfgVersions[0].Envs[0].Clusters[0].Nodes[0].Template
     path := util.Join("/", version, env, cluster, repository.Templates, tmplobj)
+    srvPath := util.Join("/", version, env, cluster, repository.ServiceList)
     tmplContent, err := repository.Src.Get(path)
     if err != nil {
         log.Sugar().Errorf("get tmpl from repository err of %v, under path %s", err, path)
@@ -133,7 +134,16 @@ func getNodeConfig(req *pb.CfgReq) (error, []string, string, []byte) {
         log.Sugar().Infof("get nil template under path %s", path)
         return errors.New(fmt.Sprintf("No Template under save path %s", path)), nil, "", nil
     }
-    return createNodeConfig(req, tmplobj, tmplContent)
+    srvContent, err := repository.Src.Get(srvPath)
+    if err != nil {
+        log.Sugar().Errorf("get srvList from repository err of %v, under path %s", err, srvPath)
+        return err, nil, "", nil
+    }
+    if srvContent == nil {
+        log.Sugar().Infof("get nil srvList under path %s", srvPath)
+        return errors.New(fmt.Sprintf("No srvList under save path %s", srvPath)), nil, "", nil
+    }
+    return createNodeConfig(req, tmplobj, tmplContent, srvContent)
 }
 
 func getTemplates(req *pb.CfgReq) (error, []string, string, []byte) {
@@ -302,7 +312,7 @@ func getKeyValueResult(req *pb.CfgReq) (error, []string, string, []byte) {
         log.Sugar().Infof("init tmpl err in CtlFind of %v", err)
         return err, nil, "", nil
     }
-    data, err := templateIns.Fill(tmplContent, tmplObj)
+    data, err := templateIns.Fill(tmplContent, tmplObj, []byte(""))
     if err != nil {
         log.Sugar().Infof("Fill tmpl err in CtlFind of %v, tmplname %s, tmplContent %s", err, tmplObj, tmplContent)
         return err, nil, "", nil
@@ -315,14 +325,28 @@ func getNodeConfigPartlyOnline(req *pb.CfgReq) (error, []string, string, []byte)
     if req.File == nil || req.File.FileData == nil || len(req.File.FileData) == 0 {
         return getNodeConfig(req)
     }
+    //获取基本参数
+    version := req.CfgVersions[0].Version
+    env := req.CfgVersions[0].Envs[0].Num
+    cluster := req.CfgVersions[0].Envs[0].Clusters[0].ClusterName
+    srvPath := util.Join("/", version, env, cluster, repository.ServiceList)
+    srvContent, err := repository.Src.Get(srvPath)
+    if err != nil {
+        log.Sugar().Errorf("get srvList from repository err of %v, under path %s", err, srvPath)
+        return err, nil, "", nil
+    }
+    if srvContent == nil {
+        log.Sugar().Infof("get nil srvList under path %s", srvPath)
+        return errors.New(fmt.Sprintf("No srvList under save path %s", srvPath)), nil, "", nil
+    }
     //使用客户端模板获取
     tmplobj := req.File.FileName
     tmplContent := req.File.FileData
-    return createNodeConfig(req, tmplobj, tmplContent)
+    return createNodeConfig(req, tmplobj, tmplContent, srvContent)
 }
 
 //传入待填充模板的名称和内容
-func createNodeConfig(req *pb.CfgReq, tmplObj string, tmplContent []byte) (error, []string, string, []byte) {
+func createNodeConfig(req *pb.CfgReq, tmplObj string, tmplContent, srcContent []byte) (error, []string, string, []byte) {
     //获取基本参数
     version := req.CfgVersions[0].Version
     env := req.CfgVersions[0].Envs[0].Num
@@ -340,7 +364,7 @@ func createNodeConfig(req *pb.CfgReq, tmplObj string, tmplContent []byte) (error
         return err, nil, "", nil
     }
     //将要填充的模板注册到模板实例中
-    data, err := templateIns.Fill(tmplContent, tmplObj)
+    data, err := templateIns.Fill(tmplContent, tmplObj, srcContent)
     if err != nil {
         log.Sugar().Infof("Fill tmpl err in creating nodeconfig of %v, tmplname %s, tmplContent %s", err, tmplObj, tmplContent)
         return err, nil, "", nil

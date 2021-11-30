@@ -4,3 +4,5 @@ gofuzz/
 configdemo/
 compressfiledemo/
 .DS_Store
+*.log
+cmd/client/cfgtool

@@ -5,6 +5,7 @@ import (
     "encoding/json"
     "errors"
     "fmt"
+    "math"
     "strconv"
     "strings"
 
@@ -13,6 +14,24 @@ import (
     "github.com/configcenter/pkg/util"
     "github.com/tidwall/sjson"
 )
+
+// Atoi 在模板中进行类型转换string->int
+func ParseFloat(s string) (float64, error) {
+    return strconv.ParseFloat(s, 64)
+}
+
+// Itoa 在模板中进行类型转换int->string
+func FmtFloat64(i float64) string {
+    return strconv.FormatFloat(i, 'f', 0, 64)
+}
+
+func Add(i float64) float64 {
+    return i + 1
+}
+
+func Mine(i float64) float64 {
+    return i - 1
+}
 
 // CtlFind 命令行单条信息查询函数，不会对service查询结果进行映射
 func CtlFind(tar, ver, env, clusterObject, service string) (string, error) {
@@ -47,6 +66,45 @@ func CtlFind(tar, ver, env, clusterObject, service string) (string, error) {
     errInfo := fmt.Sprintf("can not find \"%s\" in \"%s\"", service, filePath)
     log.Sugar().Info(errInfo)
     return "", errors.New(errInfo)
+}
+
+// GetInfobyNodeId 将给出的nodeid翻译成servicelist上实例链表的序号，再调用底层函数实现替换
+func GetInfobyNodeId(src repository.Storage, infrastructureData []byte, defaultIndex bool, globalId, nodeId, ver, env, clusterObject, service string) (string, error) {
+    //构建serviceList map
+    prefixService := util.Join("/", ver, env, clusterObject, repository.ServiceList)
+    var data interface{}
+    binaryData, err := src.Get(prefixService) //从数据源取值
+    if err != nil {
+        log.Sugar().Errorf("get serviceList from repository err of %v in baseGet, under path %s", err, prefixService)
+        return "", err
+    }
+    if binaryData == nil {
+        errInfo := fmt.Sprintf("no data under path %s in baseGet, please checkout in etcd or compressedfile", prefixService)
+        log.Sugar().Info(errInfo)
+        return "", errors.New(errInfo)
+    }
+    err = json.Unmarshal(binaryData, &data)
+    if err != nil {
+        log.Sugar().Infof("json unmarshal serviceList err of %v, data:%s", err, binaryData)
+        return "", err
+    }
+    serviceMap := make(map[string]string)
+    ConstructMap(serviceMap, data, "")
+    //查找是否存在该节点号对应的nodeid，找不到则返回
+    var localId string
+    //是否使用隐式索引
+    for k, v := range serviceMap {
+        if strings.Contains(k, DeploymentInfoKey) && strings.Contains(k, NodeIdKey) && v == nodeId {
+            keySlice := strings.SplitN(k, ".", 3)
+            if len(keySlice) < 3 {
+                errInfo := fmt.Sprintf("err key with nodeid, key is %s", k)
+                log.Sugar().Info(errInfo)
+                return "", errors.New(errInfo)
+            }
+            localId = keySlice[1]
+        }
+    }
+    return baseGet(src, infrastructureData, defaultIndex, globalId, localId, ver, env, clusterObject, service)
 }
 
 func baseGet(src repository.Storage, infrastructureData []byte, defaultIndex bool, globalId, localId, ver, env, clusterObject, service string) (string, error) {
@@ -172,11 +230,18 @@ func ConstructMap(resMap map[string]string, data interface{}, currentPath string
             isBaseData := true
             var stringSlice []string
             for _, v := range interfaceSlice {
-                if _, ok := v.(string); !ok {
+                _, isString := v.(string)
+                _, isFloat := v.(float64)
+                if !isString && !isFloat {
                     isBaseData = false
                     break
                 }
-                stringSlice = append(stringSlice, v.(string))
+                if isString {
+                    stringSlice = append(stringSlice, v.(string))
+                }
+                if isFloat {
+                    stringSlice = append(stringSlice, strconv.Itoa(int(math.Floor(v.(float64)+0.5)))) //四舍五入取整
+                }
             }
             if isBaseData {
                 resMap[currentPath[0:len(currentPath)-1]] = strings.Join(stringSlice, ",")

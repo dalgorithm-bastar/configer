@@ -6,6 +6,7 @@ package template
 
 import (
     "bytes"
+    "encoding/json"
     "errors"
     "fmt"
     "html/template"
@@ -31,6 +32,7 @@ const (
     ReplicatorNumKey  = "replicator_number" //在服务清单中指明实例数目的键
     DeploymentInfoKey = "deployment_info"   //在服务清单中指明部署信息的键
     HostNameKey       = "hostname"          //在服务清单中指明主机名称的键
+    NodeIdKey         = "NODE_ID"           //在服务清单中指明集群节点号的键
 )
 
 type TemplateImpl struct {
@@ -90,6 +92,15 @@ func NewTemplateImpl(source repository.Storage, globalId, localId, tmplInstanceN
                 return baseGet(src, nil, dftIdx, glbId, lcId, vr, en, cl, sr)
             }(source, defaultIndex, globalId, localId, anyVersion, anyEnv, clusterObject, service)
         },
+        "GetNodeIdInfo": func(NodeId, clusterObject, service string) (string, error) {
+            return func(src repository.Storage, binData []byte, dftIdx bool, glbId, lcId, vr, en, cl, sr string) (string, error) {
+                return GetInfobyNodeId(src, binData, dftIdx, glbId, lcId, vr, en, cl, sr)
+            }(source, binaryData, true, globalId, NodeId, version, env, clusterObject, service)
+        },
+        "ParseFloat": ParseFloat,
+        "FmtFloat":   FmtFloat64,
+        "Add":        Add,
+        "Mine":       Mine,
     }
     //注册函数列表
     templateIns.allTemplates.Funcs(templateIns.funcMap)
@@ -113,18 +124,23 @@ func (t *TemplateImpl) addTmpl(tmplContent []byte, tmplName string) error {
 }
 
 // Fill 按照输入的模板名称和内容进行填充，返回填充后的结果
-func (t *TemplateImpl) Fill(tmplContent []byte, tmplName string) ([]byte, error) {
-    if tmplContent == nil {
-        msg := fmt.Sprintf("nil tmplContent input when tmpl filling, tmplName is %s", tmplName)
+func (t *TemplateImpl) Fill(tmplContent []byte, tmplName string, srcContent []byte) ([]byte, error) {
+    if tmplContent == nil || srcContent == nil {
+        msg := fmt.Sprintf("nil tmplContent or srcContent input when tmpl filling, tmplName is %s", tmplName)
         log.Sugar().Info(msg)
         return nil, errors.New(msg)
     }
-    err := t.addTmpl(tmplContent, tmplName)
+    var srcData interface{}
+    err := json.Unmarshal(srcContent, &srcData)
+    if err != nil {
+        return nil, err
+    }
+    err = t.addTmpl(tmplContent, tmplName)
     if err != nil {
         return nil, err
     }
     var data bytes.Buffer
-    err = t.allTemplates.ExecuteTemplate(&data, tmplName, "")
+    err = t.allTemplates.ExecuteTemplate(&data, tmplName, srcData)
     if err != nil {
         return nil, err
     }

@@ -62,8 +62,6 @@ func CreateOffline(cmd *cobra.Command, args []string) {
     }
     path := util.Join("/", object.Version, object.Env, object.Cluster, repository.Templates, object.TemplateName)
     tmplContent, err := repository.Src.Get(path)
-    test := repository.Src.GetSourceDataorOperator()
-    fmt.Sprint(test)
     if err != nil {
         fmt.Println(err)
         return
@@ -73,7 +71,12 @@ func CreateOffline(cmd *cobra.Command, args []string) {
         fmt.Println(err)
         return
     }
-    data, err := templateIns.Fill(tmplContent, object.TemplateName)
+    srvData, err := repository.Src.Get(util.Join("/", object.Version, object.Env, object.Cluster, repository.ServiceList))
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+    data, err := templateIns.Fill(tmplContent, object.TemplateName, srvData)
     if err != nil {
         fmt.Println(err)
         return

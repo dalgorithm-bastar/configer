@@ -49,7 +49,14 @@ func put(ctx context.Context, req *pb.CfgReq) (error, []string, string, []byte) 
                 log.Sugar().Infof("get tmpl err when putting, err:%v, tmplPath:%s", err, templateFilePath)
                 return err, nil, "", nil
             }
-            _, err = templateIns.Fill(content, templateFilePath)
+            pathSlice := strings.Split(templateFilePath, "/")
+            srvPath := strings.Join(append(pathSlice[0:len(pathSlice)-2], repository.ServiceList), "/")
+            srcContent, err := srcForCheck.Get(srvPath)
+            if err != nil {
+                log.Sugar().Infof("get srvList err when putting, err:%v, srvPath:%s", err, srvPath)
+                return err, nil, "", nil
+            }
+            _, err = templateIns.Fill(content, templateFilePath, srcContent)
             if err != nil {
                 log.Sugar().Infof("fill tmpl err when putting, err:%v, tmplPath:%s, tmplContent:%s", err, templateFilePath, content)
                 return err, nil, "", nil
