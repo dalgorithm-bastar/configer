@@ -26,7 +26,7 @@ const (
     Infrastructure    = "infrastructure"    //获取某版本下所有公共信息文件
     Versions          = "versions"          //获取所有版本号
     Environments      = "environments"      //获取某版本下所有环境号
-    Clusters          = "clusters"          //获取某环境下所有节点号
+    Clusters          = "clusters"          //获取某环境下所有集群名称
     PartlyOnline      = "partlyOnline"      //上传一份本地模板，利用服务端信息生成后返回
     CtlFindFlag       = "ctlFind"           //用于单条查询
     ReplicatorNumKey  = "replicator_number" //在服务清单中指明实例数目的键
