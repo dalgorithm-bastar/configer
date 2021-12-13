@@ -54,7 +54,7 @@ var (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-    Use:   "cfgtool",
+    Use:   "proxctl",
     Short: "This is the commandline tool for configcenter client",
     Long: `	This is the commandline tool for configcenter client
 		The tool enables you to:
@@ -79,7 +79,7 @@ func init() {
     // Cobra supports persistent flags, which, if defined here,
     // will be global for your application.
     //rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cfgtool.yaml)")
-    rootCmd.PersistentFlags().StringVarP(&object.UserName, "user", "u", "chqr", "current userName(required)")
+    rootCmd.PersistentFlags().StringVarP(&object.UserName, "user", "u", "", "current userName(required)")
 
     // Cobra also supports local flags, which will only run
     // when this action is called directly.

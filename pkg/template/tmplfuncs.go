@@ -33,6 +33,14 @@ func Mine(i float64) float64 {
     return i - 1
 }
 
+func Itoa(i int) string {
+    return strconv.Itoa(i)
+}
+
+func Atoi(s string) (int, error) {
+    return strconv.Atoi(s)
+}
+
 // CtlFind 命令行单条信息查询函数，不会对service查询结果进行映射
 func CtlFind(tar, ver, env, clusterObject, service string) (string, error) {
     var filePath string

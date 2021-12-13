@@ -26,7 +26,7 @@ const (
     Infrastructure    = "infrastructure"    //获取某版本下所有公共信息文件
     Versions          = "versions"          //获取所有版本号
     Environments      = "environments"      //获取某版本下所有环境号
-    Clusters          = "clusters"          //获取某环境下所有节点号
+    Clusters          = "clusters"          //获取某环境下所有集群名称
     PartlyOnline      = "partlyOnline"      //上传一份本地模板，利用服务端信息生成后返回
     CtlFindFlag       = "ctlFind"           //用于单条查询
     ReplicatorNumKey  = "replicator_number" //在服务清单中指明实例数目的键
@@ -79,7 +79,14 @@ func NewTemplateImpl(source repository.Storage, globalId, localId, tmplInstanceN
     //此处使用闭包声明模板函数，在模板执行时使用的信息为传参时的快照信息
     templateIns.funcMap = map[string]interface{}{
         //用于查询当前环境下的服务信息，涉及公共信息的执行映射
-        "GetInfo": func(defaultIndex bool, clusterObject, service string) (string, error) {
+        "GetInfo": func(mode, clusterObject, service string) (string, error) {
+            if mode != "normal" && mode != "slice" {
+                return "", errors.New("mode out of range, please assign \"normal\" or \"slice\"")
+            }
+            defaultIndex := true
+            if mode == "normal" {
+                defaultIndex = false
+            }
             return func(src repository.Storage, binData []byte, dftIdx bool, glbId, lcId, vr, en, cl, sr string) (string, error) {
                 return baseGet(src, binData, dftIdx, glbId, lcId, vr, en, cl, sr)
             }(source, binaryData, defaultIndex, globalId, localId, version, env, clusterObject, service)
@@ -87,7 +94,14 @@ func NewTemplateImpl(source repository.Storage, globalId, localId, tmplInstanceN
         //用于命令行查询，涉及公共信息的不执行映射
         "CtlFind": CtlFind,
         //用于获取全局服务信息，存在潜在的风险，不推荐使用
-        "UnsafeGetInfo": func(defaultIndex bool, anyVersion, anyEnv, clusterObject, service string) (string, error) {
+        "UnsafeGetInfo": func(mode, anyVersion, anyEnv, clusterObject, service string) (string, error) {
+            if mode != "normal" && mode != "slice" {
+                return "", errors.New("mode out of range, please assign \"normal\" or \"slice\"")
+            }
+            defaultIndex := true
+            if mode == "normal" {
+                defaultIndex = false
+            }
             return func(src repository.Storage, dftIdx bool, glbId, lcId, vr, en, cl, sr string) (string, error) {
                 return baseGet(src, nil, dftIdx, glbId, lcId, vr, en, cl, sr)
             }(source, defaultIndex, globalId, localId, anyVersion, anyEnv, clusterObject, service)
@@ -99,6 +113,8 @@ func NewTemplateImpl(source repository.Storage, globalId, localId, tmplInstanceN
         },
         "ParseFloat": ParseFloat,
         "FmtFloat":   FmtFloat64,
+        "Itoa":       Itoa,
+        "Atoi":       Atoi,
         "Add":        Add,
         "Mine":       Mine,
     }
