@@ -1,0 +1,9 @@
+{
+  "logpath": "log/",
+  "recordlevel": "debug",
+  "encodingtype": "normal",
+  "filename": "configcenter",
+  "maxsize": 10,
+  "maxbackups": 5,
+  "maxage": 30
+}
