@@ -43,7 +43,7 @@ func init() {
     // and all subcommands, e.g.:
     // createCmd.PersistentFlags().String("foo", "", "A help for foo")
     createCmd.PersistentFlags().StringVarP(&object.Version, "version", "v", "", "assign a config version(required)")
-    createCmd.PersistentFlags().StringVarP(&object.Env, "env", "e", "", "assign an environment number(required)")
+    createCmd.PersistentFlags().StringVarP(&object.Config, "config", "s", "", "assign config scheme(required)")
     createCmd.PersistentFlags().StringVarP(&object.Cluster, "cluster", "c", "", "assign a cluster name(required)")
     createCmd.PersistentFlags().StringVarP(&object.GlobalId, "globalid", "g", "", "assign a globalId(required)")
     createCmd.PersistentFlags().StringVarP(&object.LocalId, "localid", "l", "", "assign a localId within cluster(required)")

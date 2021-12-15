@@ -26,7 +26,7 @@ func Get(ctx context.Context, req *pb.CfgReq) (error, []string, string, []byte) 
         return errors.New("no target specified when getting"), nil, "", nil
     }
     //确定请求结构体内容是否与target匹配
-    err := checkData(req.CfgVersions, req.Target[0])
+    err := checkData(req, req.Target[0])
     if err != nil {
         log.Sugar().Infof("checkData failed in GET req, get err %v, with target %s and data %+v", err, req.Target[0], req.CfgVersions)
         return err, nil, "", nil
@@ -47,8 +47,8 @@ func Get(ctx context.Context, req *pb.CfgReq) (error, []string, string, []byte) 
         return getDeploymentInfo(req)
     case template.Versions:
         return getVersions(req)
-    case template.Environments:
-        return getEnvironments(req)
+    case template.ConfigScheme:
+        return getConfs(req)
     case template.Clusters:
         return getClusters(req)
     case template.PartlyOnline:
@@ -64,49 +64,65 @@ func Get(ctx context.Context, req *pb.CfgReq) (error, []string, string, []byte) 
 }
 
 //判断请求体是否符合约定，不符合则提前返回错误，目前不支持网状结构查询
-func checkData(data []*pb.CfgVersion, tag string) error {
+func checkData(data *pb.CfgReq, tag string) error {
     switch tag {
-    case template.NodeConfig, template.PartlyOnline:
-        if len(data) != 1 {
+    case template.DeploymentInfo:
+        if !manager.regExp.RegExpOfEnvNum.MatchString(data.EnvNum) {
+            return errors.New(fmt.Sprintf("illegal envNum of %s, please input num of 2 bits", data.EnvNum))
+        }
+        if len(data.CfgVersions) != 1 {
             return errors.New("args error: too many cfgVersions or missing cfgVersions")
         }
-        if len(data[0].Envs) != 1 {
-            return errors.New("args error: too many envs or missing envs")
+        if len(data.CfgVersions[0].Confs) != 1 {
+            return errors.New("args error: too many Confs or missing Confs")
         }
-        if len(data[0].Envs[0].Clusters) != 1 {
+        if len(data.CfgVersions[0].Confs[0].Clusters) != 1 {
             return errors.New("args error: too many clusters or missing clusters")
         }
-        if len(data[0].Envs[0].Clusters[0].Nodes) != 1 {
+    case template.NodeConfig, template.PartlyOnline:
+        if !manager.regExp.RegExpOfEnvNum.MatchString(data.EnvNum) {
+            return errors.New(fmt.Sprintf("illegal envNum of %s, please input num of 2 bits", data.EnvNum))
+        }
+        if len(data.CfgVersions) != 1 {
+            return errors.New("args error: too many cfgVersions or missing cfgVersions")
+        }
+        if len(data.CfgVersions[0].Confs) != 1 {
+            return errors.New("args error: too many Confs or missing Confs")
+        }
+        if len(data.CfgVersions[0].Confs[0].Clusters) != 1 {
+            return errors.New("args error: too many clusters or missing clusters")
+        }
+        if len(data.CfgVersions[0].Confs[0].Clusters[0].Nodes) != 1 {
             return errors.New("args error: too many Nodes or missing Nodes")
         }
         //检查Id是否合法
-        _, err := strconv.Atoi(data[0].Envs[0].Clusters[0].Nodes[0].GlobalId)
+        _, err := strconv.Atoi(data.CfgVersions[0].Confs[0].Clusters[0].Nodes[0].GlobalId)
         if err != nil {
             return err
         }
-        _, err = strconv.Atoi(data[0].Envs[0].Clusters[0].Nodes[0].LocalId)
+        _, err = strconv.Atoi(data.CfgVersions[0].Confs[0].Clusters[0].Nodes[0].LocalId)
         if err != nil {
             return err
         }
-    case template.Templates, template.Services, template.Manipulations, template.DeploymentInfo:
-        if len(data) != 1 {
+    case template.Templates, template.Services, template.Manipulations:
+        if len(data.CfgVersions) != 1 {
             return errors.New("args error: too many cfgVersions or missing cfgVersions")
         }
-        if len(data[0].Envs) != 1 {
-            return errors.New("args error: too many envs or missing envs")
+        if len(data.CfgVersions[0].Confs) != 1 {
+            return errors.New("args error: too many Confs or missing Confs")
         }
-        if len(data[0].Envs[0].Clusters) != 1 {
+        if len(data.CfgVersions[0].Confs[0].Clusters) != 1 {
             return errors.New("args error: too many clusters or missing clusters")
         }
     case template.Clusters:
-        if len(data) != 1 {
+        if len(data.CfgVersions) != 1 {
             return errors.New("args error: too many cfgVersions or missing cfgVersions")
         }
-        if len(data[0].Envs) != 1 {
-            return errors.New("args error: too many envs or missing envs")
+        if len(data.CfgVersions[0].Confs) != 1 {
+            return errors.New("args error: too many Confs or missing Confs")
         }
-    case template.Infrastructure, template.Environments:
-        if len(data) != 1 {
+    case template.Infrastructure, template.ConfigScheme:
+        if len(data.CfgVersions) != 1 {
             return errors.New("args error: too many cfgVersions or missing cfgVersions")
         }
     case template.Versions, template.CtlFindFlag:
@@ -120,11 +136,11 @@ func checkData(data []*pb.CfgVersion, tag string) error {
 func getNodeConfig(req *pb.CfgReq) (error, []string, string, []byte) {
     //获取基本参数
     version := req.CfgVersions[0].Version
-    env := req.CfgVersions[0].Envs[0].Num
-    cluster := req.CfgVersions[0].Envs[0].Clusters[0].ClusterName
-    tmplobj := req.CfgVersions[0].Envs[0].Clusters[0].Nodes[0].Template
-    path := util.Join("/", version, env, cluster, repository.Templates, tmplobj)
-    srvPath := util.Join("/", version, env, cluster, repository.ServiceList)
+    conf := req.CfgVersions[0].Confs[0].ConfigName
+    cluster := req.CfgVersions[0].Confs[0].Clusters[0].ClusterName
+    tmplobj := req.CfgVersions[0].Confs[0].Clusters[0].Nodes[0].Template
+    path := util.Join("/", version, conf, cluster, repository.Templates, tmplobj)
+    srvPath := util.Join("/", version, conf, cluster, repository.ServiceList)
     tmplContent, err := repository.Src.Get(path)
     if err != nil {
         log.Sugar().Errorf("get tmpl from repository err of %v, under path %s", err, path)
@@ -148,9 +164,9 @@ func getNodeConfig(req *pb.CfgReq) (error, []string, string, []byte) {
 
 func getTemplates(req *pb.CfgReq) (error, []string, string, []byte) {
     version := req.CfgVersions[0].Version
-    env := req.CfgVersions[0].Envs[0].Num
-    cluster := req.CfgVersions[0].Envs[0].Clusters[0].ClusterName
-    path := util.GetPrefix(util.Join("/", version, env, cluster, repository.Templates))
+    conf := req.CfgVersions[0].Confs[0].ConfigName
+    cluster := req.CfgVersions[0].Confs[0].Clusters[0].ClusterName
+    path := util.GetPrefix(util.Join("/", version, conf, cluster, repository.Templates))
     fileMap, err := repository.Src.GetbyPrefix(path)
     if err != nil {
         log.Sugar().Errorf("get tmpl by prefix from repository err of %v, under prefix %s", err, path)
@@ -160,7 +176,7 @@ func getTemplates(req *pb.CfgReq) (error, []string, string, []byte) {
         log.Sugar().Infof("get nil template under prefix %s", path)
         return errors.New(fmt.Sprintf("No Templates under save path %s", path)), nil, "", nil
     }
-    compressedFileName := util.Join("_", version, env, cluster, template.Templates) + ".tar.gz"
+    compressedFileName := util.Join("_", version, conf, cluster, template.Templates) + ".tar.gz"
     if req.File != nil && req.File.FileName != "" {
         compressedFileName = req.File.FileName
     }
@@ -174,9 +190,9 @@ func getTemplates(req *pb.CfgReq) (error, []string, string, []byte) {
 
 func getServices(req *pb.CfgReq) (error, []string, string, []byte) {
     version := req.CfgVersions[0].Version
-    env := req.CfgVersions[0].Envs[0].Num
-    cluster := req.CfgVersions[0].Envs[0].Clusters[0].ClusterName
-    path := util.Join("/", version, env, cluster, repository.ServiceList)
+    conf := req.CfgVersions[0].Confs[0].ConfigName
+    cluster := req.CfgVersions[0].Confs[0].Clusters[0].ClusterName
+    path := util.Join("/", version, conf, cluster, repository.ServiceList)
     //单文件用Get接口
     fileData, err := repository.Src.Get(path)
     if err != nil {
@@ -187,7 +203,7 @@ func getServices(req *pb.CfgReq) (error, []string, string, []byte) {
         log.Sugar().Infof("get nil serviceList under path %s", path)
         return errors.New(fmt.Sprintf("No servicelist under save path %s", path)), nil, "", nil
     }
-    compressedFileName := util.Join("_", version, env, cluster, repository.ServiceList) + ".tar.gz"
+    compressedFileName := util.Join("_", version, conf, cluster, repository.ServiceList) + ".tar.gz"
     if req.File != nil && req.File.FileName != "" {
         compressedFileName = req.File.FileName
     }
@@ -204,9 +220,9 @@ func getServices(req *pb.CfgReq) (error, []string, string, []byte) {
 
 func getManipulations(req *pb.CfgReq) (error, []string, string, []byte) {
     version := req.CfgVersions[0].Version
-    env := req.CfgVersions[0].Envs[0].Num
-    cluster := req.CfgVersions[0].Envs[0].Clusters[0].ClusterName
-    path := util.GetPrefix(util.Join("/", version, env, cluster, repository.Manipulations))
+    conf := req.CfgVersions[0].Confs[0].ConfigName
+    cluster := req.CfgVersions[0].Confs[0].Clusters[0].ClusterName
+    path := util.GetPrefix(util.Join("/", version, conf, cluster, repository.Manipulations))
     fileMap, err := repository.Src.GetbyPrefix(path)
     if err != nil {
         log.Sugar().Errorf("get manipulations by prefix from repository err of %v, under prefix %s", err, path)
@@ -216,7 +232,7 @@ func getManipulations(req *pb.CfgReq) (error, []string, string, []byte) {
         log.Sugar().Infof("get nil manipulations under prefix %s", path)
         return errors.New(fmt.Sprintf("No manipulations under save path %s", path)), nil, "", nil
     }
-    compressedFileName := util.Join("_", version, env, cluster, repository.Manipulations) + ".tar.gz"
+    compressedFileName := util.Join("_", version, conf, cluster, repository.Manipulations) + ".tar.gz"
     if req.File != nil && req.File.FileName != "" {
         compressedFileName = req.File.FileName
     }
@@ -268,22 +284,22 @@ func getVersions(req *pb.CfgReq) (error, []string, string, []byte) {
     return nil, strings.Split(string(versions), ","), "", nil
 }
 
-func getEnvironments(req *pb.CfgReq) (error, []string, string, []byte) {
-    key := util.Join("/", req.CfgVersions[0].Version, repository.Envs)
-    envs, err := repository.Src.Get(key)
+func getConfs(req *pb.CfgReq) (error, []string, string, []byte) {
+    key := util.Join("/", req.CfgVersions[0].Version, repository.Confs)
+    Confs, err := repository.Src.Get(key)
     if err != nil {
-        log.Sugar().Errorf("get envs from repository err of %v, under path %s", err, key)
+        log.Sugar().Errorf("get Confs from repository err of %v, under path %s", err, key)
         return err, nil, "", nil
     }
-    if envs == nil {
-        log.Sugar().Infof("get nil envs under path %s", key)
-        return errors.New(fmt.Sprintf("No envs under save path %s", key)), nil, "", nil
+    if Confs == nil {
+        log.Sugar().Infof("get nil Confs under path %s", key)
+        return errors.New(fmt.Sprintf("No Confs under save path %s", key)), nil, "", nil
     }
-    return nil, strings.Split(string(envs), ","), "", nil
+    return nil, strings.Split(string(Confs), ","), "", nil
 }
 
 func getClusters(req *pb.CfgReq) (error, []string, string, []byte) {
-    key := util.Join("/", req.CfgVersions[0].Version, req.CfgVersions[0].Envs[0].Num, repository.Clusters)
+    key := util.Join("/", req.CfgVersions[0].Version, req.CfgVersions[0].Confs[0].ConfigName, repository.Clusters)
     clusters, err := repository.Src.Get(key)
     if err != nil {
         log.Sugar().Errorf("get clusters from repository err of %v, under path %s", err, key)
@@ -327,9 +343,9 @@ func getNodeConfigPartlyOnline(req *pb.CfgReq) (error, []string, string, []byte)
     }
     //获取基本参数
     version := req.CfgVersions[0].Version
-    env := req.CfgVersions[0].Envs[0].Num
-    cluster := req.CfgVersions[0].Envs[0].Clusters[0].ClusterName
-    srvPath := util.Join("/", version, env, cluster, repository.ServiceList)
+    conf := req.CfgVersions[0].Confs[0].ConfigName
+    cluster := req.CfgVersions[0].Confs[0].Clusters[0].ClusterName
+    srvPath := util.Join("/", version, conf, cluster, repository.ServiceList)
     srvContent, err := repository.Src.Get(srvPath)
     if err != nil {
         log.Sugar().Errorf("get srvList from repository err of %v, under path %s", err, srvPath)
@@ -349,16 +365,17 @@ func getNodeConfigPartlyOnline(req *pb.CfgReq) (error, []string, string, []byte)
 func createNodeConfig(req *pb.CfgReq, tmplObj string, tmplContent, srcContent []byte) (error, []string, string, []byte) {
     //获取基本参数
     version := req.CfgVersions[0].Version
-    env := req.CfgVersions[0].Envs[0].Num
-    cluster := req.CfgVersions[0].Envs[0].Clusters[0].ClusterName
+    conf := req.CfgVersions[0].Confs[0].ConfigName
+    cluster := req.CfgVersions[0].Confs[0].Clusters[0].ClusterName
     //tmplobj := req.File.FileName
     //创建模板实例
     templateIns, err := template.NewTemplateImpl(repository.Src,
-        req.CfgVersions[0].Envs[0].Clusters[0].Nodes[0].GlobalId,
-        req.CfgVersions[0].Envs[0].Clusters[0].Nodes[0].LocalId,
+        req.EnvNum,
+        req.CfgVersions[0].Confs[0].Clusters[0].Nodes[0].GlobalId,
+        req.CfgVersions[0].Confs[0].Clusters[0].Nodes[0].LocalId,
         "tmplIns",
         req.CfgVersions[0].Version,
-        req.CfgVersions[0].Envs[0].Num)
+        req.CfgVersions[0].Confs[0].ConfigName)
     if err != nil {
         log.Sugar().Errorf("Init tmpl err in creating nodeconfig, err:%v", err)
         return err, nil, "", nil
@@ -369,7 +386,7 @@ func createNodeConfig(req *pb.CfgReq, tmplObj string, tmplContent, srcContent []
         log.Sugar().Infof("Fill tmpl err in creating nodeconfig of %v, tmplname %s, tmplContent %s", err, tmplObj, tmplContent)
         return err, nil, "", nil
     }
-    fileName := util.Join("_", version, env, cluster, req.CfgVersions[0].Envs[0].Clusters[0].Nodes[0].LocalId, tmplObj)
+    fileName := util.Join("_", version, conf, cluster, req.CfgVersions[0].Confs[0].Clusters[0].Nodes[0].LocalId, tmplObj)
     if req.File != nil && req.File.FileName != "" {
         fileName = req.File.FileName
     }
@@ -379,9 +396,9 @@ func createNodeConfig(req *pb.CfgReq, tmplObj string, tmplContent, srcContent []
 //该函数在json之间处理数据，不需要用到模板填充
 func getDeploymentInfo(req *pb.CfgReq) (error, []string, string, []byte) {
     version := req.CfgVersions[0].Version
-    env := req.CfgVersions[0].Envs[0].Num
-    cluster := req.CfgVersions[0].Envs[0].Clusters[0].ClusterName
-    servicePath := util.Join("/", version, env, cluster, repository.ServiceList)
+    conf := req.CfgVersions[0].Confs[0].ConfigName
+    cluster := req.CfgVersions[0].Confs[0].Clusters[0].ClusterName
+    servicePath := util.Join("/", version, conf, cluster, repository.ServiceList)
     serviceData, err := repository.Src.Get(servicePath)
     if err != nil {
         log.Sugar().Errorf("get serviceList from repository err of %v, under path %s", err, servicePath)
@@ -401,10 +418,10 @@ func getDeploymentInfo(req *pb.CfgReq) (error, []string, string, []byte) {
         log.Sugar().Infof("get nil infrastructure under path %s", infrastructurePath)
         return errors.New(fmt.Sprintf("No infrastructure under path %s", infrastructurePath)), nil, "", nil
     }
-    deploymentInfo, err := template.GetDeploymentInfo(serviceData, infrastructureData)
+    deploymentInfo, err := template.GetDeploymentInfo(req.EnvNum, serviceData, infrastructureData)
     if err != nil {
         log.Sugar().Errorf("get deploymentInfo err of %v, servicepath:%s, infrastructurepath:%s", err, servicePath, infrastructurePath)
         return err, nil, "", nil
     }
-    return nil, nil, util.Join("_", version, env, cluster, template.DeploymentInfo) + ".json", []byte(deploymentInfo)
+    return nil, nil, util.Join("_", version, conf, cluster, template.DeploymentInfo) + ".json", []byte(deploymentInfo)
 }

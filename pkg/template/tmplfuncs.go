@@ -2,9 +2,11 @@
 package template
 
 import (
+    "bytes"
     "encoding/json"
     "errors"
     "fmt"
+    "html/template"
     "math"
     "strconv"
     "strings"
@@ -42,12 +44,12 @@ func Atoi(s string) (int, error) {
 }
 
 // CtlFind 命令行单条信息查询函数，不会对service查询结果进行映射
-func CtlFind(tar, ver, env, clusterObject, service string) (string, error) {
+func CtlFind(tar, ver, conf, clusterObject, service string) (string, error) {
     var filePath string
     var data interface{}
     switch tar {
     case Services:
-        filePath = util.Join("/", ver, env, clusterObject, repository.ServiceList)
+        filePath = util.Join("/", ver, conf, clusterObject, repository.ServiceList)
     case Infrastructure:
         filePath = util.Join("/", ver, repository.Infrastructure)
     }
@@ -76,62 +78,47 @@ func CtlFind(tar, ver, env, clusterObject, service string) (string, error) {
     return "", errors.New(errInfo)
 }
 
-// GetInfobyNodeId 将给出的nodeid翻译成servicelist上实例链表的序号，再调用底层函数实现替换
-func GetInfobyNodeId(src repository.Storage, infrastructureData []byte, defaultIndex bool, globalId, nodeId, ver, env, clusterObject, service string) (string, error) {
-    //构建serviceList map
-    prefixService := util.Join("/", ver, env, clusterObject, repository.ServiceList)
+func baseGet(src repository.Storage, infrastructureData []byte, defaultIndex bool, envNum, globalId, localId, ver, conf, clusterObject, service string) (string, error) {
+    //获取serviceList文件
+    prefixService := util.Join("/", ver, conf, clusterObject, repository.ServiceList)
     var data interface{}
-    binaryData, err := src.Get(prefixService) //从数据源取值
+    srvData, err := src.Get(prefixService) //从数据源取值
     if err != nil {
         log.Sugar().Errorf("get serviceList from repository err of %v in baseGet, under path %s", err, prefixService)
         return "", err
     }
-    if binaryData == nil {
+    if srvData == nil {
         errInfo := fmt.Sprintf("no data under path %s in baseGet, please checkout in etcd or compressedfile", prefixService)
         log.Sugar().Info(errInfo)
         return "", errors.New(errInfo)
     }
-    err = json.Unmarshal(binaryData, &data)
-    if err != nil {
-        log.Sugar().Infof("json unmarshal serviceList err of %v, data:%s", err, binaryData)
-        return "", err
-    }
-    serviceMap := make(map[string]string)
-    ConstructMap(serviceMap, data, "")
-    //查找是否存在该节点号对应的nodeid，找不到则返回
-    var localId string
-    //是否使用隐式索引
-    for k, v := range serviceMap {
-        if strings.Contains(k, DeploymentInfoKey) && strings.Contains(k, NodeIdKey) && v == nodeId {
-            keySlice := strings.SplitN(k, ".", 3)
-            if len(keySlice) < 3 {
-                errInfo := fmt.Sprintf("err key with nodeid, key is %s", k)
-                log.Sugar().Info(errInfo)
-                return "", errors.New(errInfo)
-            }
-            localId = keySlice[1]
+    //未传入公共信息文件时，获取文件
+    if infrastructureData == nil {
+        prefixPublic := util.Join("/", ver, repository.Infrastructure)
+        infrastructureData, err = src.Get(prefixPublic) //从数据源取值
+        if err != nil {
+            log.Sugar().Errorf("get infrastructure from repository err of %v in baseGet, under path %s", err, prefixPublic)
+            return "", err
+        }
+        if infrastructureData == nil {
+            log.Sugar().Infof("get nil infrastructure under path %s in baseGet", prefixPublic)
+            return "", errors.New(fmt.Sprintf("no data under path %s, please checkout in etcd or compressedfile", prefixPublic))
         }
     }
-    return baseGet(src, infrastructureData, defaultIndex, globalId, localId, ver, env, clusterObject, service)
-}
-
-func baseGet(src repository.Storage, infrastructureData []byte, defaultIndex bool, globalId, localId, ver, env, clusterObject, service string) (string, error) {
-    //构建serviceList map
-    prefixService := util.Join("/", ver, env, clusterObject, repository.ServiceList)
-    var data interface{}
-    binaryData, err := src.Get(prefixService) //从数据源取值
+    //向基础设施信息中插入环境号信息
+    infrastructureData, err = sjson.SetBytes(infrastructureData, EnvNumKey, envNum)
     if err != nil {
-        log.Sugar().Errorf("get serviceList from repository err of %v in baseGet, under path %s", err, prefixService)
+        return "", errors.New(err.Error() + "; quit when insert envNum")
+    }
+    //先行使用基础设施信息填充服务清单，再使用可用的服务清单继续查询
+    srvData, err = fillSrvbyInfra(srvData, infrastructureData)
+    if err != nil {
+        log.Sugar().Infof("fill serviceList err of %v, data:%s", err, srvData)
         return "", err
     }
-    if binaryData == nil {
-        errInfo := fmt.Sprintf("no data under path %s in baseGet, please checkout in etcd or compressedfile", prefixService)
-        log.Sugar().Info(errInfo)
-        return "", errors.New(errInfo)
-    }
-    err = json.Unmarshal(binaryData, &data)
+    err = json.Unmarshal(srvData, &data)
     if err != nil {
-        log.Sugar().Infof("json unmarshal serviceList err of %v, data:%s", err, binaryData)
+        log.Sugar().Infof("json unmarshal serviceList err of %v, data:%s", err, srvData)
         return "", err
     }
     serviceMap := make(map[string]string)
@@ -168,61 +155,7 @@ func baseGet(src repository.Storage, infrastructureData []byte, defaultIndex boo
         log.Sugar().Info(errInfo)
         return "", errors.New(errInfo)
     }
-    //服务值不包含"{}",直接返回，否则需要替换
-    if len(serviceValue) < 2 || serviceValue[0] != '{' || serviceValue[len(serviceValue)-1] != '}' {
-        return serviceValue, nil
-    }
-    if len(serviceValue) == 2 {
-        log.Sugar().Infof("get nil value in {}, key:%s, value:%s", service, serviceValue)
-        return "", errors.New("cannot set nil value within {}")
-    }
-    //去除括号
-    serviceValue = serviceValue[1 : len(serviceValue)-1]
-    //未传入公共信息文件时，获取文件
-    if infrastructureData == nil {
-        prefixPublic := util.Join("/", ver, repository.Infrastructure)
-        infrastructureData, err = src.Get(prefixPublic) //从数据源取值
-        if err != nil {
-            log.Sugar().Errorf("get infrastructure from repository err of %v in baseGet, under path %s", err, prefixPublic)
-            return "", err
-        }
-        if infrastructureData == nil {
-            log.Sugar().Infof("get nil infrastructure under path %s in baseGet", prefixPublic)
-            return "", errors.New(fmt.Sprintf("no data under path %s, please checkout in etcd or compressedfile", prefixPublic))
-        }
-    }
-    err = json.Unmarshal(infrastructureData, &data)
-    if err != nil {
-        log.Sugar().Infof("json unmarshal infrastructure err of %v, data:%s", err, infrastructureData)
-        return "", err
-    }
-    publicInfoMap := make(map[string]string)
-    ConstructMap(publicInfoMap, data, "")
-    //查找是否存在映射,替换或返回
-    //按照localid和约定的主机名称键值获取hostname
-    hostname := ""
-    for srvKey, srvVal := range serviceMap {
-        targetKey := util.Join(".", DeploymentInfoKey, localId, HostNameKey)
-        if srvKey == targetKey {
-            hostname = srvVal
-            break
-        }
-    }
-    if hostname == "" {
-        errInfo := fmt.Sprintf("No hostname under localId %s on servicelist %s", localId, prefixService)
-        log.Sugar().Info(errInfo)
-        return "", errors.New(errInfo)
-    }
-    //映射
-    targetKey := hostname + "." + serviceValue
-    for k, v := range publicInfoMap {
-        if strings.HasSuffix(k, targetKey) && v != "" {
-            return v, nil
-        }
-    }
-    errInfo := fmt.Sprintf("no such infrastructure info of %s on %s", targetKey, util.Join("/", ver, env, repository.Infrastructure))
-    log.Sugar().Info(errInfo)
-    return "", errors.New(errInfo)
+    return serviceValue, nil
 }
 
 // ConstructMap 从任意json构建key为完整路径的map
@@ -266,77 +199,23 @@ func ConstructMap(resMap map[string]string, data interface{}, currentPath string
     }
 }
 
-// GetDeploymentInfo 接收两份文件，返回一份新的部署信息文件
-func GetDeploymentInfo(serviceData, infrastructureData []byte) (string, error) {
-    if serviceData == nil || infrastructureData == nil {
-        return "", errors.New("nil input when filling service data")
-    }
-    var serviceInterface, infrastructureInterface interface{}
-    err := json.Unmarshal(serviceData, &serviceInterface)
+// 在预设函数中用于填充服务清单
+func fillSrvbyInfra(servicelistInput, infrastructure []byte) ([]byte, error) {
+    tmpl := template.New("forSrv")
+    tmpl, err := tmpl.Parse(string(servicelistInput))
     if err != nil {
-        log.Sugar().Infof("json unmarshal serviceList err of %v, servicedata:%s", err, serviceData)
-        return "", err
+        return nil, errors.New(err.Error() + "; init tmpl for srv failed")
     }
-    err = json.Unmarshal(infrastructureData, &infrastructureInterface)
+    var infraData interface{}
+    err = json.Unmarshal(infrastructure, &infraData)
     if err != nil {
-        log.Sugar().Infof("json unmarshal infrastructure err of %v, infrastructureData:%s", err, infrastructureData)
-        return "", err
+        return nil, err
     }
-    serviceMap := make(map[string]string)
-    ConstructMap(serviceMap, serviceInterface, "")
-    if _, ok := serviceMap[ReplicatorNumKey]; !ok {
-        log.Sugar().Infof("Missing replicator_number in serviceList, servicedata %s", serviceData)
-        return "", errors.New("Missing replicator_number in serviceList")
-    }
-    deploymentInfo, err := sjson.Set("", ReplicatorNumKey, serviceMap[ReplicatorNumKey])
+
+    var data bytes.Buffer
+    err = tmpl.ExecuteTemplate(&data, "forSrv", infraData)
     if err != nil {
-        log.Sugar().Errorf("insert deploymentInfo failed, datatoInsert:%+v, deploymentInfo:%s", serviceMap, deploymentInfo)
-        return "", errors.New("insert deploymentInfo failed")
+        return nil, err
     }
-    infrastructureMap := make(map[string]string)
-    ConstructMap(infrastructureMap, infrastructureInterface, "")
-    //筛选部署信息
-    for k, v := range serviceMap {
-        if strings.HasPrefix(k, DeploymentInfoKey) {
-            valueToWrite := v
-            if len(v) > 1 && v[0] == '{' && v[len(v)-1] == '}' {
-                if len(v) <= 2 {
-                    log.Sugar().Infof("get nil value in {}, key:%s, value:%s", k, v)
-                    return "", errors.New(fmt.Sprintf("can not set nil value in {}, key:%s, value:%s", k, v))
-                }
-                valueToWrite = v[1 : len(v)-1]
-                //取localid,按照localid查询hostname
-                serviceKeySlice := strings.SplitN(k, ".", 3)
-                if len(serviceKeySlice) < 3 {
-                    log.Sugar().Warnf("Get special service value:%s of key:%s", v, k)
-                    continue
-                }
-                keyofHostName := util.Join(".", DeploymentInfoKey, serviceKeySlice[1], HostNameKey)
-                if _, ok := serviceMap[keyofHostName]; !ok {
-                    err := fmt.Sprintf("can not find hostname key of %s on servicelist", keyofHostName)
-                    log.Sugar().Info(err)
-                    return "", errors.New(err)
-                }
-                hostName := serviceMap[keyofHostName]
-                suffixKey := hostName + "." + valueToWrite
-                for infraKey, infraVal := range infrastructureMap {
-                    if strings.HasSuffix(infraKey, suffixKey) {
-                        valueToWrite = infraVal
-                        break
-                    }
-                }
-                if valueToWrite == v[1:len(v)-1] {
-                    err := fmt.Sprintf("can not find infrastructure info of suffixkey %s", suffixKey)
-                    log.Sugar().Info(err)
-                    return "", errors.New(err)
-                }
-            }
-            deploymentInfo, err = sjson.Set(deploymentInfo, k, valueToWrite)
-            if err != nil {
-                log.Sugar().Errorf("insert deploymentInfo failed, datatoInsert:%+v, deploymentInfo:%s", serviceMap, deploymentInfo)
-                return "", errors.New("insert deploymentInfo failed")
-            }
-        }
-    }
-    return deploymentInfo, nil
+    return data.Bytes(), nil
 }

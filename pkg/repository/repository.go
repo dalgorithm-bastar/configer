@@ -18,7 +18,7 @@ const (
     Infrastructure     = "infrastructure.json"
     Manipulations      = "manipulations"
     Versions           = "versions"
-    Envs               = "envs"
+    Confs              = "configs"
 )
 
 var Src Storage

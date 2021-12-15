@@ -22,10 +22,12 @@ import (
     "io"
     "os"
     "path/filepath"
+    "regexp"
     "strconv"
     "strings"
 
     "github.com/configcenter/internal/log"
+    manage "github.com/configcenter/pkg/manager"
     "github.com/configcenter/pkg/pb"
     "github.com/configcenter/pkg/repository"
     "github.com/configcenter/pkg/template"
@@ -47,14 +49,15 @@ func init() {
     rootCmd.AddCommand(clusterCmd)
     clusterCmd.Flags().StringVarP(&object.PathIn, "pathin", "i", "", "assign input path")
     clusterCmd.Flags().StringVarP(&object.Version, "version", "v", "", "assign a config version(required)")
-    clusterCmd.Flags().StringVarP(&object.Env, "env", "e", "", "assign an environment number(required)")
+    clusterCmd.Flags().StringVarP(&object.Env, "env", "e", "", "assign an env num of 2 bits(required)")
+    clusterCmd.Flags().StringVarP(&object.Config, "config", "s", "", "assign config scheme")
     clusterCmd.Flags().StringVarP(&object.Cluster, "cluster", "c", "", "assign a cluster name")
     clusterCmd.Flags().StringVarP(&object.TemplateName, "template", "t", "", "assign template")
     clusterCmd.Flags().StringVarP(&object.PathOut, "pathout", "o", "", "assign output path(required)")
     clusterCmd.Flags().StringVarP(&mode, "mode", "m", "", "input \"remote\" or \"local\" to choose creating from remote or local(required)")
     clusterCmd.MarkFlagRequired("version")
     clusterCmd.MarkFlagRequired("env")
-    //clusterCmd.MarkFlagRequired("cluster")
+    clusterCmd.MarkFlagRequired("config")
     //clusterCmd.MarkFlagRequired("template")
     clusterCmd.MarkFlagRequired("pathout")
     clusterCmd.MarkFlagRequired("mode")
@@ -64,6 +67,14 @@ func Cluster(cmd *cobra.Command, args []string) {
     if mode != "local" && mode != "remote" {
         fmt.Println("please input correct arg mode, within \"remote\" or \"local\"")
         return
+    }
+    //校验环境号是否合法
+    envNumFormat, err := regexp.Compile(manage.EnvNumString)
+    if err != nil {
+        panic(err)
+    }
+    if !envNumFormat.MatchString(object.Env) {
+        panic(fmt.Sprintf("illegal envNum of %s, please input num of 2 bits", object.Env))
     }
     //从远端生成
     if mode == "remote" {
@@ -78,13 +89,14 @@ func Cluster(cmd *cobra.Command, args []string) {
         //新建请求体
         configReq := pb.CfgReq{
             UserName: object.UserName,
+            EnvNum:   object.Env,
             Target:   []string{template.Clusters},
             CfgVersions: []*pb.CfgVersion{
                 {
                     Version: object.Version,
-                    Envs: []*pb.Environment{
+                    Confs: []*pb.ConfigScheme{
                         {
-                            Num: object.Env,
+                            ConfigName: object.Config,
                             Clusters: []*pb.Cluster{
                                 {
                                     ClusterName: "",
@@ -127,7 +139,7 @@ func Cluster(cmd *cobra.Command, args []string) {
         clusterList := resp.SliceData
         for _, cluster := range clusterList {
             configReq.Target[0] = template.Templates
-            configReq.CfgVersions[0].Envs[0].Clusters[0].ClusterName = cluster
+            configReq.CfgVersions[0].Confs[0].Clusters[0].ClusterName = cluster
             //获取该集群下的所有模板名称
             resp, err := client.GET(context.Background(), &configReq)
             if err != nil {
@@ -184,7 +196,7 @@ func Cluster(cmd *cobra.Command, args []string) {
             if infrastructureFile == nil {
                 panic("no infrastructure file on remote!")
             }
-            deploymentDataReflected, err := template.GetDeploymentInfo(serviceListFile, infrastructureFile)
+            deploymentDataReflected, err := template.GetDeploymentInfo(object.Env, serviceListFile, infrastructureFile)
             err = json.Unmarshal([]byte(deploymentDataReflected), &reflectedDeploymentInfo)
             if err != nil {
                 log.Sugar().Infof("json unmarshal reflecteddeploymentinfo err of %v, data:%s", err, deploymentDataReflected)
@@ -201,9 +213,9 @@ func Cluster(cmd *cobra.Command, args []string) {
                 tmplName := tmplNameSlice[len(tmplNameSlice)-1]
                 for i := 0; i < replicatorNum; i++ {
                     configReq.Target[0] = template.NodeConfig
-                    configReq.CfgVersions[0].Envs[0].Clusters[0].Nodes[0].Template = tmplName
-                    configReq.CfgVersions[0].Envs[0].Clusters[0].Nodes[0].GlobalId = "0"
-                    configReq.CfgVersions[0].Envs[0].Clusters[0].Nodes[0].LocalId = strconv.Itoa(i)
+                    configReq.CfgVersions[0].Confs[0].Clusters[0].Nodes[0].Template = tmplName
+                    configReq.CfgVersions[0].Confs[0].Clusters[0].Nodes[0].GlobalId = "0"
+                    configReq.CfgVersions[0].Confs[0].Clusters[0].Nodes[0].LocalId = strconv.Itoa(i)
                     cfgResp, err := client.GET(context.Background(), &configReq)
                     if err != nil {
                         fmt.Println(err)
@@ -252,7 +264,7 @@ func Cluster(cmd *cobra.Command, args []string) {
     }
     //TODO 文件夹数据
     //初始化repository，客户端为压缩包模式
-    err := repository.NewStorage(context.Background(), repository.CompressedFileType, object.PathIn)
+    err = repository.NewStorage(context.Background(), repository.CompressedFileType, object.PathIn)
     if err != nil {
         fmt.Println(err)
         return
@@ -286,7 +298,7 @@ func Cluster(cmd *cobra.Command, args []string) {
     for clusterName, tmplSlice := range clusterMap {
         //解析得到的部署信息,拿到实例数目
         var deploymentInfo, reflectedDeploymentInfo interface{}
-        servicelistFile, err := repository.Src.Get(util.Join("/", object.Version, object.Env, clusterName, repository.ServiceList))
+        servicelistFile, err := repository.Src.Get(util.Join("/", object.Version, object.Config, clusterName, repository.ServiceList))
         err = json.Unmarshal(servicelistFile, &deploymentInfo)
         if err != nil {
             log.Sugar().Infof("json unmarshal deploymentinfo err of %v, data:%s", err, string(servicelistFile))
@@ -298,17 +310,17 @@ func Cluster(cmd *cobra.Command, args []string) {
             fmt.Println("lack of replicator_number, please checkout servicelist on remote")
             return
         }
-        replicatorNum, err := strconv.Atoi(dataMap["replicator_number"])
+        replicatorNum, err := strconv.Atoi(dataMap[template.ReplicatorNumKey])
         if err != nil {
-            fmt.Println("err replicator_number of: " + dataMap["replicator_number"])
+            fmt.Println("err replicator_number of: " + dataMap[template.ReplicatorNumKey])
             return
         }
         //取部署信息，以便使用主机名命名文件夹
         infrastructureFile, err := repository.Src.Get(util.Join("/", object.Version, repository.Infrastructure))
-        deploymentDataReflected, err := template.GetDeploymentInfo(servicelistFile, infrastructureFile)
+        deploymentDataReflected, err := template.GetDeploymentInfo(object.Env, servicelistFile, infrastructureFile)
         err = json.Unmarshal([]byte(deploymentDataReflected), &reflectedDeploymentInfo)
         if err != nil {
-            log.Sugar().Infof("json unmarshal reflecteddeploymentinfo err of %v, data:%s", err, deploymentDataReflected)
+            log.Sugar().Infof("json unmarshal reflectedDeploymentinfo err of %v, data:%s", err, deploymentDataReflected)
             return
         }
         dataMapReflected := make(map[string]string)
@@ -317,13 +329,13 @@ func Cluster(cmd *cobra.Command, args []string) {
         for _, tmplName := range tmplSlice {
             //对单个模板循环生成配置文件
             for i := 0; i < replicatorNum; i++ {
-                path := util.Join("/", object.Version, object.Env, clusterName, repository.Templates, tmplName)
+                path := util.Join("/", object.Version, object.Config, clusterName, repository.Templates, tmplName)
                 tmplContent, err := repository.Src.Get(path)
                 if err != nil {
                     fmt.Println(err)
                     return
                 }
-                templateIns, err := template.NewTemplateImpl(repository.Src, "0", strconv.Itoa(i), "tmplIns", object.Version, object.Env)
+                templateIns, err := template.NewTemplateImpl(repository.Src, object.Env, "0", strconv.Itoa(i), "tmplIns", object.Version, object.Config)
                 if err != nil {
                     fmt.Println(err)
                     return

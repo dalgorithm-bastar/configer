@@ -89,9 +89,9 @@ func CreatePartlyOnline(cmd *cobra.Command, args []string) {
         CfgVersions: []*pb.CfgVersion{
             {
                 Version: object.Version,
-                Envs: []*pb.Environment{
+                Confs: []*pb.ConfigScheme{
                     {
-                        Num: object.Env,
+                        ConfigName: object.Config,
                         Clusters: []*pb.Cluster{
                             {
                                 ClusterName: object.Cluster,

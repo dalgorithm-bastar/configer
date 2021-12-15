@@ -42,7 +42,7 @@ func init() {
     rootCmd.AddCommand(getCmd)
     getCmd.Flags().StringVarP(&object.Target, "target", "t", "", "assign file type needed(required)")
     getCmd.Flags().StringVarP(&object.Version, "version", "v", "", "assign a config version(required)")
-    getCmd.Flags().StringVarP(&object.Env, "env", "e", "", "assign an environment number")
+    getCmd.Flags().StringVarP(&object.Config, "config", "s", "", "assign config scheme ")
     getCmd.Flags().StringVarP(&object.Cluster, "cluster", "c", "", "assign a cluster name")
     getCmd.Flags().StringVarP(&object.PathOut, "pathout", "o", "", "assign output path")
 }
@@ -55,7 +55,7 @@ func Get(cmd *cobra.Command, args []string) {
             fmt.Println(fmt.Sprintf("Path required when target is %s", object.Target))
             return
         }
-    case template.Versions, template.Environments, template.Clusters:
+    case template.Versions, template.ConfigScheme, template.Clusters:
     //默认返回错误
     default:
         fmt.Println(fmt.Sprintf("Target of %s can not be recognized", object.Target))
@@ -69,9 +69,9 @@ func Get(cmd *cobra.Command, args []string) {
         CfgVersions: []*pb.CfgVersion{
             {
                 Version: object.Version,
-                Envs: []*pb.Environment{
+                Confs: []*pb.ConfigScheme{
                     {
-                        Num: object.Env,
+                        ConfigName: object.Config,
                         Clusters: []*pb.Cluster{
                             {
                                 ClusterName: object.Cluster,
@@ -135,7 +135,7 @@ func Get(cmd *cobra.Command, args []string) {
             fmt.Println(err)
             return
         }
-    case template.Versions, template.Environments, template.Clusters:
+    case template.Versions, template.ConfigScheme, template.Clusters:
         fmt.Println(resp.SliceData)
         return
     }

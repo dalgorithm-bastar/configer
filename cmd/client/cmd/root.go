@@ -35,10 +35,11 @@ const (
 // Object 用于接收参数的公用结构体，不同指令下初始化不同的变量
 type Object struct {
     UserName     string
+    Env          string
     Target       string
     Phrase       string
     Version      string
-    Env          string
+    Config       string
     Cluster      string
     GlobalId     string
     LocalId      string

@@ -14,6 +14,7 @@ import (
     "github.com/configcenter/internal/log"
     "github.com/configcenter/pkg/repository"
     "github.com/configcenter/pkg/util"
+    "github.com/tidwall/sjson"
 )
 
 //target 关键字放在template模块中，从而避免循环引用
@@ -25,7 +26,7 @@ const (
     DeploymentInfo    = "deploymentInfo"    //获取某集群下全部部署信息
     Infrastructure    = "infrastructure"    //获取某版本下所有公共信息文件
     Versions          = "versions"          //获取所有版本号
-    Environments      = "environments"      //获取某版本下所有环境号
+    ConfigScheme      = "configScheme"      //获取某版本下所有配置方案名
     Clusters          = "clusters"          //获取某环境下所有集群名称
     PartlyOnline      = "partlyOnline"      //上传一份本地模板，利用服务端信息生成后返回
     CtlFindFlag       = "ctlFind"           //用于单条查询
@@ -33,6 +34,7 @@ const (
     DeploymentInfoKey = "deployment_info"   //在服务清单中指明部署信息的键
     HostNameKey       = "hostname"          //在服务清单中指明主机名称的键
     NodeIdKey         = "NODE_ID"           //在服务清单中指明集群节点号的键
+    EnvNumKey         = "envNum"            //在模板中指定环境号的键
 )
 
 type TemplateImpl struct {
@@ -61,7 +63,7 @@ func NewCtlFindTemplate(tmplInstanceName string) (*TemplateImpl, error) {
 }
 
 // NewTemplateImpl 创建对象，除模板实例名称外，其他均为填充模板时需要用到的快照信息
-func NewTemplateImpl(source repository.Storage, globalId, localId, tmplInstanceName, version, env string) (*TemplateImpl, error) {
+func NewTemplateImpl(source repository.Storage, envNum, globalId, localId, tmplInstanceName, version, conf string) (*TemplateImpl, error) {
     templateIns := new(TemplateImpl)
     templateIns.allTemplates = template.New(tmplInstanceName)
     //获取公共信息文件，仅对GetInfo函数有意义
@@ -87,14 +89,14 @@ func NewTemplateImpl(source repository.Storage, globalId, localId, tmplInstanceN
             if mode == "normal" {
                 defaultIndex = false
             }
-            return func(src repository.Storage, binData []byte, dftIdx bool, glbId, lcId, vr, en, cl, sr string) (string, error) {
-                return baseGet(src, binData, dftIdx, glbId, lcId, vr, en, cl, sr)
-            }(source, binaryData, defaultIndex, globalId, localId, version, env, clusterObject, service)
+            return func(src repository.Storage, en string, binData []byte, dftIdx bool, glbId, lcId, vr, cf, cl, sr string) (string, error) {
+                return baseGet(src, binData, dftIdx, en, glbId, lcId, vr, cf, cl, sr)
+            }(source, envNum, binaryData, defaultIndex, globalId, localId, version, conf, clusterObject, service)
         },
         //用于命令行查询，涉及公共信息的不执行映射
         "CtlFind": CtlFind,
         //用于获取全局服务信息，存在潜在的风险，不推荐使用
-        "UnsafeGetInfo": func(mode, anyVersion, anyEnv, clusterObject, service string) (string, error) {
+        "UnsafeGetInfo": func(mode, anyVersion, anyConf, clusterObject, service string) (string, error) {
             if mode != "normal" && mode != "slice" {
                 return "", errors.New("mode out of range, please assign \"normal\" or \"slice\"")
             }
@@ -102,14 +104,14 @@ func NewTemplateImpl(source repository.Storage, globalId, localId, tmplInstanceN
             if mode == "normal" {
                 defaultIndex = false
             }
-            return func(src repository.Storage, dftIdx bool, glbId, lcId, vr, en, cl, sr string) (string, error) {
-                return baseGet(src, nil, dftIdx, glbId, lcId, vr, en, cl, sr)
-            }(source, defaultIndex, globalId, localId, anyVersion, anyEnv, clusterObject, service)
+            return func(src repository.Storage, dftIdx bool, en, glbId, lcId, vr, acf, cl, sr string) (string, error) {
+                return baseGet(src, nil, dftIdx, en, glbId, lcId, vr, acf, cl, sr)
+            }(source, defaultIndex, envNum, globalId, localId, anyVersion, anyConf, clusterObject, service)
         },
         "GetNodeIdInfo": func(NodeId, clusterObject, service string) (string, error) {
-            return func(src repository.Storage, binData []byte, dftIdx bool, glbId, lcId, vr, en, cl, sr string) (string, error) {
-                return GetInfobyNodeId(src, binData, dftIdx, glbId, lcId, vr, en, cl, sr)
-            }(source, binaryData, true, globalId, NodeId, version, env, clusterObject, service)
+            return func(src repository.Storage, binData []byte, dftIdx bool, en, glbId, lcId, vr, cf, cl, sr string) (string, error) {
+                return baseGet(src, binData, dftIdx, en, glbId, lcId, vr, cf, cl, sr)
+            }(source, binaryData, true, envNum, globalId, NodeId, version, conf, clusterObject, service)
         },
         "ParseFloat": ParseFloat,
         "FmtFloat":   FmtFloat64,
@@ -161,4 +163,20 @@ func (t *TemplateImpl) Fill(tmplContent []byte, tmplName string, srcContent []by
         return nil, err
     }
     return data.Bytes(), nil
+}
+
+// GetDeploymentInfo 接收两份文件，返回一份新的部署信息文件
+func GetDeploymentInfo(envNum string, serviceData, infrastructureData []byte) (string, error) {
+    if serviceData == nil || infrastructureData == nil {
+        return "", errors.New("nil input when filling service data")
+    }
+    infrastructureData, err := sjson.SetBytes(infrastructureData, EnvNumKey, envNum)
+    if err != nil {
+        return "", errors.New("err when set envNum into infra: " + err.Error())
+    }
+    res, err := fillSrvbyInfra(serviceData, infrastructureData)
+    if err != nil {
+        return "", err
+    }
+    return string(res), nil
 }

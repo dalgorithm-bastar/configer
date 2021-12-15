@@ -39,7 +39,7 @@ func put(ctx context.Context, req *pb.CfgReq) (error, []string, string, []byte) 
     //根据不同环境号新建模板对象
     for envNum, templateFilePaths := range envToTmplMap {
         for _, templateFilePath := range templateFilePaths {
-            templateIns, err := template.NewTemplateImpl(srcForCheck, "0", "0", "templateIns", rootPath, envNum)
+            templateIns, err := template.NewTemplateImpl(srcForCheck, "00", "0", "0", "templateIns", rootPath, envNum)
             if err != nil {
                 log.Sugar().Errorf("init tmpl err when putting, err:%v", err)
                 return err, nil, "", nil
@@ -91,7 +91,7 @@ func put(ctx context.Context, req *pb.CfgReq) (error, []string, string, []byte) 
         putmap[util.Join("/", req.UserName, envNum, repository.Clusters)] = strings.Join(clusterSlice, ",")
         clusterSlice = clusterSlice[0:0]
     }
-    putmap[req.UserName+"/"+repository.Envs] = strings.Join(envSlice, ",")
+    putmap[req.UserName+"/"+repository.Confs] = strings.Join(envSlice, ",")
     //删除用户上次缓存的文件，避免污染
     userFileMap, err := repository.Src.GetbyPrefix(req.UserName)
     if err != nil {

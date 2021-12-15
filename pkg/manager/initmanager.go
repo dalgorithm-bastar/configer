@@ -13,6 +13,7 @@ import (
 const (
     VersionString  = `^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$` //初始化用于版本号校验的正则表达式
     TemplateString = `templates/`                                          //初始化用于模板文件筛选的正则表达式
+    EnvNumString   = `^[0-9][0-9]$`                                        //初始化环境号校验
     LockName       = "/lock"                                               //etcd分布式锁名称
 )
 
@@ -23,6 +24,7 @@ var (
 type regExpStruct struct {
     RegExpOfVersion  *regexp.Regexp
     RegExpOfTemplate *regexp.Regexp
+    RegExpOfEnvNum   *regexp.Regexp
 }
 
 //调度各模块实现请求
@@ -61,9 +63,14 @@ func NewManager(ctxIn context.Context, grpcConfigLocation string) error {
     if err != nil {
         return err
     }
+    envNumFormat, err := regexp.Compile(EnvNumString)
+    if err != nil {
+        return err
+    }
     manager.regExp = regExpStruct{
         RegExpOfVersion:  versionFormat,
         RegExpOfTemplate: templateFormat,
+        RegExpOfEnvNum:   envNumFormat,
     }
     manager.ctx = ctxIn
     err = file.Close()

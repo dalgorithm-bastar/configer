@@ -22,18 +22,19 @@ service ConfigCenter{
 
 message CfgReq{
   string UserName = 1;
-  repeated string Target = 2;
-  CompressedFile File = 3;
-  repeated CfgVersion CfgVersions = 4;
+  string EnvNum = 2;
+  repeated string Target = 3;
+  CompressedFile File = 4;
+  repeated CfgVersion CfgVersions = 5;
 }
 
 message CfgVersion{
   string Version = 1;
-  repeated Environment Envs = 2;
+  repeated ConfigScheme Confs = 2;
 }
 
-message Environment {
-  string Num = 1;
+message ConfigScheme {
+  string ConfigName = 1;
   repeated Cluster Clusters = 2;
 }
 

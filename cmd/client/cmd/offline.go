@@ -43,6 +43,8 @@ func init() {
     createCmd.AddCommand(offlineCmd)
     offlineCmd.Flags().StringVarP(&object.PathIn, "pathin", "i", "", "assign input path of compressedfile(required)")
     offlineCmd.Flags().StringVarP(&object.TemplateName, "template", "t", "", "assign template to fill(required)")
+    offlineCmd.Flags().StringVarP(&object.Env, "env", "e", "", "assign envNum to fill(required)")
+    offlineCmd.MarkFlagRequired("env")
     offlineCmd.MarkFlagRequired("template")
     offlineCmd.MarkFlagRequired("pathin")
 }
@@ -60,18 +62,18 @@ func CreateOffline(cmd *cobra.Command, args []string) {
         fmt.Println(err)
         return
     }
-    path := util.Join("/", object.Version, object.Env, object.Cluster, repository.Templates, object.TemplateName)
+    path := util.Join("/", object.Version, object.Config, object.Cluster, repository.Templates, object.TemplateName)
     tmplContent, err := repository.Src.Get(path)
     if err != nil {
         fmt.Println(err)
         return
     }
-    templateIns, err := template.NewTemplateImpl(repository.Src, object.GlobalId, object.LocalId, "tmplIns", object.Version, object.Env)
+    templateIns, err := template.NewTemplateImpl(repository.Src, object.Env, object.GlobalId, object.LocalId, "tmplIns", object.Version, object.Config)
     if err != nil {
         fmt.Println(err)
         return
     }
-    srvData, err := repository.Src.Get(util.Join("/", object.Version, object.Env, object.Cluster, repository.ServiceList))
+    srvData, err := repository.Src.Get(util.Join("/", object.Version, object.Config, object.Cluster, repository.ServiceList))
     if err != nil {
         fmt.Println(err)
         return
@@ -91,7 +93,7 @@ func CreateOffline(cmd *cobra.Command, args []string) {
         fmt.Println(err)
         return
     }
-    outPutFileName := util.Join("_", object.Version, object.Env, object.Cluster, object.LocalId, object.TemplateName)
+    outPutFileName := util.Join("_", object.Version, object.Config, object.Cluster, object.LocalId, object.TemplateName)
     f, err := os.OpenFile(dirPath+"/"+outPutFileName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.ModePerm)
     defer f.Close()
     if err != nil {
