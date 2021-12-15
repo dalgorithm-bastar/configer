@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "github.com/configcenter/cmd/client/cmd"
+import "github.com/configcenter/cmd/server/cmd"
 
 func main() {
     cmd.Execute()
