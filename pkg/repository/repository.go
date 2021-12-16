@@ -38,7 +38,7 @@ type Storage interface {
 func NewStorage(ctx context.Context, dataSourceType, config string) error {
     switch dataSourceType {
     case EtcdType:
-        e, err := datasource.NewEtcdType(config)
+        e, err := datasource.NewEtcdType()
         if err != nil {
             return err
         }

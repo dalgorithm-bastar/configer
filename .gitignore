@@ -6,5 +6,5 @@ compressfiledemo/
 .DS_Store
 *.log
 *.html
-cmd/client/cfgtool
+cmd/server/proxima
 cmd/client/proxctl

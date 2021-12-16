@@ -1,15 +1,20 @@
 package cmd
 
 import (
-    "fmt"
-    "os"
-
     "github.com/spf13/cobra"
 
     "github.com/spf13/viper"
 )
 
-var cfgFile string
+var (
+    cfgFile      string
+    Version      string
+    GoVersion    string
+    GitBranch    string
+    GitCommit    string
+    GitLatestTag string
+    BuildTime    string
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -35,7 +40,6 @@ func init() {
     // will be global for your application.
 
     rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is config/configcenter.json)")
-
     // Cobra also supports local flags, which will only run
     // when this action is called directly.
     //rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
@@ -62,6 +66,6 @@ func initConfig() {
 
     // If a config file is found, read it in.
     if err := viper.ReadInConfig(); err == nil {
-        fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+        //fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
     }
 }

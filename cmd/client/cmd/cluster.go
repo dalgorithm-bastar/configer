@@ -171,13 +171,13 @@ func Cluster(cmd *cobra.Command, args []string) {
             }
             dataMap := make(map[string]string)
             template.ConstructMap(dataMap, deploymentInfo, "")
-            if _, ok := dataMap["replicator_number"]; !ok {
+            if _, ok := dataMap[template.ReplicatorNumKey]; !ok {
                 fmt.Println("lack of replicator_number, please checkout servicelist on remote")
                 return
             }
-            replicatorNum, err := strconv.Atoi(dataMap["replicator_number"])
+            replicatorNum, err := strconv.Atoi(dataMap[template.ReplicatorNumKey])
             if err != nil {
-                fmt.Println("err replicator_number of: " + dataMap["replicator_number"])
+                fmt.Println("err replicator_number of: " + dataMap[template.ReplicatorNumKey])
                 return
             }
             //取基础设施信息，以便使用主机名命名文件夹
@@ -306,7 +306,7 @@ func Cluster(cmd *cobra.Command, args []string) {
         }
         dataMap := make(map[string]string)
         template.ConstructMap(dataMap, deploymentInfo, "")
-        if _, ok := dataMap["replicator_number"]; !ok {
+        if _, ok := dataMap[template.ReplicatorNumKey]; !ok {
             fmt.Println("lack of replicator_number, please checkout servicelist on remote")
             return
         }

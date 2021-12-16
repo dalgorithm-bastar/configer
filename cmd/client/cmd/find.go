@@ -17,13 +17,10 @@ package cmd
 
 import (
     "context"
-    "encoding/json"
     "fmt"
     "io"
-    "io/ioutil"
     "os"
 
-    manage "github.com/configcenter/pkg/manager"
     "github.com/configcenter/pkg/pb"
     "github.com/configcenter/pkg/template"
     "github.com/spf13/cobra"
@@ -33,8 +30,6 @@ import (
 const (
     FindFileName = "CtlFindFile.txt"
 )
-
-var GrpcInfo manage.GrpcInfoStruct
 
 // findCmd represents the find command
 var findCmd = &cobra.Command{
@@ -102,28 +97,4 @@ func Find(cmd *cobra.Command, args []string) {
         fmt.Println(err)
         return
     }
-}
-
-func GetGrpcClient() error {
-    //读取grpc配置文件
-    var file *os.File
-    file, err := os.Open(grpcConfigLocationInProject)
-    if err != nil {
-        file, err = os.Open(grpcConfigLocationInExe)
-        if err != nil {
-            fmt.Println(fmt.Sprintf("Can not open grpcConfigFile in %s or %s", grpcConfigLocationInProject, grpcConfigLocationInExe))
-            return err
-        }
-    }
-    binaryFlie, err := ioutil.ReadAll(file)
-    if err != nil {
-        fmt.Println("Read grpcConfigFile err")
-        return err
-    }
-    err = json.Unmarshal(binaryFlie, &GrpcInfo)
-    if err != nil {
-        fmt.Println("Json Unmarshal grpcConfigFile err")
-        return err
-    }
-    return nil
 }

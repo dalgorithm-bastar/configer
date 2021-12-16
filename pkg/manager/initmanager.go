@@ -3,10 +3,10 @@ package manage
 
 import (
     "context"
-    "encoding/json"
-    "io/ioutil"
-    "os"
     "regexp"
+
+    "github.com/configcenter/config"
+    "github.com/spf13/viper"
 )
 
 //请求体Target字段取值范围
@@ -14,7 +14,7 @@ const (
     VersionString  = `^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$` //初始化用于版本号校验的正则表达式
     TemplateString = `templates/`                                          //初始化用于模板文件筛选的正则表达式
     EnvNumString   = `^[0-9][0-9]$`                                        //初始化环境号校验
-    LockName       = "/lock"                                               //etcd分布式锁名称
+    LockName       = "/lock_configcenter_ordered"                          //etcd分布式锁名称
 )
 
 var (
@@ -35,26 +35,26 @@ type Manager struct {
 }
 
 type GrpcInfoStruct struct {
-    Port        string `json:"port"`
     Socket      string `json:"socket"`
     LockTimeout int    `json:"locktimeout"`
 }
 
 // NewManager 读取grpc配置并初始化manager实例
-func NewManager(ctxIn context.Context, grpcConfigLocation string) error {
+func NewManager(ctxIn context.Context) error {
     manager = new(Manager)
-    file, err := os.Open(grpcConfigLocation)
-    if err != nil {
-        return err
-    }
-    binaryFlie, err := ioutil.ReadAll(file)
-    if err != nil {
-        return err
-    }
-    err = json.Unmarshal(binaryFlie, &manager.grpcInfo)
-    if err != nil {
-        return err
-    }
+    //file, err := os.Open(grpcConfigLocation)
+    //if err != nil {
+    //    return err
+    //}
+    //binaryFlie, err := ioutil.ReadAll(file)
+    //if err != nil {
+    //    return err
+    //}
+    //err = json.Unmarshal(binaryFlie, &manager.grpcInfo)
+    //if err != nil {
+    //    return err
+    //}
+    manager.SetGrpcInfo()
     versionFormat, err := regexp.Compile(VersionString)
     if err != nil {
         return err
@@ -73,10 +73,10 @@ func NewManager(ctxIn context.Context, grpcConfigLocation string) error {
         RegExpOfEnvNum:   envNumFormat,
     }
     manager.ctx = ctxIn
-    err = file.Close()
-    if err != nil {
-        return err
-    }
+    //err = file.Close()
+    //if err != nil {
+    //    return err
+    //}
     return nil
 }
 
@@ -88,4 +88,9 @@ func GetManager() *Manager {
 // GetGrpcInfo 获取manager对象的grpc信息
 func GetGrpcInfo() *GrpcInfoStruct {
     return &manager.grpcInfo
+}
+
+func (m *Manager) SetGrpcInfo() {
+    m.grpcInfo.Socket = viper.GetString(config.GrpcSocket)
+    m.grpcInfo.LockTimeout = viper.GetInt(config.GrpcLockTimeout)
 }

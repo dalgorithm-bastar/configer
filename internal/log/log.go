@@ -2,12 +2,12 @@
 package log
 
 import (
-    "encoding/json"
-    "io/ioutil"
     "os"
     "time"
 
+    "github.com/configcenter/config"
     rotatelogs "github.com/lestrrat/go-file-rotatelogs"
+    "github.com/spf13/viper"
 
     "go.uber.org/zap"
     "go.uber.org/zap/zapcore"
@@ -26,8 +26,6 @@ type LogInfo struct {
     RocordLevel  string  `json:"recordlevel"`
     EncodingType string  `json:"encodingtype"`
     FileName     string  `json:"filename"`
-    MaxSize      float64 `json:"maxsize"`
-    MaxBackups   float64 `json:"maxbackups"`
     MaxAge       float64 `json:"maxage"`
 }
 
@@ -39,25 +37,10 @@ type Logger struct {
     logInfo LogInfo //读取配置数据
 }
 
-func NewLogger(logConfigLocation string) error {
+func NewLogger() error {
     logRec = new(Logger)
-    file, err := os.Open(logConfigLocation)
-    if err != nil {
-        return err
-    }
-    binaryFlie, err := ioutil.ReadAll(file)
-    if err != nil {
-        return err
-    }
-    err = json.Unmarshal(binaryFlie, &logRec.logInfo)
-    if err != nil {
-        return err
-    }
-    err = logRec.Init()
-    if err != nil {
-        return err
-    }
-    err = file.Close()
+    logRec.setLogInfo()
+    err := logRec.Init()
     if err != nil {
         return err
     }
@@ -76,7 +59,7 @@ func (l *Logger) Init() error {
     hook, err := rotatelogs.New(
         l.logInfo.LogPath+l.logInfo.FileName+"_%Y%m%d.log",
         rotatelogs.WithLinkName(l.logInfo.LogPath+l.logInfo.FileName),
-        rotatelogs.WithMaxAge(time.Hour*24*30),
+        rotatelogs.WithMaxAge(time.Hour*24*time.Duration(l.logInfo.MaxAge)),
         rotatelogs.WithRotationTime(time.Hour*24),
     )
     if err != nil {
@@ -98,6 +81,16 @@ func (l *Logger) Init() error {
     l.zapLog = zap.New(core, zap.AddCaller())
     l.sugarLog = l.zapLog.Sugar()
     return nil
+}
+
+func (l *Logger) setLogInfo() {
+    l.logInfo = LogInfo{
+        LogPath:      viper.GetString(config.LogLogPath),
+        RocordLevel:  viper.GetString(config.LogRecordLevel),
+        EncodingType: viper.GetString(config.LogEncodingType),
+        FileName:     viper.GetString(config.LogFileName),
+        MaxAge:       viper.GetFloat64(config.LogMaxAge),
+    }
 }
 
 func getEncoder(encoderType string) zapcore.Encoder {

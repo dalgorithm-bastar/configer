@@ -1,35 +1,11 @@
-/*
-Copyright © 2021 NAME HERE <EMAIL ADDRESS>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
 package cmd
 
 import (
-    "fmt"
-    "os"
-
+    "github.com/configcenter/config"
+    manage "github.com/configcenter/pkg/manager"
     "github.com/spf13/cobra"
 
     "github.com/spf13/viper"
-)
-
-//配置中心服务端配置文件存放的路径，应与服务端main.go同步修改
-const (
-    logConfigLocation           = "../../config/log.json"
-    grpcConfigLocationInProject = "../../config/grpc.json"
-    grpcConfigLocationInExe     = "config/grpc.json"
-    //etcdConfigLocation = "config/etcdClientv3.json"
 )
 
 // Object 用于接收参数的公用结构体，不同指令下初始化不同的变量
@@ -49,8 +25,15 @@ type Object struct {
 }
 
 var (
-    cfgFile string
-    object  Object
+    GrpcInfo     manage.GrpcInfoStruct
+    cfgFile      string
+    object       Object
+    Version      string
+    GoVersion    string
+    GitBranch    string
+    GitCommit    string
+    GitLatestTag string
+    BuildTime    string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -82,6 +65,11 @@ func init() {
     //rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cfgtool.yaml)")
     rootCmd.PersistentFlags().StringVarP(&object.UserName, "user", "u", "", "current userName(required)")
 
+    rootCmd.Flags().String(config.GrpcSocket, "", "set grpc socket")
+    _ = viper.BindPFlag(config.GrpcSocket, rootCmd.Flag(config.GrpcSocket))
+
+    rootCmd.Flags().Int(config.GrpcLockTimeout, 30, "set etcd lock timeout by second when post config")
+    _ = viper.BindPFlag(config.GrpcLockTimeout, rootCmd.Flag(config.GrpcLockTimeout))
     // Cobra also supports local flags, which will only run
     // when this action is called directly.
     //rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
@@ -95,19 +83,30 @@ func initConfig() {
         viper.SetConfigFile(cfgFile)
     } else {
         // Find home directory.
-        home, err := os.UserHomeDir()
-        cobra.CheckErr(err)
+        //home, err := os.UserHomeDir()
+        //cobra.CheckErr(err)
 
-        // Search config in home directory with name ".cfgtool" (without extension).
-        viper.AddConfigPath(home)
-        viper.SetConfigType("yaml")
-        viper.SetConfigName(".cfgtool")
+        // Search config in home directory with name ".cfgsrv" (without extension).
+        //viper.AddConfigPath("config")
+        //viper.SetConfigType("json")
+        //viper.SetConfigName("configcenter")
+        viper.SetConfigFile("config/configcenter.json")
     }
 
     viper.AutomaticEnv() // read in environment variables that match
 
     // If a config file is found, read it in.
     if err := viper.ReadInConfig(); err == nil {
-        fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+        //fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
     }
+}
+
+// GetGrpcClient 供多个命令调用，新建grpc连接
+func GetGrpcClient() error {
+    //读取grpc配置文件
+    GrpcInfo = manage.GrpcInfoStruct{
+        Socket:      viper.GetString(config.GrpcSocket),
+        LockTimeout: viper.GetInt(config.GrpcLockTimeout),
+    }
+    return nil
 }
