@@ -7,9 +7,9 @@ import (
     "os"
 
     "github.com/configcenter/internal/log"
-    manage "github.com/configcenter/pkg/manager"
     "github.com/configcenter/pkg/pb"
     "github.com/configcenter/pkg/repository"
+    service "github.com/configcenter/pkg/service"
     "google.golang.org/grpc"
     "xchg.ai/sse/gracefully"
 )
@@ -32,14 +32,14 @@ func main() {
     }
 
     //初始化manager
-    err = manage.NewManager(processCtx)
+    err = service.NewManager(processCtx)
     if err != nil {
         panic(err)
     }
 
     //监听grpc端口
-    manager := manage.GetManager()
-    listen, err := net.Listen("tcp", manage.GetGrpcInfo().Socket)
+    manager := service.GetManager()
+    listen, err := net.Listen("tcp", service.GetGrpcInfo().Socket)
     if err != nil {
         panic(err)
     }

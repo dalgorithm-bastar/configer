@@ -8,9 +8,9 @@ import (
 
     "github.com/configcenter/config"
     "github.com/configcenter/internal/log"
-    manage "github.com/configcenter/pkg/manager"
     "github.com/configcenter/pkg/pb"
     "github.com/configcenter/pkg/repository"
+    "github.com/configcenter/pkg/service"
     "github.com/spf13/cobra"
     "github.com/spf13/viper"
     "google.golang.org/grpc"
@@ -27,7 +27,6 @@ var startCmd = &cobra.Command{
 
 func init() {
     rootCmd.AddCommand(startCmd)
-
     // Here you will define your flags and configuration settings.
     startCmd.Flags().String(config.EtcdUserName, "", "set etcd username")
     _ = viper.BindPFlag(config.EtcdUserName, startCmd.Flag(config.EtcdUserName))
@@ -82,14 +81,14 @@ func Start(cmd *cobra.Command, args []string) {
     }
 
     //初始化manager
-    err = manage.NewManager(processCtx)
+    err = service.NewManager(processCtx)
     if err != nil {
         panic(err)
     }
 
     //监听grpc端口
-    manager := manage.GetManager()
-    listen, err := net.Listen("tcp", manage.GetGrpcInfo().Socket)
+    manager := service.GetManager()
+    listen, err := net.Listen("tcp", service.GetGrpcInfo().Socket)
     if err != nil {
         panic(err)
     }

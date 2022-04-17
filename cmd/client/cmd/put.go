@@ -1,18 +1,3 @@
-/*
-Copyright © 2021 NAME HERE <EMAIL ADDRESS>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
 package cmd
 
 import (
@@ -24,7 +9,7 @@ import (
     "strings"
 
     "github.com/configcenter/pkg/pb"
-    "github.com/configcenter/pkg/template"
+    "github.com/configcenter/pkg/util"
     "github.com/spf13/cobra"
     "google.golang.org/grpc"
 )
@@ -56,31 +41,33 @@ func init() {
 }
 
 func Put(cmd *cobra.Command, args []string) {
-    baseName := filepath.Base(object.PathIn)
-    //检测是否为压缩包，提前返回
-    if !strings.Contains(baseName, ".tar.gz") && !strings.Contains(baseName, ".zip") {
-        fmt.Println("Please input file with format targz or zip")
+    //检测是否为文件夹
+    s, err := os.Stat(object.PathIn)
+    if err != nil || !s.IsDir() {
+        fmt.Println("please specify input path to directory")
         return
     }
-    file, err := os.Open(object.PathIn)
+    fileMap := make(map[string][]byte)
+    object.PathIn = filepath.Clean(object.PathIn)
+    pathSli := strings.Split(object.PathIn, "/")
+    lenVersion := len(pathSli[len(pathSli)-1])
+    idx := len(object.PathIn) - lenVersion + 1
+    err = filepath.Walk(object.PathIn, func(path string, info os.FileInfo, err error) error {
+        if !info.IsDir() {
+            pathKey := path[idx-1:]
+            data, err := ioutil.ReadFile(path)
+            if err != nil {
+                return err
+            }
+            fileMap[pathKey] = data
+        }
+        return nil
+    })
+    compressedFileData, err := util.CompressToStream("cfgpkg.tar.gz", fileMap)
     if err != nil {
-        fmt.Println(fmt.Sprintf("open file at %s err", object.PathIn))
         panic(err)
     }
-    binaryFile, err := ioutil.ReadAll(file)
-    if err != nil {
-        fmt.Println(fmt.Sprintf("read file at %s err", object.PathIn))
-        panic(err)
-    }
-    //构建请求结构体
-    configReq := pb.CfgReq{
-        UserName: object.UserName,
-        Target:   []string{template.CtlFindFlag},
-        File: &pb.CompressedFile{
-            FileName: baseName,
-            FileData: binaryFile,
-        },
-    }
+    //新建客户端
     //读取grpc配置信息
     err = GetGrpcClient()
     if err != nil {
@@ -94,14 +81,18 @@ func Put(cmd *cobra.Command, args []string) {
     }
     defer conn.Close()
     client := pb.NewConfigCenterClient(conn)
-    resp, err := client.PUT(context.Background(), &configReq)
+    resp, err := client.PUT(context.Background(), &pb.CfgReq{
+        UserName: object.UserName,
+        File: &pb.AnyFile{
+            FileName: "cfgpkg.tar.gz",
+            FileData: compressedFileData,
+        },
+    })
     if err != nil {
-        fmt.Println(err)
-        return
+        panic(err)
     }
     if resp.Status != "ok" {
-        fmt.Println(resp.Status)
-        return
+        panic(resp.Status)
     }
-    fmt.Println(fmt.Sprintf("Put compressedFile %s to remote succeed", baseName))
+    fmt.Println(fmt.Sprintf("Put cfgpkg to remote succeed"))
 }

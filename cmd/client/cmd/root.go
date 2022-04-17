@@ -2,7 +2,7 @@ package cmd
 
 import (
     "github.com/configcenter/config"
-    manage "github.com/configcenter/pkg/manager"
+    manage "github.com/configcenter/pkg/service"
     "github.com/spf13/cobra"
 
     "github.com/spf13/viper"
@@ -10,18 +10,19 @@ import (
 
 // Object 用于接收参数的公用结构体，不同指令下初始化不同的变量
 type Object struct {
-    UserName     string
-    Env          string
-    Target       string
-    Phrase       string
-    Version      string
-    Config       string
-    Cluster      string
-    GlobalId     string
-    LocalId      string
-    TemplateName string
-    PathIn       string
-    PathOut      string
+    UserName  string
+    Env       string
+    Target    string
+    Type      string
+    Platform  string
+    NodeType  string
+    Version   string
+    Scheme    string
+    Set       string
+    PathIn    string
+    PathOut   string
+    IpRange   string
+    PortRange string
 }
 
 var (

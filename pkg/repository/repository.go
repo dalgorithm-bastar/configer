@@ -12,13 +12,14 @@ import (
 const (
     EtcdType           = "etcd"
     CompressedFileType = "compressFile"
-    ServiceList        = "servicelist.json"
-    Clusters           = "clusters"
-    Templates          = "templates"
+    DirType            = "dirType"
+    Service            = "service.json"
+    Template           = "template"
     Infrastructure     = "infrastructure.json"
+    Deployment         = "deployment.json"
+    TopicInfo          = "topicInfo.json"
     Manipulations      = "manipulations"
     Versions           = "versions"
-    Confs              = "configs"
 )
 
 var Src Storage
@@ -49,6 +50,12 @@ func NewStorage(ctx context.Context, dataSourceType, config string) error {
             return err
         }
         Src = c
+    case DirType:
+        d, err := datasource.NewDirType(config)
+        if err != nil {
+            return err
+        }
+        Src = d
     }
     gracefully.Go(func() { Src.GracefullyClose(ctx) })
     return nil

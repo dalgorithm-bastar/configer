@@ -99,7 +99,7 @@ func DecompressFromStream(stringWithFormat string, binaryFile []byte) (map[strin
             if err != nil {
                 return nil, err
             }
-            resMap[key] = bitSource
+            resMap[filepath.Clean(key)] = bitSource
         }
         err = f.Close()
         if err != nil {
@@ -131,4 +131,35 @@ func DecompressFromPath(inputPath string) (map[string][]byte, error) {
         return nil, err
     }
     return DecompressFromStream(inputPath, binaryFlie)
+}
+
+func WalkFromPath(inputPath string) (map[string][]byte, error) {
+    inputPath = filepath.Clean(inputPath)
+    fileMap := make(map[string][]byte)
+    //读剩余的文件
+    err := walkAndRead(fileMap, inputPath, filepath.Base(inputPath))
+    return fileMap, err
+}
+
+func walkAndRead(fileMap map[string][]byte, inputPath, key string) error {
+    fileRange, err := ioutil.ReadDir(inputPath)
+    if err != nil {
+        return err
+    }
+    var data []byte
+    for _, file := range fileRange {
+        if file.IsDir() {
+            err = walkAndRead(fileMap, inputPath+"/"+file.Name(), key+"/"+file.Name())
+        } else {
+            data, err = ioutil.ReadFile(inputPath + "/" + file.Name())
+            if err != nil {
+                return err
+            }
+            fileMap[key+"/"+file.Name()] = data
+        }
+        if err != nil {
+            return err
+        }
+    }
+    return nil
 }

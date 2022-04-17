@@ -24,21 +24,28 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type CfgReq struct {
-	UserName             string          `protobuf:"bytes,1,opt,name=UserName,proto3" json:"UserName,omitempty"`
-	EnvNum               string          `protobuf:"bytes,2,opt,name=EnvNum,proto3" json:"EnvNum,omitempty"`
-	Target               []string        `protobuf:"bytes,3,rep,name=Target,proto3" json:"Target,omitempty"`
-	File                 *CompressedFile `protobuf:"bytes,4,opt,name=File,proto3" json:"File,omitempty"`
-	CfgVersions          []*CfgVersion   `protobuf:"bytes,5,rep,name=CfgVersions,proto3" json:"CfgVersions,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
-	XXX_unrecognized     []byte          `json:"-"`
-	XXX_sizecache        int32           `json:"-"`
+	UserName             string    `protobuf:"bytes,1,opt,name=UserName,proto3" json:"UserName,omitempty"`
+	EnvNum               string    `protobuf:"bytes,2,opt,name=EnvNum,proto3" json:"EnvNum,omitempty"`
+	Target               string    `protobuf:"bytes,3,opt,name=Target,proto3" json:"Target,omitempty"`
+	Action               string    `protobuf:"bytes,4,opt,name=Action,proto3" json:"Action,omitempty"`
+	File                 *AnyFile  `protobuf:"bytes,5,opt,name=File,proto3" json:"File,omitempty"`
+	Version              string    `protobuf:"bytes,6,opt,name=Version,proto3" json:"Version,omitempty"`
+	Scheme               string    `protobuf:"bytes,7,opt,name=Scheme,proto3" json:"Scheme,omitempty"`
+	Type                 string    `protobuf:"bytes,8,opt,name=Type,proto3" json:"Type,omitempty"`
+	Platform             string    `protobuf:"bytes,9,opt,name=Platform,proto3" json:"Platform,omitempty"`
+	NodeType             string    `protobuf:"bytes,10,opt,name=NodeType,proto3" json:"NodeType,omitempty"`
+	Set                  string    `protobuf:"bytes,11,opt,name=Set,proto3" json:"Set,omitempty"`
+	ArgRange             *ArgRange `protobuf:"bytes,12,opt,name=ArgRange,proto3" json:"ArgRange,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
 func (m *CfgReq) Reset()         { *m = CfgReq{} }
 func (m *CfgReq) String() string { return proto.CompactTextString(m) }
 func (*CfgReq) ProtoMessage()    {}
 func (*CfgReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_configCenter_0b65ccd828dff226, []int{0}
+	return fileDescriptor_configCenter_a0d650b25e84ecb2, []int{0}
 }
 func (m *CfgReq) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CfgReq.Unmarshal(m, b)
@@ -72,233 +79,90 @@ func (m *CfgReq) GetEnvNum() string {
 	return ""
 }
 
-func (m *CfgReq) GetTarget() []string {
+func (m *CfgReq) GetTarget() string {
 	if m != nil {
 		return m.Target
 	}
-	return nil
+	return ""
 }
 
-func (m *CfgReq) GetFile() *CompressedFile {
+func (m *CfgReq) GetAction() string {
+	if m != nil {
+		return m.Action
+	}
+	return ""
+}
+
+func (m *CfgReq) GetFile() *AnyFile {
 	if m != nil {
 		return m.File
 	}
 	return nil
 }
 
-func (m *CfgReq) GetCfgVersions() []*CfgVersion {
-	if m != nil {
-		return m.CfgVersions
-	}
-	return nil
-}
-
-type CfgVersion struct {
-	Version              string          `protobuf:"bytes,1,opt,name=Version,proto3" json:"Version,omitempty"`
-	Confs                []*ConfigScheme `protobuf:"bytes,2,rep,name=Confs,proto3" json:"Confs,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
-	XXX_unrecognized     []byte          `json:"-"`
-	XXX_sizecache        int32           `json:"-"`
-}
-
-func (m *CfgVersion) Reset()         { *m = CfgVersion{} }
-func (m *CfgVersion) String() string { return proto.CompactTextString(m) }
-func (*CfgVersion) ProtoMessage()    {}
-func (*CfgVersion) Descriptor() ([]byte, []int) {
-	return fileDescriptor_configCenter_0b65ccd828dff226, []int{1}
-}
-func (m *CfgVersion) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CfgVersion.Unmarshal(m, b)
-}
-func (m *CfgVersion) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CfgVersion.Marshal(b, m, deterministic)
-}
-func (dst *CfgVersion) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CfgVersion.Merge(dst, src)
-}
-func (m *CfgVersion) XXX_Size() int {
-	return xxx_messageInfo_CfgVersion.Size(m)
-}
-func (m *CfgVersion) XXX_DiscardUnknown() {
-	xxx_messageInfo_CfgVersion.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CfgVersion proto.InternalMessageInfo
-
-func (m *CfgVersion) GetVersion() string {
+func (m *CfgReq) GetVersion() string {
 	if m != nil {
 		return m.Version
 	}
 	return ""
 }
 
-func (m *CfgVersion) GetConfs() []*ConfigScheme {
+func (m *CfgReq) GetScheme() string {
 	if m != nil {
-		return m.Confs
+		return m.Scheme
+	}
+	return ""
+}
+
+func (m *CfgReq) GetType() string {
+	if m != nil {
+		return m.Type
+	}
+	return ""
+}
+
+func (m *CfgReq) GetPlatform() string {
+	if m != nil {
+		return m.Platform
+	}
+	return ""
+}
+
+func (m *CfgReq) GetNodeType() string {
+	if m != nil {
+		return m.NodeType
+	}
+	return ""
+}
+
+func (m *CfgReq) GetSet() string {
+	if m != nil {
+		return m.Set
+	}
+	return ""
+}
+
+func (m *CfgReq) GetArgRange() *ArgRange {
+	if m != nil {
+		return m.ArgRange
 	}
 	return nil
-}
-
-type ConfigScheme struct {
-	ConfigName           string     `protobuf:"bytes,1,opt,name=ConfigName,proto3" json:"ConfigName,omitempty"`
-	Clusters             []*Cluster `protobuf:"bytes,2,rep,name=Clusters,proto3" json:"Clusters,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
-	XXX_unrecognized     []byte     `json:"-"`
-	XXX_sizecache        int32      `json:"-"`
-}
-
-func (m *ConfigScheme) Reset()         { *m = ConfigScheme{} }
-func (m *ConfigScheme) String() string { return proto.CompactTextString(m) }
-func (*ConfigScheme) ProtoMessage()    {}
-func (*ConfigScheme) Descriptor() ([]byte, []int) {
-	return fileDescriptor_configCenter_0b65ccd828dff226, []int{2}
-}
-func (m *ConfigScheme) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ConfigScheme.Unmarshal(m, b)
-}
-func (m *ConfigScheme) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ConfigScheme.Marshal(b, m, deterministic)
-}
-func (dst *ConfigScheme) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ConfigScheme.Merge(dst, src)
-}
-func (m *ConfigScheme) XXX_Size() int {
-	return xxx_messageInfo_ConfigScheme.Size(m)
-}
-func (m *ConfigScheme) XXX_DiscardUnknown() {
-	xxx_messageInfo_ConfigScheme.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ConfigScheme proto.InternalMessageInfo
-
-func (m *ConfigScheme) GetConfigName() string {
-	if m != nil {
-		return m.ConfigName
-	}
-	return ""
-}
-
-func (m *ConfigScheme) GetClusters() []*Cluster {
-	if m != nil {
-		return m.Clusters
-	}
-	return nil
-}
-
-type Cluster struct {
-	ClusterName          string   `protobuf:"bytes,1,opt,name=ClusterName,proto3" json:"ClusterName,omitempty"`
-	Nodes                []*Node  `protobuf:"bytes,2,rep,name=Nodes,proto3" json:"Nodes,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Cluster) Reset()         { *m = Cluster{} }
-func (m *Cluster) String() string { return proto.CompactTextString(m) }
-func (*Cluster) ProtoMessage()    {}
-func (*Cluster) Descriptor() ([]byte, []int) {
-	return fileDescriptor_configCenter_0b65ccd828dff226, []int{3}
-}
-func (m *Cluster) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Cluster.Unmarshal(m, b)
-}
-func (m *Cluster) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Cluster.Marshal(b, m, deterministic)
-}
-func (dst *Cluster) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Cluster.Merge(dst, src)
-}
-func (m *Cluster) XXX_Size() int {
-	return xxx_messageInfo_Cluster.Size(m)
-}
-func (m *Cluster) XXX_DiscardUnknown() {
-	xxx_messageInfo_Cluster.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Cluster proto.InternalMessageInfo
-
-func (m *Cluster) GetClusterName() string {
-	if m != nil {
-		return m.ClusterName
-	}
-	return ""
-}
-
-func (m *Cluster) GetNodes() []*Node {
-	if m != nil {
-		return m.Nodes
-	}
-	return nil
-}
-
-type Node struct {
-	GlobalId             string   `protobuf:"bytes,1,opt,name=GlobalId,proto3" json:"GlobalId,omitempty"`
-	LocalId              string   `protobuf:"bytes,2,opt,name=LocalId,proto3" json:"LocalId,omitempty"`
-	Template             string   `protobuf:"bytes,3,opt,name=Template,proto3" json:"Template,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Node) Reset()         { *m = Node{} }
-func (m *Node) String() string { return proto.CompactTextString(m) }
-func (*Node) ProtoMessage()    {}
-func (*Node) Descriptor() ([]byte, []int) {
-	return fileDescriptor_configCenter_0b65ccd828dff226, []int{4}
-}
-func (m *Node) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Node.Unmarshal(m, b)
-}
-func (m *Node) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Node.Marshal(b, m, deterministic)
-}
-func (dst *Node) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Node.Merge(dst, src)
-}
-func (m *Node) XXX_Size() int {
-	return xxx_messageInfo_Node.Size(m)
-}
-func (m *Node) XXX_DiscardUnknown() {
-	xxx_messageInfo_Node.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Node proto.InternalMessageInfo
-
-func (m *Node) GetGlobalId() string {
-	if m != nil {
-		return m.GlobalId
-	}
-	return ""
-}
-
-func (m *Node) GetLocalId() string {
-	if m != nil {
-		return m.LocalId
-	}
-	return ""
-}
-
-func (m *Node) GetTemplate() string {
-	if m != nil {
-		return m.Template
-	}
-	return ""
 }
 
 type CfgResp struct {
-	Status               string          `protobuf:"bytes,1,opt,name=Status,proto3" json:"Status,omitempty"`
-	SliceData            []string        `protobuf:"bytes,2,rep,name=SliceData,proto3" json:"SliceData,omitempty"`
-	File                 *CompressedFile `protobuf:"bytes,3,opt,name=File,proto3" json:"File,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
-	XXX_unrecognized     []byte          `json:"-"`
-	XXX_sizecache        int32           `json:"-"`
+	Status               string         `protobuf:"bytes,1,opt,name=Status,proto3" json:"Status,omitempty"`
+	VersionList          []*VersionInfo `protobuf:"bytes,2,rep,name=VersionList,proto3" json:"VersionList,omitempty"`
+	File                 *AnyFile       `protobuf:"bytes,3,opt,name=File,proto3" json:"File,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
 }
 
 func (m *CfgResp) Reset()         { *m = CfgResp{} }
 func (m *CfgResp) String() string { return proto.CompactTextString(m) }
 func (*CfgResp) ProtoMessage()    {}
 func (*CfgResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_configCenter_0b65ccd828dff226, []int{5}
+	return fileDescriptor_configCenter_a0d650b25e84ecb2, []int{1}
 }
 func (m *CfgResp) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CfgResp.Unmarshal(m, b)
@@ -325,21 +189,21 @@ func (m *CfgResp) GetStatus() string {
 	return ""
 }
 
-func (m *CfgResp) GetSliceData() []string {
+func (m *CfgResp) GetVersionList() []*VersionInfo {
 	if m != nil {
-		return m.SliceData
+		return m.VersionList
 	}
 	return nil
 }
 
-func (m *CfgResp) GetFile() *CompressedFile {
+func (m *CfgResp) GetFile() *AnyFile {
 	if m != nil {
 		return m.File
 	}
 	return nil
 }
 
-type CompressedFile struct {
+type AnyFile struct {
 	FileName             string   `protobuf:"bytes,1,opt,name=FileName,proto3" json:"FileName,omitempty"`
 	FileData             []byte   `protobuf:"bytes,2,opt,name=FileData,proto3" json:"FileData,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -347,52 +211,150 @@ type CompressedFile struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *CompressedFile) Reset()         { *m = CompressedFile{} }
-func (m *CompressedFile) String() string { return proto.CompactTextString(m) }
-func (*CompressedFile) ProtoMessage()    {}
-func (*CompressedFile) Descriptor() ([]byte, []int) {
-	return fileDescriptor_configCenter_0b65ccd828dff226, []int{6}
+func (m *AnyFile) Reset()         { *m = AnyFile{} }
+func (m *AnyFile) String() string { return proto.CompactTextString(m) }
+func (*AnyFile) ProtoMessage()    {}
+func (*AnyFile) Descriptor() ([]byte, []int) {
+	return fileDescriptor_configCenter_a0d650b25e84ecb2, []int{2}
 }
-func (m *CompressedFile) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CompressedFile.Unmarshal(m, b)
+func (m *AnyFile) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AnyFile.Unmarshal(m, b)
 }
-func (m *CompressedFile) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CompressedFile.Marshal(b, m, deterministic)
+func (m *AnyFile) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AnyFile.Marshal(b, m, deterministic)
 }
-func (dst *CompressedFile) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CompressedFile.Merge(dst, src)
+func (dst *AnyFile) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AnyFile.Merge(dst, src)
 }
-func (m *CompressedFile) XXX_Size() int {
-	return xxx_messageInfo_CompressedFile.Size(m)
+func (m *AnyFile) XXX_Size() int {
+	return xxx_messageInfo_AnyFile.Size(m)
 }
-func (m *CompressedFile) XXX_DiscardUnknown() {
-	xxx_messageInfo_CompressedFile.DiscardUnknown(m)
+func (m *AnyFile) XXX_DiscardUnknown() {
+	xxx_messageInfo_AnyFile.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CompressedFile proto.InternalMessageInfo
+var xxx_messageInfo_AnyFile proto.InternalMessageInfo
 
-func (m *CompressedFile) GetFileName() string {
+func (m *AnyFile) GetFileName() string {
 	if m != nil {
 		return m.FileName
 	}
 	return ""
 }
 
-func (m *CompressedFile) GetFileData() []byte {
+func (m *AnyFile) GetFileData() []byte {
 	if m != nil {
 		return m.FileData
 	}
 	return nil
 }
 
+type VersionInfo struct {
+	Name                 string   `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
+	User                 string   `protobuf:"bytes,2,opt,name=User,proto3" json:"User,omitempty"`
+	Time                 string   `protobuf:"bytes,3,opt,name=Time,proto3" json:"Time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *VersionInfo) Reset()         { *m = VersionInfo{} }
+func (m *VersionInfo) String() string { return proto.CompactTextString(m) }
+func (*VersionInfo) ProtoMessage()    {}
+func (*VersionInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_configCenter_a0d650b25e84ecb2, []int{3}
+}
+func (m *VersionInfo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_VersionInfo.Unmarshal(m, b)
+}
+func (m *VersionInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_VersionInfo.Marshal(b, m, deterministic)
+}
+func (dst *VersionInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_VersionInfo.Merge(dst, src)
+}
+func (m *VersionInfo) XXX_Size() int {
+	return xxx_messageInfo_VersionInfo.Size(m)
+}
+func (m *VersionInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_VersionInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_VersionInfo proto.InternalMessageInfo
+
+func (m *VersionInfo) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *VersionInfo) GetUser() string {
+	if m != nil {
+		return m.User
+	}
+	return ""
+}
+
+func (m *VersionInfo) GetTime() string {
+	if m != nil {
+		return m.Time
+	}
+	return ""
+}
+
+type ArgRange struct {
+	TopicIp              []string `protobuf:"bytes,1,rep,name=TopicIp,proto3" json:"TopicIp,omitempty"`
+	TopicPort            []string `protobuf:"bytes,2,rep,name=TopicPort,proto3" json:"TopicPort,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ArgRange) Reset()         { *m = ArgRange{} }
+func (m *ArgRange) String() string { return proto.CompactTextString(m) }
+func (*ArgRange) ProtoMessage()    {}
+func (*ArgRange) Descriptor() ([]byte, []int) {
+	return fileDescriptor_configCenter_a0d650b25e84ecb2, []int{4}
+}
+func (m *ArgRange) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ArgRange.Unmarshal(m, b)
+}
+func (m *ArgRange) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ArgRange.Marshal(b, m, deterministic)
+}
+func (dst *ArgRange) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ArgRange.Merge(dst, src)
+}
+func (m *ArgRange) XXX_Size() int {
+	return xxx_messageInfo_ArgRange.Size(m)
+}
+func (m *ArgRange) XXX_DiscardUnknown() {
+	xxx_messageInfo_ArgRange.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ArgRange proto.InternalMessageInfo
+
+func (m *ArgRange) GetTopicIp() []string {
+	if m != nil {
+		return m.TopicIp
+	}
+	return nil
+}
+
+func (m *ArgRange) GetTopicPort() []string {
+	if m != nil {
+		return m.TopicPort
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*CfgReq)(nil), "pb.CfgReq")
-	proto.RegisterType((*CfgVersion)(nil), "pb.CfgVersion")
-	proto.RegisterType((*ConfigScheme)(nil), "pb.ConfigScheme")
-	proto.RegisterType((*Cluster)(nil), "pb.Cluster")
-	proto.RegisterType((*Node)(nil), "pb.Node")
 	proto.RegisterType((*CfgResp)(nil), "pb.CfgResp")
-	proto.RegisterType((*CompressedFile)(nil), "pb.CompressedFile")
+	proto.RegisterType((*AnyFile)(nil), "pb.AnyFile")
+	proto.RegisterType((*VersionInfo)(nil), "pb.VersionInfo")
+	proto.RegisterType((*ArgRange)(nil), "pb.ArgRange")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -408,7 +370,7 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ConfigCenterClient interface {
 	GET(ctx context.Context, in *CfgReq, opts ...grpc.CallOption) (*CfgResp, error)
-	POST(ctx context.Context, in *CfgReq, opts ...grpc.CallOption) (*CfgResp, error)
+	COMMIT(ctx context.Context, in *CfgReq, opts ...grpc.CallOption) (*CfgResp, error)
 	DELETE(ctx context.Context, in *CfgReq, opts ...grpc.CallOption) (*CfgResp, error)
 	PUT(ctx context.Context, in *CfgReq, opts ...grpc.CallOption) (*CfgResp, error)
 }
@@ -430,9 +392,9 @@ func (c *configCenterClient) GET(ctx context.Context, in *CfgReq, opts ...grpc.C
 	return out, nil
 }
 
-func (c *configCenterClient) POST(ctx context.Context, in *CfgReq, opts ...grpc.CallOption) (*CfgResp, error) {
+func (c *configCenterClient) COMMIT(ctx context.Context, in *CfgReq, opts ...grpc.CallOption) (*CfgResp, error) {
 	out := new(CfgResp)
-	err := c.cc.Invoke(ctx, "/pb.ConfigCenter/POST", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.ConfigCenter/COMMIT", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -460,7 +422,7 @@ func (c *configCenterClient) PUT(ctx context.Context, in *CfgReq, opts ...grpc.C
 // ConfigCenterServer is the server API for ConfigCenter service.
 type ConfigCenterServer interface {
 	GET(context.Context, *CfgReq) (*CfgResp, error)
-	POST(context.Context, *CfgReq) (*CfgResp, error)
+	COMMIT(context.Context, *CfgReq) (*CfgResp, error)
 	DELETE(context.Context, *CfgReq) (*CfgResp, error)
 	PUT(context.Context, *CfgReq) (*CfgResp, error)
 }
@@ -487,20 +449,20 @@ func _ConfigCenter_GET_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ConfigCenter_POST_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ConfigCenter_COMMIT_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CfgReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ConfigCenterServer).POST(ctx, in)
+		return srv.(ConfigCenterServer).COMMIT(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.ConfigCenter/POST",
+		FullMethod: "/pb.ConfigCenter/COMMIT",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ConfigCenterServer).POST(ctx, req.(*CfgReq))
+		return srv.(ConfigCenterServer).COMMIT(ctx, req.(*CfgReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -550,8 +512,8 @@ var _ConfigCenter_serviceDesc = grpc.ServiceDesc{
 			Handler:    _ConfigCenter_GET_Handler,
 		},
 		{
-			MethodName: "POST",
-			Handler:    _ConfigCenter_POST_Handler,
+			MethodName: "COMMIT",
+			Handler:    _ConfigCenter_COMMIT_Handler,
 		},
 		{
 			MethodName: "DELETE",
@@ -566,35 +528,35 @@ var _ConfigCenter_serviceDesc = grpc.ServiceDesc{
 	Metadata: "configCenter.proto",
 }
 
-func init() { proto.RegisterFile("configCenter.proto", fileDescriptor_configCenter_0b65ccd828dff226) }
+func init() { proto.RegisterFile("configCenter.proto", fileDescriptor_configCenter_a0d650b25e84ecb2) }
 
-var fileDescriptor_configCenter_0b65ccd828dff226 = []byte{
-	// 429 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x53, 0xdb, 0x6e, 0xd3, 0x40,
-	0x10, 0xc5, 0x71, 0xae, 0xe3, 0xaa, 0x42, 0xf3, 0x80, 0xac, 0x0a, 0x55, 0x66, 0x91, 0x4a, 0x9e,
-	0x22, 0x14, 0x3e, 0xc1, 0x35, 0x05, 0x51, 0x85, 0x6a, 0x93, 0x02, 0xaf, 0x4e, 0x32, 0x31, 0x91,
-	0x6c, 0xaf, 0xeb, 0xdd, 0xf0, 0x31, 0x7c, 0x04, 0xdf, 0x88, 0xf6, 0xe6, 0xba, 0x2f, 0x79, 0xca,
-	0x9c, 0x73, 0x66, 0x4f, 0x46, 0x73, 0xc6, 0x80, 0x3b, 0x51, 0x1f, 0x8e, 0x45, 0x4a, 0xb5, 0xa2,
-	0x76, 0xd1, 0xb4, 0x42, 0x09, 0x1c, 0x34, 0x5b, 0xf6, 0x2f, 0x80, 0x71, 0x7a, 0x28, 0x38, 0x3d,
-	0xe1, 0x15, 0x4c, 0x1f, 0x25, 0xb5, 0xab, 0xbc, 0xa2, 0x38, 0x48, 0x82, 0xf9, 0x8c, 0x77, 0x18,
-	0xdf, 0xc0, 0x38, 0xab, 0xff, 0xac, 0x4e, 0x55, 0x3c, 0x30, 0x8a, 0x43, 0x9a, 0xdf, 0xe4, 0x6d,
-	0x41, 0x2a, 0x0e, 0x93, 0x50, 0xf3, 0x16, 0xe1, 0x0d, 0x0c, 0x3f, 0x1f, 0x4b, 0x8a, 0x87, 0x49,
-	0x30, 0x8f, 0x96, 0xb8, 0x68, 0xb6, 0x8b, 0x54, 0x54, 0x4d, 0x4b, 0x52, 0xd2, 0x5e, 0x2b, 0xdc,
-	0xe8, 0xf8, 0x11, 0xa2, 0xf4, 0x50, 0xfc, 0xa0, 0x56, 0x1e, 0x45, 0x2d, 0xe3, 0x51, 0x12, 0xce,
-	0xa3, 0xe5, 0xa5, 0x69, 0xef, 0x68, 0xde, 0x6f, 0x61, 0x2b, 0x80, 0x67, 0x88, 0x31, 0x4c, 0x5c,
-	0xe9, 0x46, 0xf6, 0x10, 0x6f, 0x60, 0x94, 0x8a, 0xfa, 0x20, 0xe3, 0x81, 0xf1, 0x7c, 0x6d, 0x47,
-	0xd0, 0x3b, 0x58, 0xef, 0x7e, 0x53, 0x45, 0xdc, 0xca, 0xec, 0x27, 0x5c, 0xf4, 0x69, 0xbc, 0x06,
-	0xb0, 0xb8, 0xb7, 0x87, 0x1e, 0x83, 0x1f, 0x60, 0x9a, 0x96, 0x27, 0xa9, 0xa8, 0xf5, 0xd6, 0x91,
-	0xb1, 0xb6, 0x1c, 0xef, 0x44, 0xf6, 0x0d, 0x26, 0xae, 0xc6, 0x04, 0x22, 0x57, 0xf6, 0x4c, 0xfb,
-	0x14, 0x5e, 0xc3, 0x68, 0x25, 0xf6, 0xe4, 0x2d, 0xa7, 0xda, 0x52, 0x13, 0xdc, 0xd2, 0xec, 0x17,
-	0x0c, 0x75, 0xa1, 0x33, 0xba, 0x2b, 0xc5, 0x36, 0x2f, 0xbf, 0xee, 0x7d, 0x46, 0x1e, 0xeb, 0x5d,
-	0xdc, 0x8b, 0x9d, 0x91, 0x6c, 0x48, 0x1e, 0xea, 0x57, 0x1b, 0xaa, 0x9a, 0x32, 0x57, 0x14, 0x87,
-	0xf6, 0x95, 0xc7, 0xac, 0x80, 0x89, 0xc9, 0x5f, 0x36, 0x3a, 0xcc, 0xb5, 0xca, 0xd5, 0x49, 0x3a,
-	0x6b, 0x87, 0xf0, 0x2d, 0xcc, 0xd6, 0xe5, 0x71, 0x47, 0xb7, 0xb9, 0xca, 0xcd, 0x80, 0x33, 0xfe,
-	0x4c, 0x74, 0x51, 0x87, 0xe7, 0xa3, 0x66, 0x5f, 0xe0, 0xf2, 0x25, 0xaf, 0xc7, 0xd2, 0xbf, 0xfd,
-	0x83, 0xf3, 0xd8, 0x6b, 0xee, 0x2f, 0x83, 0xf9, 0x05, 0xef, 0xf0, 0xf2, 0x6f, 0xe0, 0x33, 0xb3,
-	0xe7, 0x8c, 0x09, 0x84, 0x77, 0xd9, 0x06, 0xc1, 0xdd, 0x0d, 0xa7, 0xa7, 0xab, 0xa8, 0xab, 0x65,
-	0xc3, 0x5e, 0xe1, 0x3b, 0x18, 0x3e, 0x7c, 0x5f, 0x9f, 0x6d, 0x79, 0x0f, 0xe3, 0xdb, 0xec, 0x3e,
-	0xdb, 0x64, 0xe7, 0x9a, 0x12, 0x08, 0x1f, 0x1e, 0xcf, 0xd9, 0x6c, 0xc7, 0xe6, 0xdb, 0xfa, 0xf4,
-	0x3f, 0x00, 0x00, 0xff, 0xff, 0x6e, 0xa3, 0x91, 0xd8, 0x71, 0x03, 0x00, 0x00,
+var fileDescriptor_configCenter_a0d650b25e84ecb2 = []byte{
+	// 432 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x53, 0xc1, 0x8e, 0xd3, 0x30,
+	0x10, 0x25, 0x4d, 0x49, 0xdb, 0x49, 0x25, 0x90, 0x0f, 0xc8, 0x5a, 0x21, 0x11, 0x85, 0x4b, 0x4f,
+	0x95, 0x28, 0x5f, 0x50, 0xba, 0x01, 0x55, 0xda, 0x2d, 0x95, 0x37, 0xcb, 0x3d, 0x2d, 0x4e, 0x88,
+	0xb4, 0x89, 0x8d, 0xe3, 0x22, 0xed, 0xbf, 0xf0, 0x3f, 0xfc, 0x16, 0x9a, 0xb1, 0x93, 0xcd, 0x85,
+	0xe5, 0xd4, 0xf7, 0xde, 0xd8, 0xd3, 0x99, 0xf7, 0x1c, 0x60, 0x67, 0xd5, 0x96, 0x75, 0xb5, 0x93,
+	0xad, 0x95, 0x66, 0xad, 0x8d, 0xb2, 0x8a, 0x4d, 0xf4, 0x29, 0xfd, 0x33, 0x81, 0x68, 0x57, 0x56,
+	0x42, 0xfe, 0x64, 0x57, 0x30, 0xbf, 0xef, 0xa4, 0x39, 0x14, 0x8d, 0xe4, 0x41, 0x12, 0xac, 0x16,
+	0x62, 0xe0, 0xec, 0x0d, 0x44, 0x59, 0xfb, 0xeb, 0x70, 0x69, 0xf8, 0x84, 0x2a, 0x9e, 0xa1, 0x9e,
+	0x17, 0xa6, 0x92, 0x96, 0x87, 0x4e, 0x77, 0x0c, 0xf5, 0xed, 0xd9, 0xd6, 0xaa, 0xe5, 0x53, 0xa7,
+	0x3b, 0xc6, 0xde, 0xc1, 0xf4, 0x73, 0xfd, 0x20, 0xf9, 0xcb, 0x24, 0x58, 0xc5, 0x9b, 0x78, 0xad,
+	0x4f, 0xeb, 0x6d, 0xfb, 0x88, 0x92, 0xa0, 0x02, 0xe3, 0x30, 0xfb, 0x26, 0x4d, 0x87, 0x37, 0x23,
+	0xba, 0xd9, 0x53, 0x6c, 0x79, 0x77, 0xfe, 0x21, 0x1b, 0xc9, 0x67, 0xae, 0xa5, 0x63, 0x8c, 0xc1,
+	0x34, 0x7f, 0xd4, 0x92, 0xcf, 0x49, 0x25, 0x8c, 0xab, 0x1c, 0x1f, 0x0a, 0x5b, 0x2a, 0xd3, 0xf0,
+	0x85, 0x5b, 0xa5, 0xe7, 0x58, 0x3b, 0xa8, 0xef, 0x92, 0xee, 0x80, 0xab, 0xf5, 0x9c, 0xbd, 0x86,
+	0xf0, 0x4e, 0x5a, 0x1e, 0x93, 0x8c, 0x90, 0xad, 0x60, 0xbe, 0x35, 0x95, 0x28, 0xda, 0x4a, 0xf2,
+	0x25, 0x0d, 0xbd, 0xa4, 0xa1, 0xbd, 0x26, 0x86, 0x6a, 0x7a, 0x81, 0x19, 0x19, 0xd9, 0x69, 0x1a,
+	0xd5, 0x16, 0xf6, 0xd2, 0x79, 0x1f, 0x3d, 0x63, 0x1f, 0x20, 0xf6, 0xdb, 0xdc, 0xd4, 0x9d, 0xe5,
+	0x93, 0x24, 0x5c, 0xc5, 0x9b, 0x57, 0xd8, 0xcf, 0xcb, 0xfb, 0xb6, 0x54, 0x62, 0x7c, 0x66, 0x30,
+	0x2c, 0xfc, 0x87, 0x61, 0xe9, 0x16, 0x66, 0x5e, 0xc0, 0xcd, 0xf0, 0x77, 0x1c, 0x60, 0xcf, 0xfb,
+	0xda, 0x75, 0x61, 0x0b, 0x8a, 0x70, 0x29, 0x06, 0x9e, 0xee, 0x87, 0xb1, 0xf0, 0xff, 0xd1, 0xd0,
+	0x51, 0x0b, 0xc2, 0xa8, 0xe1, 0x5b, 0xf0, 0xe9, 0x13, 0x26, 0xe3, 0xeb, 0x46, 0xfa, 0xe4, 0x09,
+	0xa7, 0x9f, 0x9e, 0xec, 0xc2, 0x28, 0x73, 0xa5, 0xeb, 0xf3, 0x5e, 0xf3, 0x20, 0x09, 0x31, 0x4a,
+	0x4f, 0xd9, 0x5b, 0x58, 0x10, 0x3c, 0x2a, 0xe3, 0x5c, 0x58, 0x88, 0x27, 0x61, 0xf3, 0x3b, 0x80,
+	0xe5, 0x6e, 0xf4, 0x5a, 0x59, 0x02, 0xe1, 0x97, 0x2c, 0x67, 0x80, 0xcb, 0xbb, 0xb7, 0x7a, 0x15,
+	0x0f, 0xb8, 0xd3, 0xe9, 0x0b, 0xf6, 0x1e, 0xa2, 0xdd, 0xd7, 0xdb, 0xdb, 0xfd, 0xff, 0x0e, 0x5d,
+	0x67, 0x37, 0x59, 0x9e, 0x3d, 0x77, 0x28, 0x81, 0xf0, 0x78, 0xff, 0x5c, 0x9b, 0x53, 0x44, 0x1f,
+	0xcf, 0xc7, 0xbf, 0x01, 0x00, 0x00, 0xff, 0xff, 0xfe, 0x2c, 0xcc, 0x87, 0x52, 0x03, 0x00, 0x00,
 }

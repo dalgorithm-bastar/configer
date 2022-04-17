@@ -1,4 +1,4 @@
-VERSION="v1.0.0"
+VERSION="v2.0.0"
 GO_VERSION=`go version`
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 GIT_COMMIT=`git rev-parse HEAD`

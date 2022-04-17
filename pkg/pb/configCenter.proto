@@ -7,7 +7,7 @@ service ConfigCenter{
 
   }
 
-  rpc POST(CfgReq) returns (CfgResp){
+  rpc COMMIT(CfgReq) returns (CfgResp){
 
   }
 
@@ -23,39 +23,36 @@ service ConfigCenter{
 message CfgReq{
   string UserName = 1;
   string EnvNum = 2;
-  repeated string Target = 3;
-  CompressedFile File = 4;
-  repeated CfgVersion CfgVersions = 5;
-}
-
-message CfgVersion{
-  string Version = 1;
-  repeated ConfigScheme Confs = 2;
-}
-
-message ConfigScheme {
-  string ConfigName = 1;
-  repeated Cluster Clusters = 2;
-}
-
-message Cluster{
-  string ClusterName = 1;
-  repeated Node Nodes = 2;
-}
-
-message Node{
-  string GlobalId = 1;
-  string LocalId = 2;
-  string Template = 3;
+  string Target = 3;
+  string Action =4;
+  AnyFile File = 5;
+  string Version =6;
+  string Scheme = 7;
+  string Type = 8;
+  string Platform = 9;
+  string NodeType = 10;
+  string Set = 11;
+  ArgRange ArgRange = 12;
 }
 
 message CfgResp{
   string Status = 1;
-  repeated string SliceData = 2;
-  CompressedFile File = 3;
+  repeated VersionInfo VersionList = 2;
+  AnyFile File = 3;
 }
 
-message CompressedFile{
+message AnyFile{
   string FileName = 1;
   bytes FileData = 2;
+}
+
+message VersionInfo{
+  string Name = 1;
+  string User =2;
+  string Time =3;
+}
+
+message ArgRange{
+  repeated string TopicIp = 1;
+  repeated string TopicPort = 2;
 }
