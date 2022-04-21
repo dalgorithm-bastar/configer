@@ -74,6 +74,7 @@ func Get(cmd *cobra.Command, args []string) {
         fmt.Println("please input correct arg mode, within \"remote\" or \"local\"")
         return
     }
+    object.PathIn = filepath.Clean(object.PathIn)
     if mode == "local" {
         switch object.Target {
         case service.TargetConfig:
@@ -227,6 +228,13 @@ func WriteFilesToLocal(fileMap map[string][]byte) {
             err := os.RemoveAll(object.PathOut + "/" + pathSli[0])
             if err != nil {
                 panic(errors.New(fmt.Sprintf("rmv old dir err: %s,path:%s", err.Error())))
+            }
+        } else {
+            if path == "deployList.json" || path == "topicList.json" {
+                err := os.RemoveAll(object.PathOut + "/" + path)
+                if err != nil {
+                    panic(errors.New(fmt.Sprintf("rmv old dir err: %s,path:%s", err.Error())))
+                }
             }
         }
     }
