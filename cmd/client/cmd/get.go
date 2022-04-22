@@ -75,6 +75,7 @@ func Get(cmd *cobra.Command, args []string) {
         return
     }
     object.PathIn = filepath.Clean(object.PathIn)
+    object.PathOut = filepath.Clean(object.PathOut)
     if mode == "local" {
         switch object.Target {
         case service.TargetConfig:
@@ -111,8 +112,12 @@ func Get(cmd *cobra.Command, args []string) {
             IpSlice := strings.Split(object.IpRange, ",")
             portSlice := strings.Split(object.PortRange, ",")
             configData, err := generation.Generate(infraData, rawData, object.Env, IpSlice, portSlice)
+            if err != nil {
+                panic(err)
+            }
             WriteFilesToLocal(configData)
             fmt.Printf("get %s success", object.Target)
+            fmt.Println()
         default:
             fmt.Println("on loacl mode there is only target config supported, please checkout target")
         }
