@@ -16,3 +16,12 @@ buildProxima:
 
 buildProxctl:
 	go build -o cmd/client/proxctl -ldflags ${LDFLAGS} -a  cmd/client/main.go
+
+packageAndSent:
+	mkdir -p configcenter/client configcenter/server
+	cp -r cmd/server/config configcenter/client
+	cp -r cmd/server/config configcenter/server
+	go build -o configcenter/client/proxctl -ldflags ${LDFLAGS} -a  cmd/client/main.go
+	go build -o configcenter/server/proxima -ldflags ${LDFLAGS} -a  cmd/server/main.go
+	tar -zcf configcenter-3.0.0-rhel7.9-x86_64.tar.gz configcenter
+	rm -rf configcenter

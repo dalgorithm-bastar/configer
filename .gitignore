@@ -3,6 +3,7 @@
 gofuzz/
 configdemo/
 compressfiledemo/
+configcenter/
 .DS_Store
 *.log
 *.html

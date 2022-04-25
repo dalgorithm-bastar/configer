@@ -118,8 +118,3 @@ func Sugar() *zap.SugaredLogger {
     }
     return logRec.sugarLog
 }
-
-// GetLog 获取日志实例
-func GetLog() *Logger {
-    return logRec
-}

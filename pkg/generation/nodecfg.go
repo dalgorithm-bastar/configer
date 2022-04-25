@@ -29,6 +29,7 @@ func FillTemplates(dplyStructList []ChartDeployMain, rawData map[string][]byte, 
                     for _, nodeIns := range setIns.Deployment.Node {
                         fillArgs := FillArgs{
                             PlatName:  platformIns.Platform,
+                            NodeType:  nodeTypeIns.NodeType,
                             SetId:     setIns.SetID,
                             SetIndex:  setIns.SetIndex,
                             SetName:   setIns.SetName,

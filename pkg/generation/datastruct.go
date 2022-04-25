@@ -37,7 +37,7 @@ type DeployArtificialUnit struct {
 }
 
 type DeployMain struct {
-    Artificial DeployArtificialUnit `json:"artificial"`
+    Artificial DeployArtificialUnit `json:"artifact"`
     Node       []InfraHostUnit      `json:"node"`
 }
 
@@ -46,7 +46,7 @@ type DeployMain struct {
 /****************** 服务信息 ******************/
 
 type SrvTpcStatUnit struct {
-    TpcName string `json:"tpcName"`
+    TpcName string `json:"topicName"`
     IsRMB   uint16 `json:"isRMB"`
 }
 
@@ -66,6 +66,7 @@ type SrvMain struct {
 
 type FillArgs struct {
     PlatName  string
+    NodeType  string
     SetId     uint16
     SetIndex  uint16
     SetName   string
@@ -85,6 +86,7 @@ type ExpTpcTopicUnit struct {
     SubCluster  string       `json:"subCluster"`
     SubSetId    uint16       `json:"subSetId"`
     SubSetIndex uint16       `json:"subSetIndex"`
+    ListenPort  string       `json:"listenPort"`
     TopicId     uint16       `json:"topicId"`
     EndPoint    string       `json:"endPoint"`
     NodeId      uint16       `json:"nodeId"`

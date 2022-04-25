@@ -72,7 +72,7 @@ func TestNewLogger(t *testing.T) {
             args: args{
                 logConfigLocation: logConfigLocation,
             },
-            wantErr: false,
+            wantErr: true,
         },
         {
             name: "open err",
@@ -91,7 +91,7 @@ func TestNewLogger(t *testing.T) {
     }
     for _, tt := range tests {
         t.Run(tt.name, func(t *testing.T) {
-            if err := NewLogger(tt.args.logConfigLocation); (err != nil) != tt.wantErr {
+            if err := NewLogger(); (err != nil) != tt.wantErr {
                 t.Errorf("NewLogger() error = %v, wantErr %v", err, tt.wantErr)
             }
         })

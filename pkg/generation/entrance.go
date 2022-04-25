@@ -28,6 +28,12 @@ func Generate(infrastructure []byte, rawData map[string][]byte, envNum string, i
             return nil, errors.New(fmt.Sprintf("err port input:%s", port))
         }
     }
+    //删除空文件
+    for k, _ := range rawData {
+        if len(rawData[k]) == 0 {
+            delete(rawData, k)
+        }
+    }
     //构造返回结果文件包
     resMap := make(map[string][]byte)
     //扩充部署信息
@@ -161,6 +167,6 @@ func FinishResMap(resMap map[string][]byte, dplyStructList []ChartDeployMain, to
     if err != nil {
         return errors.New(fmt.Sprintf("json marshal maintpcfile err: %s", err.Error()))
     }
-    resMap["TpcList.json"] = mainTpcFile
+    resMap["topicList.json"] = mainTpcFile
     return nil
 }

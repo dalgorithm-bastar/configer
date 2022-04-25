@@ -86,6 +86,8 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawData map[string][]by
         }
     }
     //初始化，准备生成 todo topicid越界检查
+    //生成listenPort
+    listenMap, actualListenPort, coverListenPort, listenPortOverFlow := make(map[int]int), 2000, "", false
     var topicID uint16 = 1
     //去重
     ipMap, portMap := make(map[string]int), make(map[int]int)
@@ -114,6 +116,9 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawData map[string][]by
                 netName := netUnit.NetName
                 //循环分配bizTopic
                 for _, bizUnit := range netUnit.BizTopic {
+                    if bizUnit.TpcName == "" {
+                        return nil, fmt.Errorf("nil bizTopic got under service of: %s.%s", platName, nodeTypeName)
+                    }
                     bizTpcName := bizUnit.TpcName
                     if _, ok := netMap[netName]; !ok {
                         continue
@@ -123,42 +128,43 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawData map[string][]by
                             if netMap[netName][i].IsProc == true {
                                 return nil, errors.New(fmt.Sprintf("multi nodeType pubs the same biztopic: %s", bizTpcName))
                             }
-                            //逐一处理接收方，未部署的跳过
-                            for _, subUnit := range netMap[netName][i].Sub {
-                                isSubDply, subPi, subNi := checkDeployment(dplyStructList, subUnit.Plat, subUnit.NodeType)
-                                if !isSubDply {
-                                    continue
+                            //biztpc，发送方每个集群只处理一次，在最外层循环
+                            for _, pubSetIns := range dplyStructList[pubPi].NodeTypeList[pubNi].SetList {
+                                pubTpcInfo := getTpcInfo(topicInfoMap, platName, nodeTypeName, pubSetIns.SetName)
+                                //获取endpoint,作为该set的biztpc组播endpoint
+                                seedIdx, seed, portIdx, actPort, coverPort, endPoint, overflow = getNextEndPoint(seedIdx, seedRanges, seed, portRanges, portIdx, envNum, actPort, coverPort, ipMap, portMap)
+                                if overflow {
+                                    return nil, errors.New("endPoint used up")
                                 }
-                                //循环处理发送方和接收方
-                                for _, pubSetIns := range dplyStructList[pubPi].NodeTypeList[pubNi].SetList {
-                                    pubTpcInfo := getTpcInfo(topicInfoMap, platName, nodeTypeName, pubSetIns.SetName)
-                                    //获取endpoint,作为该set的biztpc组播endpoint
-                                    seedIdx, seed, portIdx, actPort, coverPort, endPoint, overflow = getNextEndPoint(seedIdx, seedRanges, seed, portRanges, portIdx, envNum, actPort, coverPort, ipMap, portMap)
-                                    if overflow {
-                                        return nil, errors.New("endPoint used up")
+                                //处理发送方，添加集群内每个节点的tpcUnit
+                                for _, pubNodeIns := range pubSetIns.Deployment.Node {
+                                    //检测节点上是否具有该网络
+                                    isNetExst, netIdx := checkNetOnNode(netName, pubNodeIns.Network)
+                                    if !isNetExst {
+                                        return nil, errors.New(fmt.Sprintf("node in set: %s have no adapter for net: %s for topic: %s", util.Join("/", platName, nodeTypeName, pubSetIns.SetName), netName, bizTpcName))
                                     }
-                                    //处理发送方，添加集群内每个节点的tpcUnit
-                                    for _, pubNodeIns := range pubSetIns.Deployment.Node {
-                                        //检测节点上是否具有该网络
-                                        isNetExst, netIdx := checkNetOnNode(netName, pubNodeIns.Network)
-                                        if !isNetExst {
-                                            return nil, errors.New(fmt.Sprintf("node in set: %s have no adapter for net: %s for topic: %s", util.Join("/", platName, nodeTypeName, pubSetIns.SetName), netName, bizTpcName))
-                                        }
-                                        pubTpcUnit := ExpTpcTopicUnit{
-                                            TopicName:   bizTpcName,
-                                            PubCluster:  util.Join(".", platName, nodeTypeName, pubSetIns.SetName),
-                                            PubSetId:    pubSetIns.SetID,
-                                            PubSetIndex: pubSetIns.SetIndex,
-                                            TopicId:     topicID,
-                                            EndPoint:    endPoint,
-                                            NodeId:      pubNodeIns.NodeId,
-                                            NodeIndex:   pubNodeIns.NodeIndex,
-                                            IsRMB:       bizUnit.IsRMB,
-                                            Net:         pubNodeIns.Network[netIdx],
-                                        }
-                                        pubTpcInfo.PubExtern.BizTopic = append(pubTpcInfo.PubExtern.BizTopic, pubTpcUnit)
+                                    pubTpcUnit := ExpTpcTopicUnit{
+                                        TopicName:   bizTpcName,
+                                        PubCluster:  util.Join(".", platName, nodeTypeName, pubSetIns.SetName),
+                                        PubSetId:    pubSetIns.SetID,
+                                        PubSetIndex: pubSetIns.SetIndex,
+                                        TopicId:     topicID,
+                                        EndPoint:    endPoint,
+                                        NodeId:      pubNodeIns.NodeId,
+                                        NodeIndex:   pubNodeIns.NodeIndex,
+                                        IsRMB:       bizUnit.IsRMB,
+                                        Net:         pubNodeIns.Network[netIdx],
                                     }
-                                    insertTpcInfo(topicInfoMap, pubTpcInfo, platName, nodeTypeName, pubSetIns.SetName)
+                                    pubTpcInfo.PubExtern.BizTopic = append(pubTpcInfo.PubExtern.BizTopic, pubTpcUnit)
+                                }
+                                insertTpcInfo(topicInfoMap, pubTpcInfo, platName, nodeTypeName, pubSetIns.SetName)
+                                //依次获取接收方节点类型
+                                for _, subUnit := range netMap[netName][i].Sub {
+                                    isSubDply, subPi, subNi := checkDeployment(dplyStructList, subUnit.Plat, subUnit.NodeType)
+                                    if !isSubDply {
+                                        continue
+                                    }
+                                    //依次填充接收方每个set的信息
                                     for _, subSetIns := range dplyStructList[subPi].NodeTypeList[subNi].SetList {
                                         subTpcInfo := getTpcInfo(topicInfoMap, subUnit.Plat, subUnit.NodeType, subSetIns.SetName)
                                         //处理发送方，添加集群内每个节点的tpcUnit
@@ -187,18 +193,91 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawData map[string][]by
                                         }
                                         insertTpcInfo(topicInfoMap, subTpcInfo, subUnit.Plat, subUnit.NodeType, subSetIns.SetName)
                                     }
-                                    topicID++
                                 }
+                                netMap[netName][i].IsProc = true
+                                topicID++
                             }
-                            //标记已处理的biztpc
-                            netMap[netName][i].IsProc = true
-                            break
+
+                            /*//逐一处理接收方，未部署的跳过
+                              for _, subUnit := range netMap[netName][i].Sub {
+                                  isSubDply, subPi, subNi := checkDeployment(dplyStructList, subUnit.Plat, subUnit.NodeType)
+                                  if !isSubDply {
+                                      continue
+                                  }
+                                  //循环处理发送方和接收方
+                                  for _, pubSetIns := range dplyStructList[pubPi].NodeTypeList[pubNi].SetList {
+                                      pubTpcInfo := getTpcInfo(topicInfoMap, platName, nodeTypeName, pubSetIns.SetName)
+                                      //获取endpoint,作为该set的biztpc组播endpoint
+                                      seedIdx, seed, portIdx, actPort, coverPort, endPoint, overflow = getNextEndPoint(seedIdx, seedRanges, seed, portRanges, portIdx, envNum, actPort, coverPort, ipMap, portMap)
+                                      if overflow {
+                                          return nil, errors.New("endPoint used up")
+                                      }
+                                      //处理发送方，添加集群内每个节点的tpcUnit
+                                      for _, pubNodeIns := range pubSetIns.Deployment.Node {
+                                          //检测节点上是否具有该网络
+                                          isNetExst, netIdx := checkNetOnNode(netName, pubNodeIns.Network)
+                                          if !isNetExst {
+                                              return nil, errors.New(fmt.Sprintf("node in set: %s have no adapter for net: %s for topic: %s", util.Join("/", platName, nodeTypeName, pubSetIns.SetName), netName, bizTpcName))
+                                          }
+                                          pubTpcUnit := ExpTpcTopicUnit{
+                                              TopicName:   bizTpcName,
+                                              PubCluster:  util.Join(".", platName, nodeTypeName, pubSetIns.SetName),
+                                              PubSetId:    pubSetIns.SetID,
+                                              PubSetIndex: pubSetIns.SetIndex,
+                                              TopicId:     topicID,
+                                              EndPoint:    endPoint,
+                                              NodeId:      pubNodeIns.NodeId,
+                                              NodeIndex:   pubNodeIns.NodeIndex,
+                                              IsRMB:       bizUnit.IsRMB,
+                                              Net:         pubNodeIns.Network[netIdx],
+                                          }
+                                          pubTpcInfo.PubExtern.BizTopic = append(pubTpcInfo.PubExtern.BizTopic, pubTpcUnit)
+                                      }
+                                      insertTpcInfo(topicInfoMap, pubTpcInfo, platName, nodeTypeName, pubSetIns.SetName)
+                                      for _, subSetIns := range dplyStructList[subPi].NodeTypeList[subNi].SetList {
+                                          subTpcInfo := getTpcInfo(topicInfoMap, subUnit.Plat, subUnit.NodeType, subSetIns.SetName)
+                                          //处理发送方，添加集群内每个节点的tpcUnit
+                                          for _, subNodeIns := range subSetIns.Deployment.Node {
+                                              //检测节点上是否具有该网络
+                                              isNetExst, netIdx := checkNetOnNode(netName, subNodeIns.Network)
+                                              if !isNetExst {
+                                                  return nil, errors.New(fmt.Sprintf("node in set: %s have no adapter for net: %s for topic: %s", util.Join("/", subUnit.Plat, subUnit.NodeType, subSetIns.SetName), netName, bizTpcName))
+                                              }
+                                              subTpcUnit := ExpTpcTopicUnit{
+                                                  TopicName:   bizTpcName,
+                                                  PubCluster:  util.Join(".", platName, nodeTypeName, pubSetIns.SetName),
+                                                  PubSetId:    pubSetIns.SetID,
+                                                  PubSetIndex: pubSetIns.SetIndex,
+                                                  SubCluster:  util.Join(".", subUnit.Plat, subUnit.NodeType, subSetIns.SetName),
+                                                  SubSetId:    subSetIns.SetID,
+                                                  SubSetIndex: subSetIns.SetIndex,
+                                                  TopicId:     topicID,
+                                                  EndPoint:    endPoint,
+                                                  NodeId:      subNodeIns.NodeId,
+                                                  NodeIndex:   subNodeIns.NodeIndex,
+                                                  IsRMB:       bizUnit.IsRMB,
+                                                  Net:         subNodeIns.Network[netIdx],
+                                              }
+                                              subTpcInfo.SubExtern.BizTopic = append(subTpcInfo.SubExtern.BizTopic, subTpcUnit)
+                                          }
+                                          insertTpcInfo(topicInfoMap, subTpcInfo, subUnit.Plat, subUnit.NodeType, subSetIns.SetName)
+                                      }
+                                      topicID++
+                                  }
+                              }
+                              //标记已处理的biztpc
+                              netMap[netName][i].IsProc = true
+                              break*/
                         }
                     }
                 }
                 //循环分配setTpc,无需netMap
                 for _, setUnit := range netUnit.SetTopic {
                     setTpcName := setUnit.TpcName
+                    //校验是否自发自收
+                    if setTpcName == platName+"."+nodeTypeName {
+                        return nil, fmt.Errorf("cannot send setTopic to self: %s", setTpcName)
+                    }
                     //校验subset是否部署,未部署返回错误
                     sli := strings.Split(setTpcName, ".")
                     if len(sli) != 2 {
@@ -280,16 +359,26 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawData map[string][]by
                     if overflow {
                         return nil, errors.New("endPoint used up")
                     }
-                    var topicName string
+                    var topicName, listenPort string
                     var nodeId, nodeIndex uint16
                     var netInfo InfraNetUnit
                     if i < len(setIns.Deployment.Node) {
+                        actualListenPort, coverListenPort, listenPortOverFlow = getNextListenPort(actualListenPort, envNum, listenMap)
+                        if listenPortOverFlow {
+                            return nil, errors.New("listenPort used up")
+                        }
                         topicName = "follow"
+                        listenPort = coverListenPort
                         nodeId, nodeIndex = setIns.Deployment.Node[i].NodeId, setIns.Deployment.Node[i].NodeIndex
+                        isNetExt := false
                         for j, _ := range setIns.Deployment.Node[i].Network {
                             if setIns.Deployment.Node[i].Network[j].Name == innerNet {
                                 netInfo = setIns.Deployment.Node[i].Network[j]
+                                isNetExt = true
                             }
+                        }
+                        if !isNetExt {
+                            return nil, fmt.Errorf("innerTopic net out of host adapter list, path:%s", util.Join("/", platName, nodeTypeName, repository.Service))
                         }
                     } else {
                         topicName = "main"
@@ -300,6 +389,7 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawData map[string][]by
                         PubCluster:  util.Join(".", platName, nodeTypeName, setIns.SetName),
                         PubSetId:    setIns.SetID,
                         PubSetIndex: setIns.SetIndex,
+                        ListenPort:  listenPort,
                         TopicId:     topicID,
                         EndPoint:    endPoint,
                         NodeId:      nodeId,
@@ -501,20 +591,14 @@ func FindIpv4Seeds(ipRanges []string) ([]string, []int32, error) {
             frontSlice = append(frontSlice, int32(intFrt))
             backSlice = append(backSlice, int32(intBck))
         }
-        front := 0
+        frontLess := true
         for i, _ := range frontSlice {
-            if frontSlice[i] < backSlice[i] {
-                front = 1
-                break
-            } else if frontSlice[i] > backSlice[i] {
-                front = 2
+            if frontSlice[i] > backSlice[i] {
+                frontLess = false
                 break
             }
         }
-        if front == 0 {
-            return nil, nil, errors.New("ip range with the same bound")
-        }
-        if front == 2 {
+        if !frontLess {
             tmp := ipRanges[2*i]
             ipRanges[2*i] = ipRanges[2*i+1]
             ipRanges[2*i+1] = tmp
@@ -535,7 +619,7 @@ func FindIpv4Seeds(ipRanges []string) ([]string, []int32, error) {
 // GetNextIpv4 将种子值+1，返回生成的ip和新种子，并指示是否溢出
 func GetNextIpv4(idx int, seedRanges []int32, oldSeed int32) (int, string, int32, bool) {
     var newSeed int32 = 0
-    if seedRanges[2*idx+1] > seedRanges[2*idx] {
+    if seedRanges[2*idx+1] >= seedRanges[2*idx] {
         if oldSeed > seedRanges[2*idx+1] {
             if 2*(idx+1) >= len(seedRanges) {
                 return 0, "", 0, true
@@ -660,7 +744,7 @@ func sortPorts(portRanges []string) ([]int, error) {
 //假设envNum合法
 func getNextPort(ports []int, idx int, envNum string, actualPort int) (int, int, int, bool) {
     if actualPort > ports[2*idx+1] {
-        if 2+(idx+1) >= len(ports) {
+        if 2*(idx+1) >= len(ports) {
             return 0, 0, 0, true
         }
         idx++
@@ -670,6 +754,30 @@ func getNextPort(ports []int, idx int, envNum string, actualPort int) (int, int,
     env = env * 10
     coverPort := actualPort/1000*1000 + env + actualPort%10
     return idx, actualPort + 1, coverPort, false
+}
+
+//假设envNum合法
+func getNextListenPort(inputPort int, envNum string, listenPortMap map[int]int) (actualListenPort int, coverPort string, overFlow bool) {
+    env, _ := strconv.Atoi(envNum)
+    env = env * 10
+    for true {
+        if inputPort > 65535 {
+            return 0, "", true
+        }
+        coverPortInt := inputPort/1000*1000 + env + inputPort%10
+        if coverPortInt > 65535 {
+            inputPort++
+            continue
+        }
+        if _, ok := listenPortMap[coverPortInt]; !ok {
+            listenPortMap[coverPortInt] = 0
+            actualListenPort = inputPort + 1
+            coverPort = strconv.Itoa(coverPortInt)
+            break
+        }
+        inputPort++
+    }
+    return
 }
 
 func getNextEndPoint(idxI int, seedRanges []int32, oldSeed int32, ports []int, idxP int, envNum string, actualPort int, coverPortIn string, ipMap map[string]int, portMap map[int]int) (int, int32, int, int, string, string, bool) {
@@ -686,15 +794,23 @@ func getNextEndPoint(idxI int, seedRanges []int32, oldSeed int32, ports []int, i
         }
     }
     if !isIpOverFlow {
-        idxP, actualPort, coverPort, isPortOverflow = getNextPort(ports, idxP, envNum, actualPort)
-        portMap[coverPort] = 0
+        for true {
+            idxP, actualPort, coverPort, isPortOverflow = getNextPort(ports, idxP, envNum, actualPort)
+            if coverPort < 65536 {
+                portMap[coverPort] = 0
+                break
+            }
+        }
     } else {
         for isPortRpt {
-            actualPort++
+            //actualPort++
             idxP, actualPort, coverPort, isPortOverflow = getNextPort(ports, idxP, envNum, actualPort)
             if isPortOverflow {
                 //溢出
                 return 0, 0, 0, 0, "", "", true
+            }
+            if coverPort > 65535 {
+                continue
             }
             if _, ok := portMap[coverPort]; !ok {
                 portMap[coverPort] = 0
