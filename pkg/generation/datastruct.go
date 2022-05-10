@@ -67,6 +67,7 @@ type SrvMain struct {
 type FillArgs struct {
     PlatName  string
     NodeType  string
+    NodeNum   uint16
     SetId     uint16
     SetIndex  uint16
     SetName   string

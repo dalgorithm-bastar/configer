@@ -30,11 +30,19 @@ func FillTemplates(dplyStructList []ChartDeployMain, rawData map[string][]byte, 
                         fillArgs := FillArgs{
                             PlatName:  platformIns.Platform,
                             NodeType:  nodeTypeIns.NodeType,
+                            NodeNum:   uint16(len(setIns.Deployment.Node)),
                             SetId:     setIns.SetID,
                             SetIndex:  setIns.SetIndex,
                             SetName:   setIns.SetName,
                             NodeId:    nodeIns.NodeId,
                             NodeIndex: nodeIns.NodeIndex,
+                        }
+                        sli[4] = util.Join("_", nodeIns.HostName, strconv.Itoa(int(nodeIns.NodeId)))
+                        resPath := util.Join("/", sli[0]+"_"+sli[1], sli[2], sli[3], setIns.SetName, sli[4], sli[5])
+                        //处理空文件
+                        if inFile == nil || len(inFile) == 0 {
+                            resMap[resPath] = []byte{}
+                            continue
                         }
                         model := template.New("fillConf")
                         model, err := model.Parse(string(inFile))
@@ -46,8 +54,6 @@ func FillTemplates(dplyStructList []ChartDeployMain, rawData map[string][]byte, 
                         if err != nil {
                             return errors.New(fmt.Sprintf("Execute cfg err in path: %s, with err %s", path, err.Error()))
                         }
-                        sli[4] = util.Join("_", nodeIns.HostName, strconv.Itoa(int(nodeIns.NodeId)))
-                        resPath := util.Join("/", sli[0]+"_"+sli[1], sli[2], sli[3], setIns.SetName, sli[4], sli[5])
                         resMap[resPath] = data.Bytes()
                     }
                 }

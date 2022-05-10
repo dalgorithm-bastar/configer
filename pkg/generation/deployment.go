@@ -10,18 +10,20 @@ import (
     "github.com/configcenter/pkg/repository"
 )
 
-func GenerateDeploymentInfo(infrastrcture []byte, rawData map[string][]byte) ([]ChartDeployMain, error) {
+func GenerateDeploymentInfo(infrastructure []byte, rawSlice []RawFile) ([]ChartDeployMain, error) {
     //返回值
     var chartDeployMain []ChartDeployMain
     //解析基础设施信息
     var infraStruct InfraMain
-    err := json.Unmarshal(infrastrcture, &infraStruct)
+    err := json.Unmarshal(infrastructure, &infraStruct)
     if err != nil {
         return nil, err
     }
     //分配和构建部署信息
     var setId, nodeId uint16 = 1, 1
-    for path, data := range rawData {
+    for _, fileInfo := range rawSlice {
+        path := fileInfo.Path
+        data := fileInfo.Data
         //找出deploment.json文件
         if strings.Contains(path, repository.Deployment) {
             //校验长度

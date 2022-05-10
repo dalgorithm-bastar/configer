@@ -16,7 +16,9 @@ limitations under the License.
 package cmd
 
 import (
+    "bytes"
     "context"
+    "encoding/json"
     "errors"
     "fmt"
     "io"
@@ -256,6 +258,12 @@ func WriteFilesToLocal(fileMap map[string][]byte) {
         }
         filePath := object.PathOut + "/" + path
         f, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.FileMode(0666))
+        //将json文件格式化输出
+        if filepath.Ext(path) == ".json" {
+            var outBuf bytes.Buffer
+            _ = json.Indent(&outBuf, data, "", "    ")
+            data = outBuf.Bytes()
+        }
         n, err := f.Write(data)
         if err == nil && n < len(data) {
             err = io.ErrShortWrite

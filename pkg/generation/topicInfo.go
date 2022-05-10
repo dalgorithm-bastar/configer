@@ -17,21 +17,42 @@ type idtfy struct {
     NodeType string
 }
 
+//描述biztopic处理状况
 type topicStat struct {
     IsProc bool
     Name   string
     Sub    []idtfy
 }
 
-func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawData map[string][]byte, ipRange []string, portRange []string, envNum string) (map[string]map[string]map[string]ExpTpcMain, error) {
+//主切片排序单元
+type mainSlicePlatUnit struct {
+    PlatForm  string
+    NodeTypes []mainSliceNodeTypeUnit
+}
+
+//主切片次级排序单元
+type mainSliceNodeTypeUnit struct {
+    NodeType string
+    SrvFile  SrvMain
+}
+
+//用于主机tcp端口池
+type hostTcpUnit struct {
+    actualTcpPort uint16
+    coverTcpMap   map[int]int
+}
+
+func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, ipRange []string, portRange []string, envNum string) (map[string]map[string]map[string]ExpTpcMain, error) {
     //初始化参数和返回结果
     topicInfoMap := make(map[string]map[string]map[string]ExpTpcMain)
-    //用于索引的辅助map
     //netMap，网络-biztopic名称&处理状态-接收方
     netMap := make(map[string][]topicStat)
-    //mainMap,主列表，plat-nodetype-srvMainStruct
-    mainMap := make(map[string]map[string]SrvMain)
-    for path, data := range rawData {
+    //mainSlice,主切片，plat-nodetype-srvMainStruct，用于循环遍历
+    var mainSlice []mainSlicePlatUnit
+    //构造主切片
+    for _, fileInfo := range rawSlice {
+        path := fileInfo.Path
+        data := fileInfo.Data
         //找出service.json
         if !strings.Contains(path, repository.Service) {
             continue
@@ -47,37 +68,60 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawData map[string][]by
         if err != nil {
             return nil, err
         }
-        //当前平台或节点类型尚未收录过
-        if _, ok := mainMap[pathSlice[2]]; !ok {
-            mainMap[pathSlice[2]] = map[string]SrvMain{
-                pathSlice[3]: srvStruct,
+        //检测当前平台或节点类型是否收录过
+        isPlatExist, isNodeTypeExist, platIdx, nodeTypeIdx := false, false, 0, 0
+        for i, _ := range mainSlice {
+            if mainSlice[i].PlatForm == pathSlice[2] {
+                isPlatExist = true
+                platIdx = i
+                for j, _ := range mainSlice[i].NodeTypes {
+                    if mainSlice[i].NodeTypes[j].NodeType == pathSlice[3] {
+                        isNodeTypeExist = true
+                        nodeTypeIdx = j
+                        break
+                    }
+                }
+                break
             }
-        } else if _, ok := mainMap[pathSlice[2]][pathSlice[3]]; !ok {
-            mainMap[pathSlice[2]][pathSlice[3]] = srvStruct
-        } else {
-            //当前平台与节点类型已被收录过，进行合并
-            if mainMap[pathSlice[2]][pathSlice[3]].InnerTopicNet != "" {
-                if srvStruct.InnerTopicNet != mainMap[pathSlice[2]][pathSlice[3]].InnerTopicNet {
+        }
+        //平台与节点均未收录过
+        if !isPlatExist && !isNodeTypeExist {
+            mainSlice = append(mainSlice, mainSlicePlatUnit{
+                PlatForm: pathSlice[2],
+                NodeTypes: []mainSliceNodeTypeUnit{{
+                    NodeType: pathSlice[3],
+                    SrvFile:  srvStruct,
+                }},
+            })
+        }
+        //节点类型未被收录过
+        if isPlatExist && !isNodeTypeExist {
+            mainSlice[platIdx].NodeTypes = append(mainSlice[platIdx].NodeTypes, mainSliceNodeTypeUnit{
+                NodeType: pathSlice[3],
+                SrvFile:  srvStruct,
+            })
+        }
+        //平台与节点类型均被收录过，进行合并
+        if isPlatExist && isNodeTypeExist {
+            //合并innerTopic
+            if mainSlice[platIdx].NodeTypes[nodeTypeIdx].SrvFile.InnerTopicNet != "" {
+                if srvStruct.InnerTopicNet != mainSlice[platIdx].NodeTypes[nodeTypeIdx].SrvFile.InnerTopicNet {
                     return nil, errors.New(fmt.Sprintf("Multi inner topic net assigned in nodeType: %s", path))
                 }
             } else if srvStruct.InnerTopicNet != "" {
-                tmp := mainMap[pathSlice[2]][pathSlice[3]]
-                tmp.InnerTopicNet = srvStruct.InnerTopicNet
-                mainMap[pathSlice[2]][pathSlice[3]] = tmp
+                mainSlice[platIdx].NodeTypes[nodeTypeIdx].SrvFile.InnerTopicNet = srvStruct.InnerTopicNet
             }
+            //合并其余项
             //取map中的对应srv用于合并
-            tmp := mainMap[pathSlice[2]][pathSlice[3]]
+            tmp := mainSlice[platIdx].NodeTypes[nodeTypeIdx].SrvFile
             //合并单个目标srv,同时构建netMap
-            tmp, err := MergeSrvStruct(idtfy{
-                Plat:     pathSlice[2],
-                NodeType: pathSlice[3],
-            }, netMap, tmp, srvStruct)
+            tmp, err := MergeSrvStruct(tmp, srvStruct)
             if err != nil {
                 return nil, errors.New(fmt.Sprintf("merge srv err in path: %s;", path) + err.Error())
             }
-            mainMap[pathSlice[2]][pathSlice[3]] = tmp
+            mainSlice[platIdx].NodeTypes[nodeTypeIdx].SrvFile = tmp
         }
-        //netMap同步更新
+        //同步更新netMap
         for _, subUnit := range srvStruct.SubTopic {
             MergeNetMap(idtfy{
                 Plat:     pathSlice[2],
@@ -86,8 +130,8 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawData map[string][]by
         }
     }
     //初始化，准备生成 todo topicid越界检查
-    //生成listenPort
-    listenMap, actualListenPort, coverListenPort, listenPortOverFlow := make(map[int]int), 2000, "", false
+    //生成listenPort，为每个主机生成分配tcp端口池
+    hostTcpPoolMap := make(map[string]hostTcpUnit)
     var topicID uint16 = 1
     //去重
     ipMap, portMap := make(map[string]int), make(map[int]int)
@@ -104,8 +148,11 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawData map[string][]by
     seedIdx, portIdx := 0, 0
     endPoint, overflow := "", false
     //遍历mainMap，根据每个pub查询deploy，构建细分到pub和sub的set的topicInfo
-    for platName, NodeTypeMap := range mainMap {
-        for nodeTypeName, SrvIns := range NodeTypeMap {
+    for _, platInfo := range mainSlice {
+        platName := platInfo.PlatForm
+        for _, nodeTypeIns := range platInfo.NodeTypes {
+            nodeTypeName := nodeTypeIns.NodeType
+            SrvIns := nodeTypeIns.SrvFile
             //找部署信息,未部署的集群跳过
             isPubDeployed, pubPi, pubNi := checkDeployment(dplyStructList, platName, nodeTypeName)
             if !isPubDeployed {
@@ -197,77 +244,6 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawData map[string][]by
                                 netMap[netName][i].IsProc = true
                                 topicID++
                             }
-
-                            /*//逐一处理接收方，未部署的跳过
-                              for _, subUnit := range netMap[netName][i].Sub {
-                                  isSubDply, subPi, subNi := checkDeployment(dplyStructList, subUnit.Plat, subUnit.NodeType)
-                                  if !isSubDply {
-                                      continue
-                                  }
-                                  //循环处理发送方和接收方
-                                  for _, pubSetIns := range dplyStructList[pubPi].NodeTypeList[pubNi].SetList {
-                                      pubTpcInfo := getTpcInfo(topicInfoMap, platName, nodeTypeName, pubSetIns.SetName)
-                                      //获取endpoint,作为该set的biztpc组播endpoint
-                                      seedIdx, seed, portIdx, actPort, coverPort, endPoint, overflow = getNextEndPoint(seedIdx, seedRanges, seed, portRanges, portIdx, envNum, actPort, coverPort, ipMap, portMap)
-                                      if overflow {
-                                          return nil, errors.New("endPoint used up")
-                                      }
-                                      //处理发送方，添加集群内每个节点的tpcUnit
-                                      for _, pubNodeIns := range pubSetIns.Deployment.Node {
-                                          //检测节点上是否具有该网络
-                                          isNetExst, netIdx := checkNetOnNode(netName, pubNodeIns.Network)
-                                          if !isNetExst {
-                                              return nil, errors.New(fmt.Sprintf("node in set: %s have no adapter for net: %s for topic: %s", util.Join("/", platName, nodeTypeName, pubSetIns.SetName), netName, bizTpcName))
-                                          }
-                                          pubTpcUnit := ExpTpcTopicUnit{
-                                              TopicName:   bizTpcName,
-                                              PubCluster:  util.Join(".", platName, nodeTypeName, pubSetIns.SetName),
-                                              PubSetId:    pubSetIns.SetID,
-                                              PubSetIndex: pubSetIns.SetIndex,
-                                              TopicId:     topicID,
-                                              EndPoint:    endPoint,
-                                              NodeId:      pubNodeIns.NodeId,
-                                              NodeIndex:   pubNodeIns.NodeIndex,
-                                              IsRMB:       bizUnit.IsRMB,
-                                              Net:         pubNodeIns.Network[netIdx],
-                                          }
-                                          pubTpcInfo.PubExtern.BizTopic = append(pubTpcInfo.PubExtern.BizTopic, pubTpcUnit)
-                                      }
-                                      insertTpcInfo(topicInfoMap, pubTpcInfo, platName, nodeTypeName, pubSetIns.SetName)
-                                      for _, subSetIns := range dplyStructList[subPi].NodeTypeList[subNi].SetList {
-                                          subTpcInfo := getTpcInfo(topicInfoMap, subUnit.Plat, subUnit.NodeType, subSetIns.SetName)
-                                          //处理发送方，添加集群内每个节点的tpcUnit
-                                          for _, subNodeIns := range subSetIns.Deployment.Node {
-                                              //检测节点上是否具有该网络
-                                              isNetExst, netIdx := checkNetOnNode(netName, subNodeIns.Network)
-                                              if !isNetExst {
-                                                  return nil, errors.New(fmt.Sprintf("node in set: %s have no adapter for net: %s for topic: %s", util.Join("/", subUnit.Plat, subUnit.NodeType, subSetIns.SetName), netName, bizTpcName))
-                                              }
-                                              subTpcUnit := ExpTpcTopicUnit{
-                                                  TopicName:   bizTpcName,
-                                                  PubCluster:  util.Join(".", platName, nodeTypeName, pubSetIns.SetName),
-                                                  PubSetId:    pubSetIns.SetID,
-                                                  PubSetIndex: pubSetIns.SetIndex,
-                                                  SubCluster:  util.Join(".", subUnit.Plat, subUnit.NodeType, subSetIns.SetName),
-                                                  SubSetId:    subSetIns.SetID,
-                                                  SubSetIndex: subSetIns.SetIndex,
-                                                  TopicId:     topicID,
-                                                  EndPoint:    endPoint,
-                                                  NodeId:      subNodeIns.NodeId,
-                                                  NodeIndex:   subNodeIns.NodeIndex,
-                                                  IsRMB:       bizUnit.IsRMB,
-                                                  Net:         subNodeIns.Network[netIdx],
-                                              }
-                                              subTpcInfo.SubExtern.BizTopic = append(subTpcInfo.SubExtern.BizTopic, subTpcUnit)
-                                          }
-                                          insertTpcInfo(topicInfoMap, subTpcInfo, subUnit.Plat, subUnit.NodeType, subSetIns.SetName)
-                                      }
-                                      topicID++
-                                  }
-                              }
-                              //标记已处理的biztpc
-                              netMap[netName][i].IsProc = true
-                              break*/
                         }
                     }
                 }
@@ -363,10 +339,27 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawData map[string][]by
                     var nodeId, nodeIndex uint16
                     var netInfo InfraNetUnit
                     if i < len(setIns.Deployment.Node) {
-                        actualListenPort, coverListenPort, listenPortOverFlow = getNextListenPort(actualListenPort, envNum, listenMap)
-                        if listenPortOverFlow {
-                            return nil, errors.New("listenPort used up")
+                        //从节点对应主机的tcp端口池中取出下一个可用端口
+                        hostName := setIns.Deployment.Node[i].HostName
+                        //若当前主机尚未建立端口池，则新建端口池
+                        if _, ok := hostTcpPoolMap[hostName]; !ok {
+                            hostTcpPoolMap[hostName] = hostTcpUnit{
+                                actualTcpPort: 1024,
+                                coverTcpMap:   make(map[int]int),
+                            }
                         }
+                        actualListenPort := int(hostTcpPoolMap[hostName].actualTcpPort)
+                        actualListenPort, coverListenPort, listenPortOverFlow := getNextListenPort(actualListenPort, envNum, hostTcpPoolMap[hostName].coverTcpMap)
+                        if listenPortOverFlow {
+                            return nil, fmt.Errorf("listenPort used up on host: %s", hostName)
+                        }
+                        //更新端口池
+                        tmp := hostTcpUnit{
+                            actualTcpPort: uint16(actualListenPort),
+                            coverTcpMap:   hostTcpPoolMap[hostName].coverTcpMap,
+                        }
+                        hostTcpPoolMap[hostName] = tmp
+                        //检测网络是否存在
                         topicName = "follow"
                         listenPort = coverListenPort
                         nodeId, nodeIndex = setIns.Deployment.Node[i].NodeId, setIns.Deployment.Node[i].NodeIndex
@@ -413,7 +406,7 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawData map[string][]by
     return topicInfoMap, nil
 }
 
-func MergeSrvStruct(inputIdtfy idtfy, netMap map[string][]topicStat, TgtSrv, curtSrv SrvMain) (SrvMain, error) {
+func MergeSrvStruct(TgtSrv, curtSrv SrvMain) (SrvMain, error) {
     //取pubTopic
     for _, pubTopic := range curtSrv.PubTopic {
         isNetExist := false
@@ -765,7 +758,7 @@ func getNextListenPort(inputPort int, envNum string, listenPortMap map[int]int) 
             return 0, "", true
         }
         coverPortInt := inputPort/1000*1000 + env + inputPort%10
-        if coverPortInt > 65535 {
+        if coverPortInt < 1024 || coverPortInt > 65535 {
             inputPort++
             continue
         }

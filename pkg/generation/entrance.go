@@ -4,11 +4,23 @@ import (
     "encoding/json"
     "errors"
     "fmt"
+    "sort"
     "strings"
 
     "github.com/configcenter/pkg/repository"
     "github.com/configcenter/pkg/util"
 )
+
+const (
+    DEPLOYLIST = "deployList.json"
+    TOPICLIST  = "topicList.json"
+)
+
+//RawFile 用于定序生成
+type RawFile struct {
+    Path string
+    Data []byte
+}
 
 // Generate 由标准输入生成标准输出
 func Generate(infrastructure []byte, rawData map[string][]byte, envNum string, ipRange, portRange []string) (map[string][]byte, error) {
@@ -28,16 +40,18 @@ func Generate(infrastructure []byte, rawData map[string][]byte, envNum string, i
             return nil, errors.New(fmt.Sprintf("err port input:%s", port))
         }
     }
-    //删除空文件
+    //删除空文件，配置模板中的空文件除外
     for k, _ := range rawData {
-        if len(rawData[k]) == 0 {
+        if len(rawData[k]) == 0 && !strings.Contains(k, repository.Template) {
             delete(rawData, k)
         }
     }
+    //对rawData的键排序，转换成rawSlice
+    rawSlice := sortRawData(rawData)
     //构造返回结果文件包
     resMap := make(map[string][]byte)
     //扩充部署信息
-    dplyStructList, err := GenerateDeploymentInfo(infrastructure, rawData)
+    dplyStructList, err := GenerateDeploymentInfo(infrastructure, rawSlice)
     if err != nil {
         return nil, err
     }
@@ -46,7 +60,7 @@ func Generate(infrastructure []byte, rawData map[string][]byte, envNum string, i
         return resMap, nil
     }
     //生成topicInfo总表
-    topicInfoList, err := GenerateTopicInfo(dplyStructList, rawData, ipRange, portRange, envNum)
+    topicInfoList, err := GenerateTopicInfo(dplyStructList, rawSlice, ipRange, portRange, envNum)
     if err != nil {
         return nil, err
     }
@@ -72,7 +86,29 @@ func Generate(infrastructure []byte, rawData map[string][]byte, envNum string, i
     if err != nil {
         return nil, err
     }
+    //处理第三方文件生成
+    err = addThirdPartFiles(resMap, infrastructure, dplyStructList, envNum)
+    if err != nil {
+        return nil, err
+    }
     return resMap, nil
+}
+
+func sortRawData(rawData map[string][]byte) []RawFile {
+    var keySlice []string
+    var rawSlice []RawFile
+    for path, _ := range rawData {
+        keySlice = append(keySlice, path)
+    }
+    sort.Strings(keySlice)
+    for _, path := range keySlice {
+        file := RawFile{
+            Path: path,
+            Data: rawData[path],
+        }
+        rawSlice = append(rawSlice, file)
+    }
+    return rawSlice
 }
 
 func FinishResMap(resMap map[string][]byte, dplyStructList []ChartDeployMain, topicInfoList map[string]map[string]map[string]ExpTpcMain, prePath string) error {
@@ -162,11 +198,26 @@ func FinishResMap(resMap map[string][]byte, dplyStructList []ChartDeployMain, to
     if err != nil {
         return errors.New(fmt.Sprintf("json marshal maindpfile err: %s", err.Error()))
     }
-    resMap["deployList.json"] = mainDpFile
+    resMap[DEPLOYLIST] = mainDpFile
     mainTpcFile, err := json.Marshal(chartTpc)
     if err != nil {
         return errors.New(fmt.Sprintf("json marshal maintpcfile err: %s", err.Error()))
     }
-    resMap["topicList.json"] = mainTpcFile
+    resMap[TOPICLIST] = mainTpcFile
+    return nil
+}
+
+func addThirdPartFiles(resMap map[string][]byte, infrastructure []byte, dplyStructList []ChartDeployMain, envNum string) error {
+    //生成华锐所需的配置文件
+    huaRuiFileMap, err := huaRuiMain(infrastructure, dplyStructList, resMap[TOPICLIST], envNum)
+    if err != nil {
+        return err
+    }
+    for k, _ := range huaRuiFileMap {
+        if _, ok := resMap[k]; ok {
+            return fmt.Errorf("repeated key in outputs between raw and huarui, key:%s", k)
+        }
+        resMap[k] = huaRuiFileMap[k]
+    }
     return nil
 }
