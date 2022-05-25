@@ -1,0 +1,9 @@
+[Information]
+platName="{{.PlatName}}"
+nodeType="{{.NodeType}}"
+nodeNum={{.NodeNum}}
+nodeId={{.NodeId}}
+nodeIndex={{.NodeIndex}}
+setID={{.SetId}}
+setName="{{.SetName}}"
+setIndex={{.SetIndex}}

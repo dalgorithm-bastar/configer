@@ -1,0 +1,8 @@
+innerTopicNet: intranet
+pubTopic: 
+ - 
+  netName: extranet
+  setTopic: 
+    - 
+      topicName: DTP.MC
+      isRMB: 1

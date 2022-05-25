@@ -1,0 +1,8 @@
+innerTopicNet: intranet
+subTopic: 
+ - 
+  netName: extranet
+  bizTopic: 
+    - 
+      topicName: risk
+      isRMB: 1

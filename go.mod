@@ -42,6 +42,8 @@ require (
 	go.uber.org/zap v1.19.0
 	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d
 	google.golang.org/grpc v1.42.0
+	gopkg.in/yaml.v2 v2.4.0 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	sigs.k8s.io/yaml v1.2.0 // indirect
 	xchg.ai/sse/gracefully v0.3.2
 )

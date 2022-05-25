@@ -1,0 +1,1228 @@
+{
+    "scheme": "",
+    "platforms": [
+        {
+            "platform": "DTP",
+            "node_type_list": [
+                {
+                    "node_type": "CS",
+                    "set_list": [
+                        {
+                            "set_name": "set1",
+                            "set_id": 1,
+                            "broad_info": {
+                                "inner": [
+                                    {
+                                        "topicName": "follow",
+                                        "pubCluster": "DTP.CS.set1",
+                                        "pubSetId": 1,
+                                        "pubSetIndex": 1,
+                                        "subCluster": "",
+                                        "subSetId": 0,
+                                        "subSetIndex": 0,
+                                        "listenPort": "2010",
+                                        "topicId": 9,
+                                        "endPoint": "156.10.1.9:10010",
+                                        "nodeId": 1,
+                                        "nodeIndex": 1,
+                                        "isRMB": 0,
+                                        "net": {
+                                            "name": "intranet",
+                                            "adapter": "a1",
+                                            "ipv4": "197.3.2.1",
+                                            "ipv6": ""
+                                        }
+                                    },
+                                    {
+                                        "topicName": "main",
+                                        "pubCluster": "DTP.CS.set1",
+                                        "pubSetId": 1,
+                                        "pubSetIndex": 1,
+                                        "subCluster": "",
+                                        "subSetId": 0,
+                                        "subSetIndex": 0,
+                                        "listenPort": "",
+                                        "topicId": 10,
+                                        "endPoint": "156.10.1.10:10010",
+                                        "nodeId": 0,
+                                        "nodeIndex": 0,
+                                        "isRMB": 0,
+                                        "net": {
+                                            "name": "",
+                                            "adapter": "",
+                                            "ipv4": "",
+                                            "ipv6": ""
+                                        }
+                                    }
+                                ],
+                                "pub_extern": {
+                                    "biz_topic": null,
+                                    "set_topic": [
+                                        {
+                                            "topicName": "DTP.MC",
+                                            "pubCluster": "DTP.CS.set1",
+                                            "pubSetId": 1,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "DTP.MC.set1",
+                                            "subSetId": 3,
+                                            "subSetIndex": 1,
+                                            "listenPort": "",
+                                            "topicId": 1,
+                                            "endPoint": "156.10.1.1:10010",
+                                            "nodeId": 1,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a2",
+                                                "ipv4": "10.112.3.1",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "DTP.MC",
+                                            "pubCluster": "DTP.CS.set1",
+                                            "pubSetId": 1,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "DTP.MC.set2",
+                                            "subSetId": 4,
+                                            "subSetIndex": 2,
+                                            "listenPort": "",
+                                            "topicId": 2,
+                                            "endPoint": "156.10.1.2:10010",
+                                            "nodeId": 1,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a2",
+                                                "ipv4": "10.112.3.1",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "MTP.RC",
+                                            "pubCluster": "DTP.CS.set1",
+                                            "pubSetId": 1,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "MTP.RC.set1",
+                                            "subSetId": 5,
+                                            "subSetIndex": 1,
+                                            "listenPort": "",
+                                            "topicId": 5,
+                                            "endPoint": "156.10.1.5:10010",
+                                            "nodeId": 1,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a2",
+                                                "ipv4": "10.112.3.1",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "MTP.RC",
+                                            "pubCluster": "DTP.CS.set1",
+                                            "pubSetId": 1,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "MTP.RC.set2",
+                                            "subSetId": 6,
+                                            "subSetIndex": 2,
+                                            "listenPort": "",
+                                            "topicId": 6,
+                                            "endPoint": "156.10.1.6:10010",
+                                            "nodeId": 1,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a2",
+                                                "ipv4": "10.112.3.1",
+                                                "ipv6": ""
+                                            }
+                                        }
+                                    ]
+                                },
+                                "sub_extern": {
+                                    "biz_topic": null,
+                                    "set_topic": null
+                                }
+                            }
+                        },
+                        {
+                            "set_name": "set2",
+                            "set_id": 2,
+                            "broad_info": {
+                                "inner": [
+                                    {
+                                        "topicName": "follow",
+                                        "pubCluster": "DTP.CS.set2",
+                                        "pubSetId": 2,
+                                        "pubSetIndex": 2,
+                                        "subCluster": "",
+                                        "subSetId": 0,
+                                        "subSetIndex": 0,
+                                        "listenPort": "2010",
+                                        "topicId": 11,
+                                        "endPoint": "156.10.1.11:10010",
+                                        "nodeId": 2,
+                                        "nodeIndex": 1,
+                                        "isRMB": 0,
+                                        "net": {
+                                            "name": "intranet",
+                                            "adapter": "a4",
+                                            "ipv4": "197.3.2.2",
+                                            "ipv6": ""
+                                        }
+                                    },
+                                    {
+                                        "topicName": "main",
+                                        "pubCluster": "DTP.CS.set2",
+                                        "pubSetId": 2,
+                                        "pubSetIndex": 2,
+                                        "subCluster": "",
+                                        "subSetId": 0,
+                                        "subSetIndex": 0,
+                                        "listenPort": "",
+                                        "topicId": 12,
+                                        "endPoint": "156.10.1.12:10010",
+                                        "nodeId": 0,
+                                        "nodeIndex": 0,
+                                        "isRMB": 0,
+                                        "net": {
+                                            "name": "",
+                                            "adapter": "",
+                                            "ipv4": "",
+                                            "ipv6": ""
+                                        }
+                                    }
+                                ],
+                                "pub_extern": {
+                                    "biz_topic": null,
+                                    "set_topic": [
+                                        {
+                                            "topicName": "DTP.MC",
+                                            "pubCluster": "DTP.CS.set2",
+                                            "pubSetId": 2,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "DTP.MC.set1",
+                                            "subSetId": 3,
+                                            "subSetIndex": 1,
+                                            "listenPort": "",
+                                            "topicId": 3,
+                                            "endPoint": "156.10.1.3:10010",
+                                            "nodeId": 2,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a5",
+                                                "ipv4": "10.112.3.2",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "DTP.MC",
+                                            "pubCluster": "DTP.CS.set2",
+                                            "pubSetId": 2,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "DTP.MC.set2",
+                                            "subSetId": 4,
+                                            "subSetIndex": 2,
+                                            "listenPort": "",
+                                            "topicId": 4,
+                                            "endPoint": "156.10.1.4:10010",
+                                            "nodeId": 2,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a5",
+                                                "ipv4": "10.112.3.2",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "MTP.RC",
+                                            "pubCluster": "DTP.CS.set2",
+                                            "pubSetId": 2,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "MTP.RC.set1",
+                                            "subSetId": 5,
+                                            "subSetIndex": 1,
+                                            "listenPort": "",
+                                            "topicId": 7,
+                                            "endPoint": "156.10.1.7:10010",
+                                            "nodeId": 2,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a5",
+                                                "ipv4": "10.112.3.2",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "MTP.RC",
+                                            "pubCluster": "DTP.CS.set2",
+                                            "pubSetId": 2,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "MTP.RC.set2",
+                                            "subSetId": 6,
+                                            "subSetIndex": 2,
+                                            "listenPort": "",
+                                            "topicId": 8,
+                                            "endPoint": "156.10.1.8:10010",
+                                            "nodeId": 2,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a5",
+                                                "ipv4": "10.112.3.2",
+                                                "ipv6": ""
+                                            }
+                                        }
+                                    ]
+                                },
+                                "sub_extern": {
+                                    "biz_topic": null,
+                                    "set_topic": null
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "node_type": "MC",
+                    "set_list": [
+                        {
+                            "set_name": "set1",
+                            "set_id": 3,
+                            "broad_info": {
+                                "inner": [
+                                    {
+                                        "topicName": "follow",
+                                        "pubCluster": "DTP.MC.set1",
+                                        "pubSetId": 3,
+                                        "pubSetIndex": 1,
+                                        "subCluster": "",
+                                        "subSetId": 0,
+                                        "subSetIndex": 0,
+                                        "listenPort": "2011",
+                                        "topicId": 13,
+                                        "endPoint": "156.10.1.13:10010",
+                                        "nodeId": 3,
+                                        "nodeIndex": 1,
+                                        "isRMB": 0,
+                                        "net": {
+                                            "name": "intranet",
+                                            "adapter": "a1",
+                                            "ipv4": "197.3.2.1",
+                                            "ipv6": ""
+                                        }
+                                    },
+                                    {
+                                        "topicName": "follow",
+                                        "pubCluster": "DTP.MC.set1",
+                                        "pubSetId": 3,
+                                        "pubSetIndex": 1,
+                                        "subCluster": "",
+                                        "subSetId": 0,
+                                        "subSetIndex": 0,
+                                        "listenPort": "2011",
+                                        "topicId": 14,
+                                        "endPoint": "156.10.1.14:10010",
+                                        "nodeId": 4,
+                                        "nodeIndex": 2,
+                                        "isRMB": 0,
+                                        "net": {
+                                            "name": "intranet",
+                                            "adapter": "a4",
+                                            "ipv4": "197.3.2.2",
+                                            "ipv6": ""
+                                        }
+                                    },
+                                    {
+                                        "topicName": "main",
+                                        "pubCluster": "DTP.MC.set1",
+                                        "pubSetId": 3,
+                                        "pubSetIndex": 1,
+                                        "subCluster": "",
+                                        "subSetId": 0,
+                                        "subSetIndex": 0,
+                                        "listenPort": "",
+                                        "topicId": 15,
+                                        "endPoint": "156.10.1.15:10010",
+                                        "nodeId": 0,
+                                        "nodeIndex": 0,
+                                        "isRMB": 0,
+                                        "net": {
+                                            "name": "",
+                                            "adapter": "",
+                                            "ipv4": "",
+                                            "ipv6": ""
+                                        }
+                                    }
+                                ],
+                                "pub_extern": {
+                                    "biz_topic": null,
+                                    "set_topic": null
+                                },
+                                "sub_extern": {
+                                    "biz_topic": [
+                                        {
+                                            "topicName": "risk",
+                                            "pubCluster": "MTP.RC.set1",
+                                            "pubSetId": 5,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "DTP.MC.set1",
+                                            "subSetId": 3,
+                                            "subSetIndex": 1,
+                                            "listenPort": "",
+                                            "topicId": 19,
+                                            "endPoint": "156.10.1.19:10010",
+                                            "nodeId": 3,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a2",
+                                                "ipv4": "10.112.3.1",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "risk",
+                                            "pubCluster": "MTP.RC.set1",
+                                            "pubSetId": 5,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "DTP.MC.set1",
+                                            "subSetId": 3,
+                                            "subSetIndex": 1,
+                                            "listenPort": "",
+                                            "topicId": 19,
+                                            "endPoint": "156.10.1.19:10010",
+                                            "nodeId": 4,
+                                            "nodeIndex": 2,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a5",
+                                                "ipv4": "10.112.3.2",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "risk",
+                                            "pubCluster": "MTP.RC.set2",
+                                            "pubSetId": 6,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "DTP.MC.set1",
+                                            "subSetId": 3,
+                                            "subSetIndex": 1,
+                                            "listenPort": "",
+                                            "topicId": 20,
+                                            "endPoint": "156.10.1.20:10010",
+                                            "nodeId": 3,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a2",
+                                                "ipv4": "10.112.3.1",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "risk",
+                                            "pubCluster": "MTP.RC.set2",
+                                            "pubSetId": 6,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "DTP.MC.set1",
+                                            "subSetId": 3,
+                                            "subSetIndex": 1,
+                                            "listenPort": "",
+                                            "topicId": 20,
+                                            "endPoint": "156.10.1.20:10010",
+                                            "nodeId": 4,
+                                            "nodeIndex": 2,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a5",
+                                                "ipv4": "10.112.3.2",
+                                                "ipv6": ""
+                                            }
+                                        }
+                                    ],
+                                    "set_topic": [
+                                        {
+                                            "topicName": "DTP.MC",
+                                            "pubCluster": "DTP.CS.set1",
+                                            "pubSetId": 1,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "DTP.MC.set1",
+                                            "subSetId": 3,
+                                            "subSetIndex": 1,
+                                            "listenPort": "",
+                                            "topicId": 1,
+                                            "endPoint": "156.10.1.1:10010",
+                                            "nodeId": 3,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a2",
+                                                "ipv4": "10.112.3.1",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "DTP.MC",
+                                            "pubCluster": "DTP.CS.set1",
+                                            "pubSetId": 1,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "DTP.MC.set1",
+                                            "subSetId": 3,
+                                            "subSetIndex": 1,
+                                            "listenPort": "",
+                                            "topicId": 1,
+                                            "endPoint": "156.10.1.1:10010",
+                                            "nodeId": 4,
+                                            "nodeIndex": 2,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a5",
+                                                "ipv4": "10.112.3.2",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "DTP.MC",
+                                            "pubCluster": "DTP.CS.set2",
+                                            "pubSetId": 2,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "DTP.MC.set1",
+                                            "subSetId": 3,
+                                            "subSetIndex": 1,
+                                            "listenPort": "",
+                                            "topicId": 3,
+                                            "endPoint": "156.10.1.3:10010",
+                                            "nodeId": 3,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a2",
+                                                "ipv4": "10.112.3.1",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "DTP.MC",
+                                            "pubCluster": "DTP.CS.set2",
+                                            "pubSetId": 2,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "DTP.MC.set1",
+                                            "subSetId": 3,
+                                            "subSetIndex": 1,
+                                            "listenPort": "",
+                                            "topicId": 3,
+                                            "endPoint": "156.10.1.3:10010",
+                                            "nodeId": 4,
+                                            "nodeIndex": 2,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a5",
+                                                "ipv4": "10.112.3.2",
+                                                "ipv6": ""
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "set_name": "set2",
+                            "set_id": 4,
+                            "broad_info": {
+                                "inner": [
+                                    {
+                                        "topicName": "follow",
+                                        "pubCluster": "DTP.MC.set2",
+                                        "pubSetId": 4,
+                                        "pubSetIndex": 2,
+                                        "subCluster": "",
+                                        "subSetId": 0,
+                                        "subSetIndex": 0,
+                                        "listenPort": "2010",
+                                        "topicId": 16,
+                                        "endPoint": "156.10.1.16:10010",
+                                        "nodeId": 5,
+                                        "nodeIndex": 1,
+                                        "isRMB": 0,
+                                        "net": {
+                                            "name": "intranet",
+                                            "adapter": "a7",
+                                            "ipv4": "197.3.2.3",
+                                            "ipv6": ""
+                                        }
+                                    },
+                                    {
+                                        "topicName": "follow",
+                                        "pubCluster": "DTP.MC.set2",
+                                        "pubSetId": 4,
+                                        "pubSetIndex": 2,
+                                        "subCluster": "",
+                                        "subSetId": 0,
+                                        "subSetIndex": 0,
+                                        "listenPort": "2010",
+                                        "topicId": 17,
+                                        "endPoint": "156.10.1.17:10010",
+                                        "nodeId": 6,
+                                        "nodeIndex": 2,
+                                        "isRMB": 0,
+                                        "net": {
+                                            "name": "intranet",
+                                            "adapter": "a10",
+                                            "ipv4": "197.3.2.4",
+                                            "ipv6": ""
+                                        }
+                                    },
+                                    {
+                                        "topicName": "main",
+                                        "pubCluster": "DTP.MC.set2",
+                                        "pubSetId": 4,
+                                        "pubSetIndex": 2,
+                                        "subCluster": "",
+                                        "subSetId": 0,
+                                        "subSetIndex": 0,
+                                        "listenPort": "",
+                                        "topicId": 18,
+                                        "endPoint": "156.10.1.18:10010",
+                                        "nodeId": 0,
+                                        "nodeIndex": 0,
+                                        "isRMB": 0,
+                                        "net": {
+                                            "name": "",
+                                            "adapter": "",
+                                            "ipv4": "",
+                                            "ipv6": ""
+                                        }
+                                    }
+                                ],
+                                "pub_extern": {
+                                    "biz_topic": null,
+                                    "set_topic": null
+                                },
+                                "sub_extern": {
+                                    "biz_topic": [
+                                        {
+                                            "topicName": "risk",
+                                            "pubCluster": "MTP.RC.set1",
+                                            "pubSetId": 5,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "DTP.MC.set2",
+                                            "subSetId": 4,
+                                            "subSetIndex": 2,
+                                            "listenPort": "",
+                                            "topicId": 19,
+                                            "endPoint": "156.10.1.19:10010",
+                                            "nodeId": 5,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a8",
+                                                "ipv4": "10.112.3.3",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "risk",
+                                            "pubCluster": "MTP.RC.set1",
+                                            "pubSetId": 5,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "DTP.MC.set2",
+                                            "subSetId": 4,
+                                            "subSetIndex": 2,
+                                            "listenPort": "",
+                                            "topicId": 19,
+                                            "endPoint": "156.10.1.19:10010",
+                                            "nodeId": 6,
+                                            "nodeIndex": 2,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a11",
+                                                "ipv4": "10.112.3.4",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "risk",
+                                            "pubCluster": "MTP.RC.set2",
+                                            "pubSetId": 6,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "DTP.MC.set2",
+                                            "subSetId": 4,
+                                            "subSetIndex": 2,
+                                            "listenPort": "",
+                                            "topicId": 20,
+                                            "endPoint": "156.10.1.20:10010",
+                                            "nodeId": 5,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a8",
+                                                "ipv4": "10.112.3.3",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "risk",
+                                            "pubCluster": "MTP.RC.set2",
+                                            "pubSetId": 6,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "DTP.MC.set2",
+                                            "subSetId": 4,
+                                            "subSetIndex": 2,
+                                            "listenPort": "",
+                                            "topicId": 20,
+                                            "endPoint": "156.10.1.20:10010",
+                                            "nodeId": 6,
+                                            "nodeIndex": 2,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a11",
+                                                "ipv4": "10.112.3.4",
+                                                "ipv6": ""
+                                            }
+                                        }
+                                    ],
+                                    "set_topic": [
+                                        {
+                                            "topicName": "DTP.MC",
+                                            "pubCluster": "DTP.CS.set1",
+                                            "pubSetId": 1,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "DTP.MC.set2",
+                                            "subSetId": 4,
+                                            "subSetIndex": 2,
+                                            "listenPort": "",
+                                            "topicId": 2,
+                                            "endPoint": "156.10.1.2:10010",
+                                            "nodeId": 5,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a8",
+                                                "ipv4": "10.112.3.3",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "DTP.MC",
+                                            "pubCluster": "DTP.CS.set1",
+                                            "pubSetId": 1,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "DTP.MC.set2",
+                                            "subSetId": 4,
+                                            "subSetIndex": 2,
+                                            "listenPort": "",
+                                            "topicId": 2,
+                                            "endPoint": "156.10.1.2:10010",
+                                            "nodeId": 6,
+                                            "nodeIndex": 2,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a11",
+                                                "ipv4": "10.112.3.4",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "DTP.MC",
+                                            "pubCluster": "DTP.CS.set2",
+                                            "pubSetId": 2,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "DTP.MC.set2",
+                                            "subSetId": 4,
+                                            "subSetIndex": 2,
+                                            "listenPort": "",
+                                            "topicId": 4,
+                                            "endPoint": "156.10.1.4:10010",
+                                            "nodeId": 5,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a8",
+                                                "ipv4": "10.112.3.3",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "DTP.MC",
+                                            "pubCluster": "DTP.CS.set2",
+                                            "pubSetId": 2,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "DTP.MC.set2",
+                                            "subSetId": 4,
+                                            "subSetIndex": 2,
+                                            "listenPort": "",
+                                            "topicId": 4,
+                                            "endPoint": "156.10.1.4:10010",
+                                            "nodeId": 6,
+                                            "nodeIndex": 2,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a11",
+                                                "ipv4": "10.112.3.4",
+                                                "ipv6": ""
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "platform": "MTP",
+            "node_type_list": [
+                {
+                    "node_type": "RC",
+                    "set_list": [
+                        {
+                            "set_name": "set1",
+                            "set_id": 5,
+                            "broad_info": {
+                                "inner": [
+                                    {
+                                        "topicName": "follow",
+                                        "pubCluster": "MTP.RC.set1",
+                                        "pubSetId": 5,
+                                        "pubSetIndex": 1,
+                                        "subCluster": "",
+                                        "subSetId": 0,
+                                        "subSetIndex": 0,
+                                        "listenPort": "2012",
+                                        "topicId": 21,
+                                        "endPoint": "156.10.1.21:10010",
+                                        "nodeId": 7,
+                                        "nodeIndex": 1,
+                                        "isRMB": 0,
+                                        "net": {
+                                            "name": "intranet",
+                                            "adapter": "a1",
+                                            "ipv4": "197.3.2.1",
+                                            "ipv6": ""
+                                        }
+                                    },
+                                    {
+                                        "topicName": "follow",
+                                        "pubCluster": "MTP.RC.set1",
+                                        "pubSetId": 5,
+                                        "pubSetIndex": 1,
+                                        "subCluster": "",
+                                        "subSetId": 0,
+                                        "subSetIndex": 0,
+                                        "listenPort": "2012",
+                                        "topicId": 22,
+                                        "endPoint": "156.10.1.22:10010",
+                                        "nodeId": 8,
+                                        "nodeIndex": 2,
+                                        "isRMB": 0,
+                                        "net": {
+                                            "name": "intranet",
+                                            "adapter": "a4",
+                                            "ipv4": "197.3.2.2",
+                                            "ipv6": ""
+                                        }
+                                    },
+                                    {
+                                        "topicName": "main",
+                                        "pubCluster": "MTP.RC.set1",
+                                        "pubSetId": 5,
+                                        "pubSetIndex": 1,
+                                        "subCluster": "",
+                                        "subSetId": 0,
+                                        "subSetIndex": 0,
+                                        "listenPort": "",
+                                        "topicId": 23,
+                                        "endPoint": "156.10.1.23:10010",
+                                        "nodeId": 0,
+                                        "nodeIndex": 0,
+                                        "isRMB": 0,
+                                        "net": {
+                                            "name": "",
+                                            "adapter": "",
+                                            "ipv4": "",
+                                            "ipv6": ""
+                                        }
+                                    }
+                                ],
+                                "pub_extern": {
+                                    "biz_topic": [
+                                        {
+                                            "topicName": "risk",
+                                            "pubCluster": "MTP.RC.set1",
+                                            "pubSetId": 5,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "",
+                                            "subSetId": 0,
+                                            "subSetIndex": 0,
+                                            "listenPort": "",
+                                            "topicId": 19,
+                                            "endPoint": "156.10.1.19:10010",
+                                            "nodeId": 7,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a2",
+                                                "ipv4": "10.112.3.1",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "risk",
+                                            "pubCluster": "MTP.RC.set1",
+                                            "pubSetId": 5,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "",
+                                            "subSetId": 0,
+                                            "subSetIndex": 0,
+                                            "listenPort": "",
+                                            "topicId": 19,
+                                            "endPoint": "156.10.1.19:10010",
+                                            "nodeId": 8,
+                                            "nodeIndex": 2,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a5",
+                                                "ipv4": "10.112.3.2",
+                                                "ipv6": ""
+                                            }
+                                        }
+                                    ],
+                                    "set_topic": null
+                                },
+                                "sub_extern": {
+                                    "biz_topic": null,
+                                    "set_topic": [
+                                        {
+                                            "topicName": "MTP.RC",
+                                            "pubCluster": "DTP.CS.set1",
+                                            "pubSetId": 1,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "MTP.RC.set1",
+                                            "subSetId": 5,
+                                            "subSetIndex": 1,
+                                            "listenPort": "",
+                                            "topicId": 5,
+                                            "endPoint": "156.10.1.5:10010",
+                                            "nodeId": 7,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a2",
+                                                "ipv4": "10.112.3.1",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "MTP.RC",
+                                            "pubCluster": "DTP.CS.set1",
+                                            "pubSetId": 1,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "MTP.RC.set1",
+                                            "subSetId": 5,
+                                            "subSetIndex": 1,
+                                            "listenPort": "",
+                                            "topicId": 5,
+                                            "endPoint": "156.10.1.5:10010",
+                                            "nodeId": 8,
+                                            "nodeIndex": 2,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a5",
+                                                "ipv4": "10.112.3.2",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "MTP.RC",
+                                            "pubCluster": "DTP.CS.set2",
+                                            "pubSetId": 2,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "MTP.RC.set1",
+                                            "subSetId": 5,
+                                            "subSetIndex": 1,
+                                            "listenPort": "",
+                                            "topicId": 7,
+                                            "endPoint": "156.10.1.7:10010",
+                                            "nodeId": 7,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a2",
+                                                "ipv4": "10.112.3.1",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "MTP.RC",
+                                            "pubCluster": "DTP.CS.set2",
+                                            "pubSetId": 2,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "MTP.RC.set1",
+                                            "subSetId": 5,
+                                            "subSetIndex": 1,
+                                            "listenPort": "",
+                                            "topicId": 7,
+                                            "endPoint": "156.10.1.7:10010",
+                                            "nodeId": 8,
+                                            "nodeIndex": 2,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a5",
+                                                "ipv4": "10.112.3.2",
+                                                "ipv6": ""
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "set_name": "set2",
+                            "set_id": 6,
+                            "broad_info": {
+                                "inner": [
+                                    {
+                                        "topicName": "follow",
+                                        "pubCluster": "MTP.RC.set2",
+                                        "pubSetId": 6,
+                                        "pubSetIndex": 2,
+                                        "subCluster": "",
+                                        "subSetId": 0,
+                                        "subSetIndex": 0,
+                                        "listenPort": "2011",
+                                        "topicId": 24,
+                                        "endPoint": "156.10.1.24:10010",
+                                        "nodeId": 9,
+                                        "nodeIndex": 1,
+                                        "isRMB": 0,
+                                        "net": {
+                                            "name": "intranet",
+                                            "adapter": "a7",
+                                            "ipv4": "197.3.2.3",
+                                            "ipv6": ""
+                                        }
+                                    },
+                                    {
+                                        "topicName": "follow",
+                                        "pubCluster": "MTP.RC.set2",
+                                        "pubSetId": 6,
+                                        "pubSetIndex": 2,
+                                        "subCluster": "",
+                                        "subSetId": 0,
+                                        "subSetIndex": 0,
+                                        "listenPort": "2011",
+                                        "topicId": 25,
+                                        "endPoint": "156.10.1.25:10010",
+                                        "nodeId": 10,
+                                        "nodeIndex": 2,
+                                        "isRMB": 0,
+                                        "net": {
+                                            "name": "intranet",
+                                            "adapter": "a10",
+                                            "ipv4": "197.3.2.4",
+                                            "ipv6": ""
+                                        }
+                                    },
+                                    {
+                                        "topicName": "main",
+                                        "pubCluster": "MTP.RC.set2",
+                                        "pubSetId": 6,
+                                        "pubSetIndex": 2,
+                                        "subCluster": "",
+                                        "subSetId": 0,
+                                        "subSetIndex": 0,
+                                        "listenPort": "",
+                                        "topicId": 26,
+                                        "endPoint": "156.10.1.26:10010",
+                                        "nodeId": 0,
+                                        "nodeIndex": 0,
+                                        "isRMB": 0,
+                                        "net": {
+                                            "name": "",
+                                            "adapter": "",
+                                            "ipv4": "",
+                                            "ipv6": ""
+                                        }
+                                    }
+                                ],
+                                "pub_extern": {
+                                    "biz_topic": [
+                                        {
+                                            "topicName": "risk",
+                                            "pubCluster": "MTP.RC.set2",
+                                            "pubSetId": 6,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "",
+                                            "subSetId": 0,
+                                            "subSetIndex": 0,
+                                            "listenPort": "",
+                                            "topicId": 20,
+                                            "endPoint": "156.10.1.20:10010",
+                                            "nodeId": 9,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a8",
+                                                "ipv4": "10.112.3.3",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "risk",
+                                            "pubCluster": "MTP.RC.set2",
+                                            "pubSetId": 6,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "",
+                                            "subSetId": 0,
+                                            "subSetIndex": 0,
+                                            "listenPort": "",
+                                            "topicId": 20,
+                                            "endPoint": "156.10.1.20:10010",
+                                            "nodeId": 10,
+                                            "nodeIndex": 2,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a11",
+                                                "ipv4": "10.112.3.4",
+                                                "ipv6": ""
+                                            }
+                                        }
+                                    ],
+                                    "set_topic": null
+                                },
+                                "sub_extern": {
+                                    "biz_topic": null,
+                                    "set_topic": [
+                                        {
+                                            "topicName": "MTP.RC",
+                                            "pubCluster": "DTP.CS.set1",
+                                            "pubSetId": 1,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "MTP.RC.set2",
+                                            "subSetId": 6,
+                                            "subSetIndex": 2,
+                                            "listenPort": "",
+                                            "topicId": 6,
+                                            "endPoint": "156.10.1.6:10010",
+                                            "nodeId": 9,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a8",
+                                                "ipv4": "10.112.3.3",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "MTP.RC",
+                                            "pubCluster": "DTP.CS.set1",
+                                            "pubSetId": 1,
+                                            "pubSetIndex": 1,
+                                            "subCluster": "MTP.RC.set2",
+                                            "subSetId": 6,
+                                            "subSetIndex": 2,
+                                            "listenPort": "",
+                                            "topicId": 6,
+                                            "endPoint": "156.10.1.6:10010",
+                                            "nodeId": 10,
+                                            "nodeIndex": 2,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a11",
+                                                "ipv4": "10.112.3.4",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "MTP.RC",
+                                            "pubCluster": "DTP.CS.set2",
+                                            "pubSetId": 2,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "MTP.RC.set2",
+                                            "subSetId": 6,
+                                            "subSetIndex": 2,
+                                            "listenPort": "",
+                                            "topicId": 8,
+                                            "endPoint": "156.10.1.8:10010",
+                                            "nodeId": 9,
+                                            "nodeIndex": 1,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a8",
+                                                "ipv4": "10.112.3.3",
+                                                "ipv6": ""
+                                            }
+                                        },
+                                        {
+                                            "topicName": "MTP.RC",
+                                            "pubCluster": "DTP.CS.set2",
+                                            "pubSetId": 2,
+                                            "pubSetIndex": 2,
+                                            "subCluster": "MTP.RC.set2",
+                                            "subSetId": 6,
+                                            "subSetIndex": 2,
+                                            "listenPort": "",
+                                            "topicId": 8,
+                                            "endPoint": "156.10.1.8:10010",
+                                            "nodeId": 10,
+                                            "nodeIndex": 2,
+                                            "isRMB": 1,
+                                            "net": {
+                                                "name": "extranet",
+                                                "adapter": "a11",
+                                                "ipv4": "10.112.3.4",
+                                                "ipv6": ""
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

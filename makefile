@@ -1,4 +1,4 @@
-VERSION="v3.0.0"
+VERSION="v3.1.0"
 GO_VERSION=`go version`
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 GIT_COMMIT=`git rev-parse HEAD`
@@ -23,5 +23,5 @@ packageAndSent:
 	cp -r cmd/server/config configcenter/server
 	go build -o configcenter/client/proxctl -ldflags ${LDFLAGS} -a  cmd/client/main.go
 	go build -o configcenter/server/proxima -ldflags ${LDFLAGS} -a  cmd/server/main.go
-	tar -zcf configcenter-3.0.0-rhel7.9-x86_64.tar.gz configcenter
+	tar -zcf configcenter-3.0.0-rhel8.3-x86_64.tar.gz configcenter
 	rm -rf configcenter

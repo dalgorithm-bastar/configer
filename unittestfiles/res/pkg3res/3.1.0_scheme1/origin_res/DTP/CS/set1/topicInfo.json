@@ -1,0 +1,139 @@
+{
+    "inner": [
+        {
+            "topicName": "follow",
+            "pubCluster": "DTP.CS.set1",
+            "pubSetId": 1,
+            "pubSetIndex": 1,
+            "subCluster": "",
+            "subSetId": 0,
+            "subSetIndex": 0,
+            "listenPort": "2010",
+            "topicId": 9,
+            "endPoint": "156.10.1.9:10010",
+            "nodeId": 1,
+            "nodeIndex": 1,
+            "isRMB": 0,
+            "net": {
+                "name": "intranet",
+                "adapter": "a1",
+                "ipv4": "197.3.2.1",
+                "ipv6": ""
+            }
+        },
+        {
+            "topicName": "main",
+            "pubCluster": "DTP.CS.set1",
+            "pubSetId": 1,
+            "pubSetIndex": 1,
+            "subCluster": "",
+            "subSetId": 0,
+            "subSetIndex": 0,
+            "listenPort": "",
+            "topicId": 10,
+            "endPoint": "156.10.1.10:10010",
+            "nodeId": 0,
+            "nodeIndex": 0,
+            "isRMB": 0,
+            "net": {
+                "name": "",
+                "adapter": "",
+                "ipv4": "",
+                "ipv6": ""
+            }
+        }
+    ],
+    "pub_extern": {
+        "biz_topic": null,
+        "set_topic": [
+            {
+                "topicName": "DTP.MC",
+                "pubCluster": "DTP.CS.set1",
+                "pubSetId": 1,
+                "pubSetIndex": 1,
+                "subCluster": "DTP.MC.set1",
+                "subSetId": 3,
+                "subSetIndex": 1,
+                "listenPort": "",
+                "topicId": 1,
+                "endPoint": "156.10.1.1:10010",
+                "nodeId": 1,
+                "nodeIndex": 1,
+                "isRMB": 1,
+                "net": {
+                    "name": "extranet",
+                    "adapter": "a2",
+                    "ipv4": "10.112.3.1",
+                    "ipv6": ""
+                }
+            },
+            {
+                "topicName": "DTP.MC",
+                "pubCluster": "DTP.CS.set1",
+                "pubSetId": 1,
+                "pubSetIndex": 1,
+                "subCluster": "DTP.MC.set2",
+                "subSetId": 4,
+                "subSetIndex": 2,
+                "listenPort": "",
+                "topicId": 2,
+                "endPoint": "156.10.1.2:10010",
+                "nodeId": 1,
+                "nodeIndex": 1,
+                "isRMB": 1,
+                "net": {
+                    "name": "extranet",
+                    "adapter": "a2",
+                    "ipv4": "10.112.3.1",
+                    "ipv6": ""
+                }
+            },
+            {
+                "topicName": "MTP.RC",
+                "pubCluster": "DTP.CS.set1",
+                "pubSetId": 1,
+                "pubSetIndex": 1,
+                "subCluster": "MTP.RC.set1",
+                "subSetId": 5,
+                "subSetIndex": 1,
+                "listenPort": "",
+                "topicId": 5,
+                "endPoint": "156.10.1.5:10010",
+                "nodeId": 1,
+                "nodeIndex": 1,
+                "isRMB": 1,
+                "net": {
+                    "name": "extranet",
+                    "adapter": "a2",
+                    "ipv4": "10.112.3.1",
+                    "ipv6": ""
+                }
+            },
+            {
+                "topicName": "MTP.RC",
+                "pubCluster": "DTP.CS.set1",
+                "pubSetId": 1,
+                "pubSetIndex": 1,
+                "subCluster": "MTP.RC.set2",
+                "subSetId": 6,
+                "subSetIndex": 2,
+                "listenPort": "",
+                "topicId": 6,
+                "endPoint": "156.10.1.6:10010",
+                "nodeId": 1,
+                "nodeIndex": 1,
+                "isRMB": 1,
+                "net": {
+                    "name": "extranet",
+                    "adapter": "a2",
+                    "ipv4": "10.112.3.1",
+                    "ipv6": ""
+                }
+            }
+        ]
+    },
+    "sub_extern": {
+        "biz_topic": null,
+        "set_topic": null
+    }
+}
