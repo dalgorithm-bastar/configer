@@ -1,24 +1,10 @@
-/*
-Copyright © 2021 NAME HERE <EMAIL ADDRESS>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
 package cmd
 
 import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -38,6 +24,8 @@ import (
 	"google.golang.org/grpc"
 	"gopkg.in/yaml.v3"
 )
+
+const _separator = string(os.PathSeparator)
 
 var mode string
 
@@ -85,10 +73,12 @@ func Get(cmd *cobra.Command, args []string) {
 			//校验环境号是否合法
 			envNumFormat, err := regexp.Compile(service.EnvNumString)
 			if err != nil {
-				panic(err)
+				fmt.Println(err)
+				return
 			}
 			if !envNumFormat.MatchString(object.Env) {
-				panic(fmt.Sprintf("illegal envNum of %s, please input num of 2 bits like 00 or 01 .etc", object.Env))
+				fmt.Printf("illegal envNum of %s, please input num of 2 bits like 00 or 01 .etc", object.Env)
+				return
 			}
 			mask := syscall.Umask(0)
 			defer syscall.Umask(mask)
@@ -109,18 +99,21 @@ func Get(cmd *cobra.Command, args []string) {
 				return
 			}
 			//读基础设施文件
-			infraPath := filepath.Dir(object.PathIn) + "/" + repository.Infrastructure
+			infraPath := filepath.Dir(object.PathIn) + _separator + repository.Infrastructure
 			infraData, err := ioutil.ReadFile(infraPath)
 			if err != nil {
-				panic(err)
+				fmt.Println(err)
+				return
 			}
 			err = repository.NewStorage(context.Background(), repository.DirType, object.PathIn)
 			if err != nil {
-				panic(err)
+				fmt.Println(err)
+				return
 			}
 			rawData, err := repository.Src.GetbyPrefix(filepath.Base(object.PathIn) + "/" + object.Scheme)
 			if err != nil {
-				panic(err)
+				fmt.Println(err)
+				return
 			}
 			//校验配置包目录结构
 			err = checkInputPackage(rawData)
@@ -132,7 +125,8 @@ func Get(cmd *cobra.Command, args []string) {
 			portSlice := strings.Split(object.PortRange, ",")
 			configData, err := generation.Generate(infraData, rawData, object.Env, IpSlice, portSlice)
 			if err != nil {
-				panic(err)
+				fmt.Println(err)
+				return
 			}
 			err = WriteFilesToLocal(configData, permStruct, filepath.Base(object.PathIn)+"/"+object.Scheme)
 			if err != nil {
@@ -151,7 +145,8 @@ func Get(cmd *cobra.Command, args []string) {
 		//读取grpc配置信息
 		err := GetGrpcClient()
 		if err != nil {
-			panic(err)
+			fmt.Println(err)
+			return
 		}
 		//新建grpc客户端
 		conn, err := grpc.Dial(GrpcInfo.Socket, grpc.WithInsecure())
@@ -167,7 +162,11 @@ func Get(cmd *cobra.Command, args []string) {
 				UserName: object.UserName,
 				Target:   object.Target,
 			}
-			resp := GetResp(configReq, conn)
+			resp, err := GetResp(configReq, conn)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
 			fmt.Printf("%+v", &resp.VersionList)
 		case service.TargetRaw:
 			if object.Version == "" {
@@ -182,10 +181,15 @@ func Get(cmd *cobra.Command, args []string) {
 				Platform: object.Platform,
 				NodeType: object.NodeType,
 			}
-			resp := GetResp(configReq, conn)
+			resp, err := GetResp(configReq, conn)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
 			dataMap, err := util.DecompressFromStream(resp.File.FileName, resp.File.FileData)
 			if err != nil {
-				panic(err)
+				fmt.Println(err)
+				return
 			}
 			if _, ok := dataMap[object.Version+"/"+repository.Perms]; !ok {
 				fmt.Println("err: get no permission file from remote")
@@ -207,10 +211,15 @@ func Get(cmd *cobra.Command, args []string) {
 				Target:   object.Target,
 				Version:  object.UserName,
 			}
-			resp := GetResp(configReq, conn)
+			resp, err := GetResp(configReq, conn)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
 			dataMap, err := util.DecompressFromStream(resp.File.FileName, resp.File.FileData)
 			if err != nil {
-				panic(err)
+				fmt.Println(err)
+				return
 			}
 			if _, ok := dataMap[object.UserName+"/"+repository.Perms]; !ok {
 				fmt.Println("err: get no permission file from remote")
@@ -231,10 +240,15 @@ func Get(cmd *cobra.Command, args []string) {
 				UserName: object.UserName,
 				Target:   object.Target,
 			}
-			resp := GetResp(configReq, conn)
+			resp, err := GetResp(configReq, conn)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
 			dataMap, err := util.DecompressFromStream(resp.File.FileName, resp.File.FileData)
 			if err != nil {
-				panic(err)
+				fmt.Println(err)
+				return
 			}
 			err = WriteFilesToLocal(dataMap, generation.PermFile{}, "")
 			if err != nil {
@@ -253,10 +267,15 @@ func Get(cmd *cobra.Command, args []string) {
 					TopicPort: strings.Split(object.PortRange, ","),
 				},
 			}
-			resp := GetResp(configReq, conn)
+			resp, err := GetResp(configReq, conn)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
 			dataMap, err := util.DecompressFromStream(resp.File.FileName, resp.File.FileData)
 			if err != nil {
-				panic(err)
+				fmt.Println(err)
+				return
 			}
 			if _, ok := dataMap[object.Version+"/"+repository.Perms]; !ok {
 				fmt.Printf("err: get no permission file from remote, file path:%s", object.Version+"/"+repository.Perms)
@@ -277,16 +296,16 @@ func Get(cmd *cobra.Command, args []string) {
 	fmt.Printf("get %s success", object.Target)
 }
 
-func GetResp(req pb.CfgReq, conn *grpc.ClientConn) *pb.CfgResp {
+func GetResp(req pb.CfgReq, conn *grpc.ClientConn) (*pb.CfgResp, error) {
 	client := pb.NewConfigCenterClient(conn)
 	resp, err := client.GET(context.Background(), &req)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	if resp.Status != "ok" {
-		panic(resp.Status)
+		return nil, errors.New(resp.Status)
 	}
-	return resp
+	return resp, nil
 }
 
 // WriteFilesToLocal 根据权限要求写入本地,versionScheme指定生成的方案
@@ -297,14 +316,18 @@ func WriteFilesToLocal(fileMap map[string][]byte, permStruct generation.PermFile
 	//清空同一版本同一方案下的文件夹
 	for path, _ := range fileMap {
 		pathSli := strings.Split(path, "/")
-		if len(pathSli) > 1 {
-			pathSli = pathSli[:len(pathSli)-1]
-			err := os.RemoveAll(object.PathOut + "/" + pathSli[0])
-			if err != nil {
-				return fmt.Errorf("rmv old dir err: %s,path:%s", err.Error(), path)
+		if len(pathSli) <= 1 {
+			if path == repository.Infrastructure {
+				break
 			}
-			break
+			return fmt.Errorf("unexpected filepath: %s", path)
 		}
+		pathSli = pathSli[:len(pathSli)-1]
+		err := os.RemoveAll(object.PathOut + _separator + pathSli[0])
+		if err != nil {
+			return fmt.Errorf("rmv old dir err: %s,path:%s", err.Error(), path)
+		}
+		break
 	}
 	//写文件
 	//先写有权限要求的文件
@@ -330,23 +353,26 @@ func WriteFilesToLocal(fileMap map[string][]byte, permStruct generation.PermFile
 					dirPath := util.Join("/", outPathSli[:6]...)
 					dirPath = dirPath + "/" + util.Join("/", inputPathSli[5:]...)
 					//检测目标文件夹是否已存在
-					_, err := os.Stat(object.PathOut + "/" + dirPath)
+					_, err := os.Stat(filepath.FromSlash(object.PathOut + "/" + dirPath))
 					if err != nil {
 						if !os.IsNotExist(err) {
-							return fmt.Errorf("get an err when checking dirPath:%s, err: %v", object.PathOut+"/"+dirPath, err)
+							return fmt.Errorf("get an err when checking dirPath:%s, err: %v",
+								filepath.FromSlash(object.PathOut+"/"+dirPath), err)
 						}
 						//文件夹不存在
 						permNum, _ := strconv.ParseInt(permUnit.Perm, 8, 0)
-						err := os.MkdirAll(object.PathOut+"/"+dirPath, os.FileMode(permNum))
+						err := os.MkdirAll(filepath.FromSlash(object.PathOut+"/"+dirPath), os.FileMode(permNum))
 						if err != nil {
-							return fmt.Errorf("make dir err: %s, dirPath: %s", err.Error(), object.PathOut+"/"+dirPath)
+							return fmt.Errorf("make dir err: %s, dirPath: %s", err.Error(),
+								filepath.FromSlash(object.PathOut+"/"+dirPath))
 						}
 					} else {
 						//文件夹存在，修改权限
 						permNum, _ := strconv.ParseInt(permUnit.Perm, 8, 0)
-						err := os.Chmod(object.PathOut+"/"+dirPath, os.FileMode(permNum))
+						err := os.Chmod(filepath.FromSlash(object.PathOut+"/"+dirPath), os.FileMode(permNum))
 						if err != nil {
-							return fmt.Errorf("chmod dir err: %s, dirPath: %s", err.Error(), object.PathOut+"/"+dirPath)
+							return fmt.Errorf("chmod dir err: %s, dirPath: %s", err.Error(),
+								filepath.FromSlash(object.PathOut+"/"+dirPath))
 						}
 					}
 				}
@@ -365,14 +391,16 @@ func WriteFilesToLocal(fileMap map[string][]byte, permStruct generation.PermFile
 				}
 				//平台名与节点类型均一致，且从template目录开始后缀名一致，判定为目标文件
 				if inputPathSli[2] == outPathSli[2] && inputPathSli[3] == outPathSli[3] && inputPathSli[5] == outPathSli[6] {
-					err := os.MkdirAll(filepath.Dir(object.PathOut+"/"+outPath), os.FileMode(0755))
+					err := os.MkdirAll(filepath.Dir(filepath.FromSlash(object.PathOut+"/"+outPath)), os.FileMode(0755))
 					if err != nil {
-						return fmt.Errorf("make dir err: %s, dirPath: %s", err.Error(), filepath.Dir(object.PathOut+"/"+outPath))
+						return fmt.Errorf("make dir err: %s, dirPath: %s", err.Error(),
+							filepath.Dir(filepath.FromSlash(object.PathOut+"/"+outPath)))
 					}
 					permNum, _ := strconv.ParseInt(permUnit.Perm, 8, 0)
-					f, err := os.OpenFile(object.PathOut+"/"+outPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.FileMode(permNum))
+					f, err := os.OpenFile(filepath.FromSlash(object.PathOut+"/"+outPath),
+						os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.FileMode(permNum))
 					if err != nil {
-						return fmt.Errorf("creating file err:%s, filepath:%s", err.Error(), object.PathOut+"/"+outPath)
+						return fmt.Errorf("creating file err:%s, filepath:%s", err.Error(), filepath.FromSlash(object.PathOut+"/"+outPath))
 					}
 					n, err := f.Write(data)
 					if err == nil && n < len(data) {
@@ -389,12 +417,12 @@ func WriteFilesToLocal(fileMap map[string][]byte, permStruct generation.PermFile
 		if len(pathSli) > 1 {
 			pathSli = pathSli[:len(pathSli)-1]
 			dirPath := strings.Join(pathSli, "/")
-			err := os.MkdirAll(object.PathOut+"/"+dirPath, 0755)
+			err := os.MkdirAll(filepath.FromSlash(object.PathOut+"/"+dirPath), 0755)
 			if err != nil {
 				return fmt.Errorf("make dir err: %s, current dir: %s", err.Error(), object.PathOut+"/"+dirPath)
 			}
 		}
-		filePath := object.PathOut + "/" + path
+		filePath := filepath.FromSlash(object.PathOut + "/" + path)
 		f, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.FileMode(0644))
 		if err != nil {
 			return fmt.Errorf("creating file err:%s, filepath:%s", err.Error(), filePath)
@@ -417,7 +445,7 @@ func WriteFilesToLocal(fileMap map[string][]byte, permStruct generation.PermFile
 
 func generatePermFile() ([]byte, error) {
 	permStruct := generation.PermFile{}
-	pathSli := strings.Split(object.PathIn, "/")
+	pathSli := strings.Split(object.PathIn, _separator)
 	lenVersion := len(pathSli[len(pathSli)-1])
 	idx := len(object.PathIn) - lenVersion + 1
 	err := filepath.Walk(object.PathIn, func(path string, info os.FileInfo, err error) error {
@@ -425,7 +453,7 @@ func generatePermFile() ([]byte, error) {
 			fmt.Printf("prevent panic by handling failure accessing a path %q: %v\n", path, err)
 			return err
 		}
-		if strings.Contains(path, "/template/") {
+		if strings.Contains(path, _separator+_templateFlag+_separator) {
 			pathKey := path[idx-1:]
 			fileInfo, statErr := os.Stat(path)
 			if statErr != nil {
@@ -438,7 +466,7 @@ func generatePermFile() ([]byte, error) {
 			}
 			//fmt.Println(fileInfo.Mode())
 			permStruct.FilePerms = append(permStruct.FilePerms, generation.PermUnit{
-				Path:  pathKey,
+				Path:  filepath.ToSlash(pathKey),
 				IsDir: isDir,
 				Perm:  permStr,
 			})

@@ -26,9 +26,9 @@ learn more about that on command "post"`,
 }
 
 const (
-	DEPLOYMENTFLAG = "deployment"
-	SERVICEFLG     = "service"
-	TEMPLATEFLG    = "template"
+	_deploymentFlag = "deployment"
+	_serviceFlag    = "service"
+	_templateFlag   = "template"
 )
 
 func init() {
@@ -62,7 +62,7 @@ func Put(cmd *cobra.Command, args []string) {
 		fmt.Println(err)
 		return
 	}
-	pathSli := strings.Split(object.PathIn, "/")
+	pathSli := strings.Split(object.PathIn, _separator)
 	//插入整个版本对应的权限信息文件
 	fileMap[pathSli[len(pathSli)-1]+"/"+repository.Perms] = permData
 	lenVersion := len(pathSli[len(pathSli)-1])
@@ -78,7 +78,8 @@ func Put(cmd *cobra.Command, args []string) {
 			if readErr != nil {
 				return readErr
 			}
-			fileMap[pathKey] = data
+			//转化为标准路径分隔符
+			fileMap[filepath.ToSlash(pathKey)] = data
 		}
 		return err
 	})
@@ -88,7 +89,8 @@ func Put(cmd *cobra.Command, args []string) {
 	}
 	compressedFileData, err := util.CompressToStream("cfgpkg.tar.gz", fileMap)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return
 	}
 	err = checkInputPackage(fileMap)
 	if err != nil {
@@ -99,7 +101,8 @@ func Put(cmd *cobra.Command, args []string) {
 	//读取grpc配置信息
 	err = GetGrpcClient()
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return
 	}
 	//新建grpc客户端
 	conn, err := grpc.Dial(GrpcInfo.Socket, grpc.WithInsecure())
@@ -117,14 +120,17 @@ func Put(cmd *cobra.Command, args []string) {
 		},
 	})
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return
 	}
 	if resp.Status != "ok" {
-		panic(resp.Status)
+		fmt.Println("resp err: " + resp.Status)
+		return
 	}
 	fmt.Println(fmt.Sprintf("Put cfgpkg to remote succeed"))
 }
 
+// 进行标准比较，无需考虑系统路径分隔符
 func checkInputPackage(fileMap map[string][]byte) error {
 	for filePath, _ := range fileMap {
 		if strings.Contains(filePath, repository.Deployment) {
@@ -132,20 +138,20 @@ func checkInputPackage(fileMap map[string][]byte) error {
 			if len(pathSli) != 7 {
 				return fmt.Errorf("err deployment file path of:%s, please checkout input path or pkg format", filePath)
 			}
-			if pathSli[4] != DEPLOYMENTFLAG {
-				return fmt.Errorf("err deployment file path of:%s, differ from standard path with flag: %s", filePath, DEPLOYMENTFLAG)
+			if pathSli[4] != _deploymentFlag {
+				return fmt.Errorf("err deployment file path of:%s, differ from standard path with flag: %s", filePath, _deploymentFlag)
 			}
 		} else if strings.Contains(filePath, repository.Service) {
 			pathSli := strings.SplitN(filePath, "/", 6)
 			if len(pathSli) < 6 {
 				return fmt.Errorf("err service file path of:%s, please checkout input path or pkg format", filePath)
 			}
-			if pathSli[4] != SERVICEFLG {
-				return fmt.Errorf("err service file path of:%s, differ from standard path with flag: %s", filePath, SERVICEFLG)
+			if pathSli[4] != _serviceFlag {
+				return fmt.Errorf("err service file path of:%s, differ from standard path with flag: %s", filePath, _serviceFlag)
 			}
 		} else if strings.Contains(filePath, repository.Template) {
 			pathSli := strings.SplitN(filePath, "/", 6)
-			if len(pathSli) < 5 || pathSli[4] != TEMPLATEFLG {
+			if len(pathSli) < 5 || pathSli[4] != _templateFlag {
 				return fmt.Errorf("err template file path of:%s, please checkout input path or pkg format", filePath)
 			}
 		} else {

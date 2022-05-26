@@ -13,11 +13,11 @@ import (
 )
 
 const (
-	HUARUIDIR = "huarui_files"
-	HOSTCFG   = "host.cfg"
-	NODECFG   = "node.cfg"
-	ROUTECFG  = "route.cfg"
-	BIZNET    = "biznet"
+	_huaruiDir = "huarui_files"
+	_hostCfg   = "host.cfg"
+	_nodeCfg   = "node.cfg"
+	_routeCfg  = "route.cfg"
+	_bizNet    = "biznet"
 )
 
 func huaRuiMain(infrastructure []byte, deployment []ChartDeployMain, topicList []byte) (map[string][]byte, error) {
@@ -28,11 +28,11 @@ func huaRuiMain(infrastructure []byte, deployment []ChartDeployMain, topicList [
 		newLine = "\r\n"
 	}
 	hostCfgData := huaRuiGetHostCfg(infrastructure, newLine)
-	resMap[HUARUIDIR+"/"+HOSTCFG] = hostCfgData
+	resMap[_huaruiDir+"/"+_hostCfg] = hostCfgData
 	nodeCfgData := huaRuiGetNodeCfg(deployment, newLine)
-	resMap[HUARUIDIR+"/"+NODECFG] = nodeCfgData
+	resMap[_huaruiDir+"/"+_nodeCfg] = nodeCfgData
 	routeCfgData := huaRuiGetRouteCfg(topicList, newLine)
-	resMap[HUARUIDIR+"/"+ROUTECFG] = routeCfgData
+	resMap[_huaruiDir+"/"+_routeCfg] = routeCfgData
 	return resMap, nil
 }
 
@@ -42,7 +42,7 @@ func huaRuiGetHostCfg(infrastructure []byte, newLine string) []byte {
 	_ = yaml.Unmarshal(infrastructure, &infraStruct)
 	for _, host := range infraStruct.Host {
 		for i, _ := range host.Network {
-			if host.Network[i].Name == BIZNET {
+			if host.Network[i].Name == _bizNet {
 				if resData == "" {
 					resData = host.HostName + "|" + host.Network[i].Ipv4 + "|" + " "
 				} else {

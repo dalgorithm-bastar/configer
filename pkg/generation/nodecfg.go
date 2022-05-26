@@ -39,7 +39,7 @@ func FillTemplates(dplyStructList []ChartDeployMain, rawData map[string][]byte, 
 							NodeIndex: nodeIns.NodeIndex,
 						}
 						sli[4] = util.Join("_", nodeIns.HostName, strconv.Itoa(int(nodeIns.NodeId)))
-						resPath := util.Join("/", sli[0]+"_"+sli[1], ORIGIN, sli[2], sli[3], setIns.SetName, sli[4], sli[5])
+						resPath := util.Join("/", sli[0]+"_"+sli[1], _origin, sli[2], sli[3], setIns.SetName, sli[4], sli[5])
 						if dirPrePath == "" {
 							dirPrePath = sli[0] + "_" + sli[1]
 						}

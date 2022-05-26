@@ -13,9 +13,9 @@ import (
 )
 
 const (
-	DEPLOYLIST = "deployList.yaml"
-	TOPICLIST  = "topicList.json"
-	ORIGIN     = "origin_res"
+	_deployList = "deployList.yaml"
+	_topicList  = "topicList.json"
+	_origin     = "origin_res"
 )
 
 //RawFile 用于定序生成
@@ -72,7 +72,7 @@ func Generate(infrastructure []byte, rawData map[string][]byte, envNum string, i
 		return nil, err
 	}
 	//处理总表，补充resMap
-	err = FinishResMap(resMap, dplyStructList, topicInfoList, versionHead+"/"+ORIGIN)
+	err = FinishResMap(resMap, dplyStructList, topicInfoList, versionHead+"/"+_origin)
 	if err != nil {
 		return nil, err
 	}
@@ -188,18 +188,18 @@ func FinishResMap(resMap map[string][]byte, dplyStructList []ChartDeployMain, to
 	if err != nil {
 		return errors.New(fmt.Sprintf("yaml marshal maindpfile err: %s", err.Error()))
 	}
-	resMap[prePath+"/"+DEPLOYLIST] = mainDpFile
+	resMap[prePath+"/"+_deployList] = mainDpFile
 	mainTpcFile, err := json.Marshal(chartTpc)
 	if err != nil {
 		return errors.New(fmt.Sprintf("json marshal maintpcfile err: %s", err.Error()))
 	}
-	resMap[prePath+"/"+TOPICLIST] = mainTpcFile
+	resMap[prePath+"/"+_topicList] = mainTpcFile
 	return nil
 }
 
 func addThirdPartFiles(resMap map[string][]byte, infrastructure []byte, dplyStructList []ChartDeployMain, versionHead string) error {
 	//生成华锐所需的配置文件
-	huaRuiFileMap, err := huaRuiMain(infrastructure, dplyStructList, resMap[util.Join("/", versionHead, ORIGIN, TOPICLIST)])
+	huaRuiFileMap, err := huaRuiMain(infrastructure, dplyStructList, resMap[util.Join("/", versionHead, _origin, _topicList)])
 	if err != nil {
 		return err
 	}
