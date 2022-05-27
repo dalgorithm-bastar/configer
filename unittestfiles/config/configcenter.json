@@ -5,7 +5,7 @@
     ],
     "username": "root",
     "password": "chbw0011",
-    "operationtimeout": 3
+    "operationtimeout": 1
   },
   "grpc": {
     "socket": "127.0.0.1:2333",

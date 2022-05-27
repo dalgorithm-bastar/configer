@@ -5,7 +5,10 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/configcenter/internal/mock"
 	"github.com/configcenter/pkg/pb"
+	"github.com/configcenter/pkg/repository"
+	"github.com/golang/mock/gomock"
 )
 
 func TestDeleteInManager(t *testing.T) {
@@ -20,8 +23,26 @@ func TestDeleteInManager(t *testing.T) {
 		want1 []*pb.VersionInfo
 		want2 *pb.AnyFile
 	}{
-		// TODO: Add test cases.
+		{
+			name: "ok",
+			args: args{
+				ctx: context.TODO(),
+				req: &pb.CfgReq{},
+			},
+			want:  nil,
+			want1: nil,
+			want2: nil,
+		},
 	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockSrc := mock.NewMockStorage(ctrl)
+	repository.Src = mockSrc
+	gomock.InOrder(
+		mockSrc.EXPECT().DeletebyPrefix(gomock.Any()).Return(nil),
+	)
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, got1, got2 := DeleteInManager(tt.args.ctx, tt.args.req)

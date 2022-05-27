@@ -24,8 +24,8 @@ func commit(ctxRoot context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, 
 		return errors.New("empty username of username contains point or comma, commit request deny"), nil, nil
 	}
 	if req.Target == TargetInfrastructure {
-		if req.File.FileData == nil || len(req.File.FileData) == 0 {
-			return errors.New("infrastructure.json with err content,please checkout"), nil, nil
+		if req.File == nil || req.File.FileData == nil || len(req.File.FileData) == 0 {
+			return errors.New("infrastructure.yaml with err content,please checkout"), nil, nil
 		}
 		err := repository.Src.Put(repository.Infrastructure, string(req.File.FileData))
 		if err != nil {

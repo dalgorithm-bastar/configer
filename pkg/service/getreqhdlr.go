@@ -123,7 +123,7 @@ func getVersion(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, 
 		return errors.New("no versions on remote yet"), nil, nil
 	}
 	if _, ok := fileMap[repository.Versions]; !ok {
-		errorIns := fmt.Sprintf("error happened on remote, with unexpected version date: %+v", fileMap)
+		errorIns := fmt.Sprintf("error happened on remote, with unexpected version data: %+v", fileMap)
 		log.Sugar().Errorf(errorIns)
 		return errors.New(errorIns), nil, nil
 	}

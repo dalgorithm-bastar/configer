@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -230,7 +231,42 @@ func TestWalkFromPath(t *testing.T) {
 		want    map[string][]byte
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "walk ok",
+			args: args{
+				inputPath: filepath.FromSlash("../../unittestfiles/config"),
+			},
+			wantErr: false,
+			want: map[string][]byte{
+				"config/configcenter.json": []byte(`{
+  "etcd": {
+    "endpoints": [
+      "127.0.0.1:2379"
+    ],
+    "username": "root",
+    "password": "chbw0011",
+    "operationtimeout": 1
+  },
+  "grpc": {
+    "socket": "127.0.0.1:2333",
+    "locktimeout": 30
+  },
+  "log": {
+    "logpath": "log/",
+    "recordlevel": "info",
+    "encodingtype": "normal",
+    "filename": "configcenter",
+    "maxage": 30
+  }
+}`),
+			},
+		},
+		{
+			name:    "read err",
+			args:    args{inputPath: "../../unittestfiles/config/configcenter.json"},
+			wantErr: true,
+			want:    map[string][]byte{},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

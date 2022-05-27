@@ -1,54 +1,54 @@
 package service
 
 import (
-    "context"
-    "errors"
-    "fmt"
-    "strings"
+	"context"
+	"errors"
+	"fmt"
+	"strings"
 
-    "github.com/configcenter/internal/log"
-    "github.com/configcenter/pkg/pb"
-    "github.com/configcenter/pkg/repository"
-    "github.com/configcenter/pkg/util"
+	"github.com/configcenter/internal/log"
+	"github.com/configcenter/pkg/pb"
+	"github.com/configcenter/pkg/repository"
+	"github.com/configcenter/pkg/util"
 )
 
 //put接口用于导入配置并缓存，缓存接口单独设置以便后续升级
 func put(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.AnyFile) {
-    //检查请求是否合法
-    if req.UserName == "" || req.File == nil || req.File.FileData == nil || len(req.File.FileData) == 0 {
-        return errors.New("bad request, missing username or file or filedata"), nil, nil
-    }
-    //获取文件存储路径和内容
-    fileMap, err := util.DecompressFromStream(req.File.FileName, req.File.FileData)
-    if err != nil {
-        log.Sugar().Infof("Decompressed from file err:%v, filename:%s", err, req.File.FileName)
-        return err, nil, nil
-    }
-    if fileMap == nil || len(fileMap) == 0 {
-        log.Sugar().Infof("Decompressed from file and get nil filedata, filename:%s", req.File.FileName)
-        return errors.New("get no data from filedata, please checkout file uploaded"), nil, nil
-    }
-    //检查并替换根目录
-    newMap, err := checkAndReplaceRootPath(fileMap, req.UserName)
-    //获取用户当前缓存的文件并删除，避免污染
-    oldData, err := repository.Src.GetbyPrefix(req.Version)
-    if err != nil {
-        log.Sugar().Errorf("get rawData from repository err of %v, under path %s", err, util.Join(req.Version, req.Scheme))
-        return err, nil, nil
-    }
-    var deleteSlice []string
-    if oldData != nil && len(oldData) > 0 {
-        for oldPath, _ := range oldData {
-            deleteSlice = append(deleteSlice, oldPath)
-        }
-    }
-    //直接缓存
-    err = repository.Src.AcidCommit(newMap, deleteSlice)
-    if err != nil {
-        log.Sugar().Errorf("AcidCommit err of %v when putting", err)
-        return err, nil, nil
-    }
-    return nil, nil, nil
+	//检查请求是否合法
+	if req.UserName == "" || req.File == nil || req.File.FileData == nil || len(req.File.FileData) == 0 {
+		return errors.New("bad request, missing username or file or filedata"), nil, nil
+	}
+	//获取文件存储路径和内容
+	fileMap, err := util.DecompressFromStream(req.File.FileName, req.File.FileData)
+	if err != nil {
+		log.Sugar().Infof("Decompressed from file err:%v, filename:%s", err, req.File.FileName)
+		return err, nil, nil
+	}
+	if fileMap == nil || len(fileMap) == 0 {
+		log.Sugar().Infof("Decompressed from file and get nil filedata, filename:%s", req.File.FileName)
+		return errors.New("get no data from filedata, please checkout file uploaded"), nil, nil
+	}
+	//检查并替换根目录
+	newMap, err := checkAndReplaceRootPath(fileMap, req.UserName)
+	//获取用户当前缓存的文件并删除，避免污染
+	oldData, err := repository.Src.GetbyPrefix(req.UserName)
+	if err != nil {
+		log.Sugar().Errorf("get rawData from repository err of %v, under path %s", err, util.Join(req.Version, req.Scheme))
+		return err, nil, nil
+	}
+	var deleteSlice []string
+	if oldData != nil && len(oldData) > 0 {
+		for oldPath, _ := range oldData {
+			deleteSlice = append(deleteSlice, oldPath)
+		}
+	}
+	//直接缓存
+	err = repository.Src.AcidCommit(newMap, deleteSlice)
+	if err != nil {
+		log.Sugar().Errorf("AcidCommit err of %v when putting", err)
+		return err, nil, nil
+	}
+	return nil, nil, nil
 }
 
 /*func put(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.AnyFile) {
@@ -218,20 +218,20 @@ func checkFilePath(fileMap map[string][]byte) (string, map[string][]string, map[
 }*/
 
 func checkAndReplaceRootPath(fileMap map[string][]byte, RootPath string) (map[string]string, error) {
-    oldRoot, resMap := "", make(map[string]string)
-    for path, file := range fileMap {
-        pathSli := strings.Split(path, "/")
-        if len(pathSli) < 2 {
-            return nil, errors.New(fmt.Sprintf("err filepath of:%s", path))
-        }
-        if oldRoot == "" {
-            oldRoot = pathSli[0]
-        } else if oldRoot != pathSli[0] {
-            return nil, errors.New(fmt.Sprintf("multi rootPath of filepath:%s", path))
-        }
-        pathSli[0] = RootPath
-        newPath := strings.Join(pathSli, "/")
-        resMap[newPath] = string(file)
-    }
-    return resMap, nil
+	oldRoot, resMap := "", make(map[string]string)
+	for path, file := range fileMap {
+		pathSli := strings.Split(path, "/")
+		if len(pathSli) < 2 {
+			return nil, errors.New(fmt.Sprintf("err filepath of:%s", path))
+		}
+		if oldRoot == "" {
+			oldRoot = pathSli[0]
+		} else if oldRoot != pathSli[0] {
+			return nil, errors.New(fmt.Sprintf("multi rootPath of filepath:%s", path))
+		}
+		pathSli[0] = RootPath
+		newPath := strings.Join(pathSli, "/")
+		resMap[newPath] = string(file)
+	}
+	return resMap, nil
 }
