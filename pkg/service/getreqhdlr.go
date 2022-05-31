@@ -80,6 +80,11 @@ func getConfig(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *
 	if rawData == nil || len(rawData) <= 0 {
 		return errors.New(fmt.Sprintf("no rawData on remote yet at path:%s/%s", req.Version, req.Scheme)), nil, nil
 	}
+	permFilePath := util.Join("/", req.Version, repository.Perms)
+	permFile, err := repository.Src.Get(permFilePath)
+	if err != nil || permFile == nil {
+		return fmt.Errorf("get permfile err:%v, filepath:%s", err, permFilePath), nil, nil
+	}
 	err, _, file := getInfrastructure(ctx, req)
 	if err != nil {
 		return err, nil, nil
@@ -88,6 +93,7 @@ func getConfig(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *
 	if err != nil {
 		return err, nil, nil
 	}
+	configData[permFilePath] = permFile
 	compressedData, err := util.CompressToStream("config.tar.gz", configData)
 	if err != nil {
 		return err, nil, nil
@@ -114,26 +120,21 @@ func getInfrastructure(ctx context.Context, req *pb.CfgReq) (error, []*pb.Versio
 }
 
 func getVersion(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.AnyFile) {
-	fileMap, err := repository.Src.GetbyPrefix(repository.Versions)
+	data, err := repository.Src.Get(repository.Versions)
 	if err != nil {
 		log.Sugar().Errorf("get versions from repository err of %v, under path %s", err, repository.Versions)
 		return err, nil, nil
 	}
-	if fileMap == nil || len(fileMap) <= 0 {
+	if data == nil || len(data) <= 0 {
 		return errors.New("no versions on remote yet"), nil, nil
 	}
-	if _, ok := fileMap[repository.Versions]; !ok {
-		errorIns := fmt.Sprintf("error happened on remote, with unexpected version data: %+v", fileMap)
-		log.Sugar().Errorf(errorIns)
-		return errors.New(errorIns), nil, nil
-	}
-	vSli := strings.Split(string(fileMap[repository.Versions]), ",")
+	vSli := strings.Split(string(data), ",")
 	var versions []*pb.VersionInfo
 	for i := 0; 3*i < len(vSli); i++ {
 		versions = append(versions, &pb.VersionInfo{
-			Name: vSli[i],
-			User: vSli[i+1],
-			Time: vSli[i+2],
+			Name: vSli[3*i],
+			User: vSli[3*i+1],
+			Time: vSli[3*i+2],
 		})
 	}
 	return nil, versions, nil
@@ -148,6 +149,12 @@ func getCache(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *p
 	if cache == nil || len(cache) <= 0 {
 		return errors.New(fmt.Sprintf("no cache on remote yet at path:%s", req.UserName)), nil, nil
 	}
+	permFilePath := util.Join("/", req.UserName, repository.Perms)
+	permFile, err := repository.Src.Get(permFilePath)
+	if err != nil || permFile == nil {
+		return fmt.Errorf("get permfile err:%v, filepath:%s", err, permFilePath), nil, nil
+	}
+	cache[permFilePath] = permFile
 	compressedData, err := util.CompressToStream("cache.tar.gz", cache)
 	if err != nil {
 		return err, nil, nil
@@ -167,6 +174,12 @@ func getRaw(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.
 	if rawData == nil || len(rawData) <= 0 {
 		return errors.New(fmt.Sprintf("no rawData on remote yet at path:%s", req.Version)), nil, nil
 	}
+	permFilePath := util.Join("/", req.Version, repository.Perms)
+	permFile, err := repository.Src.Get(permFilePath)
+	if err != nil || permFile == nil {
+		return fmt.Errorf("get permfile err:%v, filepath:%s", err, permFilePath), nil, nil
+	}
+	rawData[permFilePath] = permFile
 	compressedData, err := util.CompressToStream("rawdata.tar.gz", rawData)
 	if err != nil {
 		return err, nil, nil

@@ -50,7 +50,7 @@ func commit(ctxRoot context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, 
 	if err != nil {
 		return err, nil, nil
 	}
-	_, err = generation.Generate(file.FileData, rawData, req.EnvNum, req.ArgRange.TopicIp, req.ArgRange.TopicPort)
+	_, err = generation.Generate(file.FileData, rawData, "01", []string{"0.0.0.0", "255.255.255.255"}, []string{"1024", "65535"})
 	if err != nil {
 		return errors.New(fmt.Sprintf("generate cfgFile err:%s,please checkout cache under username:%s", err, req.UserName)), nil, nil
 	}
@@ -94,7 +94,7 @@ func commit(ctxRoot context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, 
 		return err, nil, nil
 	}
 	//加锁后进行操作
-	timeStamp, newVersionStr := strconv.FormatInt(time.Now().UnixMilli(), 10), ""
+	timeStamp, newVersionStr := strconv.FormatInt(time.Now().UnixNano()/1e6, 10), ""
 	if versionStr != "" {
 		newVersionStr = util.Join(",", versionStr, newVersion, req.UserName, timeStamp)
 	} else {

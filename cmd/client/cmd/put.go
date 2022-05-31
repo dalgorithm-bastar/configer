@@ -156,7 +156,7 @@ func checkInputPackage(fileMap map[string][]byte) error {
 			}
 		} else {
 			//处理剩余情况
-			if !strings.Contains(filePath, repository.Infrastructure) {
+			if !strings.Contains(filePath, repository.Infrastructure) && !strings.Contains(filePath, repository.Perms) {
 				return fmt.Errorf("a file should not be here with filepath: %s", filePath)
 			}
 		}

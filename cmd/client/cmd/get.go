@@ -51,13 +51,13 @@ func init() {
 	clusterCmd.Flags().StringVarP(&mode, "mode", "m", "", "input \"remote\" or \"local\" to choose creating from remote or local(required)")
 	clusterCmd.Flags().StringVarP(&object.IpRange, "ip", "", "", "assign IP range(required)")
 	clusterCmd.Flags().StringVarP(&object.PortRange, "port", "p", "", "assign Port range(required)")
-	//clusterCmd.MarkFlagRequired("version")
-	clusterCmd.MarkFlagRequired("env")
-	clusterCmd.MarkFlagRequired("scheme")
-	clusterCmd.MarkFlagRequired("pathout")
 	clusterCmd.MarkFlagRequired("mode")
-	clusterCmd.MarkFlagRequired("ip")
-	clusterCmd.MarkFlagRequired("port")
+	/*clusterCmd.MarkFlagRequired("version")
+	  clusterCmd.MarkFlagRequired("env")
+	  clusterCmd.MarkFlagRequired("scheme")
+	  clusterCmd.MarkFlagRequired("pathout")
+	  clusterCmd.MarkFlagRequired("ip")
+	  clusterCmd.MarkFlagRequired("port")*/
 }
 
 func Get(cmd *cobra.Command, args []string) {
@@ -70,6 +70,11 @@ func Get(cmd *cobra.Command, args []string) {
 	if mode == "local" {
 		switch object.Target {
 		case service.TargetConfig:
+			if object.Target == "" || object.Version == "" || object.Env == "" || object.PathIn == "" ||
+				object.Scheme == "" || object.PathOut == "" || object.IpRange == "" || object.PortRange == "" {
+				fmt.Println("lack of args within target,version,env,scheme,pathout,pathin,iprange,portrange")
+				return
+			}
 			//校验环境号是否合法
 			envNumFormat, err := regexp.Compile(service.EnvNumString)
 			if err != nil {
@@ -113,6 +118,11 @@ func Get(cmd *cobra.Command, args []string) {
 			rawData, err := repository.Src.GetbyPrefix(filepath.Base(object.PathIn) + "/" + object.Scheme)
 			if err != nil {
 				fmt.Println(err)
+				return
+			}
+			if rawData == nil || len(rawData) == 0 {
+				fmt.Printf("get nil rawdata from input args: %s",
+					filepath.FromSlash(filepath.Base(object.PathIn)+"/"+object.Scheme))
 				return
 			}
 			//校验配置包目录结构
@@ -200,6 +210,7 @@ func Get(cmd *cobra.Command, args []string) {
 				fmt.Println(err)
 				return
 			}
+			delete(dataMap, object.Version+"/"+repository.Perms)
 			err = WriteFilesToLocal(dataMap, permStruct, "")
 			if err != nil {
 				fmt.Println(err)
@@ -230,6 +241,7 @@ func Get(cmd *cobra.Command, args []string) {
 				fmt.Println(err)
 				return
 			}
+			delete(dataMap, object.UserName+"/"+repository.Perms)
 			err = WriteFilesToLocal(dataMap, permStruct, "")
 			if err != nil {
 				fmt.Println(err)
@@ -245,17 +257,18 @@ func Get(cmd *cobra.Command, args []string) {
 				fmt.Println(err)
 				return
 			}
-			dataMap, err := util.DecompressFromStream(resp.File.FileName, resp.File.FileData)
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
+			dataMap := map[string][]byte{resp.File.FileName: resp.File.FileData}
 			err = WriteFilesToLocal(dataMap, generation.PermFile{}, "")
 			if err != nil {
 				fmt.Println(err)
 				return
 			}
 		case service.TargetConfig:
+			if object.Target == "" || object.Version == "" || object.Env == "" || object.PathIn == "" ||
+				object.Scheme == "" || object.PathOut == "" || object.IpRange == "" || object.PortRange == "" {
+				fmt.Println("lack of args within target,version,env,scheme,pathout,pathin,iprange,portrange")
+				return
+			}
 			configReq := pb.CfgReq{
 				UserName: object.UserName,
 				Target:   object.Target,
@@ -286,6 +299,7 @@ func Get(cmd *cobra.Command, args []string) {
 				fmt.Println(err)
 				return
 			}
+			delete(dataMap, object.Version+"/"+repository.Perms)
 			err = WriteFilesToLocal(dataMap, permStruct, object.Version+"/"+object.Scheme)
 			if err != nil {
 				fmt.Println(err)
