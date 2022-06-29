@@ -65,10 +65,10 @@ func (s *Stream) GetSourceDataorOperator() interface{} {
     return source
 }
 
-func (s *Stream) AcidCommit(putMap map[string]string, deleteMap []string) error {
-    return errors.New("cannot AcidCommit in stream file")
+func (s *Stream) AtomicCommit(putMap map[string]string, deleteMap []string) error {
+    return errors.New("cannot AtomicCommit in stream file")
 }
 
 func (s *Stream) GracefullyClose(ctx context.Context) {
-    
+
 }

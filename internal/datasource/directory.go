@@ -78,8 +78,8 @@ func (c *DirType) GetSourceDataorOperator() interface{} {
     return source
 }
 
-func (c *DirType) AcidCommit(putMap map[string]string, deleteMap []string) error {
-    return errors.New("cannot AcidCommit in local compressed file")
+func (c *DirType) AtomicCommit(putMap map[string]string, deleteMap []string) error {
+    return errors.New("cannot AtomicCommit in local compressed file")
 }
 
 func (c *DirType) GracefullyClose(ctx context.Context) {

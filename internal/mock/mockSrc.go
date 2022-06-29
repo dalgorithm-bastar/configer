@@ -34,18 +34,18 @@ func (m *MockStorage) EXPECT() *MockStorageMockRecorder {
 	return m.recorder
 }
 
-// AcidCommit mocks base method.
-func (m *MockStorage) AcidCommit(arg0 map[string]string, arg1 []string) error {
+// AtomicCommit mocks base method.
+func (m *MockStorage) AtomicCommit(arg0 map[string]string, arg1 []string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AcidCommit", arg0, arg1)
+	ret := m.ctrl.Call(m, "AtomicCommit", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// AcidCommit indicates an expected call of AcidCommit.
-func (mr *MockStorageMockRecorder) AcidCommit(arg0, arg1 interface{}) *gomock.Call {
+// AtomicCommit indicates an expected call of AtomicCommit.
+func (mr *MockStorageMockRecorder) AtomicCommit(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AcidCommit", reflect.TypeOf((*MockStorage)(nil).AcidCommit), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AtomicCommit", reflect.TypeOf((*MockStorage)(nil).AtomicCommit), arg0, arg1)
 }
 
 // Delete mocks base method.

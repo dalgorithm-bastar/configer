@@ -39,7 +39,7 @@ func TestCompressFileType_AcidCommit(t *testing.T) {
                 path: tt.fields.path,
                 data: tt.fields.data,
             }
-            if err := c.AcidCommit(tt.args.putMap, tt.args.deleteMap); (err != nil) != tt.wantErr {
+            if err := c.AtomicCommit(tt.args.putMap, tt.args.deleteMap); (err != nil) != tt.wantErr {
                 t.Errorf("AcidCommit() error = %v, wantErr %v", err, tt.wantErr)
             }
         })

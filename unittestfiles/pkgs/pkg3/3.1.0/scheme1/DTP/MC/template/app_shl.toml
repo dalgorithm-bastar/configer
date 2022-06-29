@@ -1,9 +1,0 @@
-[Information]
-platName="{{.PlatName}}"
-nodeType="{{.NodeType}}"
-nodeId={{.NodeId}}
-nodeNum={{.NodeNum}}
-nodeIndex={{.NodeIndex}}
-setID={{.SetId}}
-setName="{{.SetName}}"
-setIndex={{.SetIndex}}

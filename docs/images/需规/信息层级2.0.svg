@@ -1,1 +1,169 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="491px" height="281px" viewBox="-0.5 -0.5 491 281" content="&lt;mxfile pages=&quot;2&quot;&gt;&lt;diagram id=&quot;5ghxl-pbiyIqiedONPmC&quot; name=&quot;交互方&quot;&gt;5Vndj5s4EP9rLLUPuwoYCDySj20f7nQn7cO1jw44xKoD1HG++tffGAzBmLTpXrKJdNIqa8/Yg/2b8W8Gg/B0ffgkSLn6s0gpR+4oPSA8Q64bjVz4VYJjLQi9qBZkgqW1yDkJXtkPqoUjLd2ylG6MgbIouGSlKUyKPKeJNGREiGJvDlsW3HxqSTJqCV4Twm3pPyyVK70Ld3ySf6YsWzVPdgK9vzVpBuudbFYkLfYdEZ4jPBVFIevW+jClXGHX4FLPezmjbRcmaC4vmqCXvCN8qzenFyaPzW5Fsc1TqiaMEJ7sV0zS15IkSrsH94JsJdcceg407QXoNe2okPTQEekFfaLFmkpxhCGNNtTg6OgIdHd/ghpjLVt1YPbGWki0e7PW9AkBaGgQzgAS2oDMIxT6KJyh+RhNZiieo3mAomklAXmMYucnoDnvAlp7NjRo2LVRc8cDqAXXAC2yQEs4g83s8IdMlAnMX0lZfrRQonkaq/MIvYSTzYYlJjAbSYS0R1TiF8Z/id+m2IqEmp6FuRnVwxqQaGoceBvlDor+AIiNTFBOJNuZNDGErH7C3wWDFbdOxNHYcGJrtzFR70fP6h7rniE/MA15rm8aqkGwDFWObrd9ke8bCA0GCbhUbipJbvg7+L5VxDZJCl4IhGOFWLb4ABbgD5406rQ+qqZyLdBzLp+WZM34sZ4Dhsi6rJQYeypiKN9RyRJiaUwjmyqTKBOOWx56unqVSpkXYk24qd5rbyu9V6+zUnIqJRVPsNWE5dngfDjB8olwluW1OoEopcJUMyCLXJsfdZZWKaUg+WYJRhvzOW0H7AuRmk/vTl+Q5FtWUdFTD3PXC1usXZV+m7bfQT5lm5ITjTrLOes8eMkLIrsLapwLrUz9pzJJm0iAIKqDoVZZPABpsFTN5MgVEgL/mjMXNcH+sWgF7V7/2spqqZpD6vLB8a9DtNjxzaPl2UQbDFBEeAWebVd7Oms1vf4mra4KwX5AVJNBnq3c+UaSdcOHIlTgvWfTXa73RkrFvarESpxXpFT3LKUqLhqk1D6/YcUC/SM5VMl4aBKiuKpkJi8oxJ0jWz/szJFVzNRP1qL4Rqc1zzRRtIQA6ok0Fc40D+KJOnxA3jzWijVLU/WYQQowq9GrHGgzV4b2efYDO0Lda5xnPFBsWqUl+CqeoPhFSSJH+U05DSQemodqQDitvAfD/GpW1dZuXIjGg8ky24jdwxWqzkCh6gyV99coVF3vPQj0fKEKsInjl27nqwrkZ7/pzg46sOvesekdmPzSaXdmQe80SXWaOZfx9dguip3H4nDfMwMG9zPppQzu4X4ywKPbcbg/wOHvHWWdwPra1Z2JsrMRY7wy4YeKDnfcc2mfly+OjigwDeHbxUYwQPt2Zm5p/wVNICOEWgUpAAYD7U98a0x0d3rH/gX07t6K3gdus1Q+xRWwAQrnKB4PlTx3Bs0Pz1Dcu4Bm33jRfFcc745KP5Tcdw0l+0pLXWHdncNHl1YKbXXQMv9/rBSCgVzwWJVCMPKfx47nhn79G5pMFL0xMwSjXhzeLjM0lu9en96kcnisaPHO3Zj/bny01+rnAu2K8WFfAKksBtVCXGU6KBLg1e96L4zqq9rd80A/Ow59ELpZHsD2Xcz/+40RD5zsR3tjjMyA8d7+TtCjiKvd+UH39JG3Hn76Uo7n/wI=&lt;/diagram&gt;&lt;diagram id=&quot;tY_HG1pgy65-itY2Arw2&quot; name=&quot;信息层级&quot;&gt;7VvRjuI2FP0aS+3DjmI7TpxHEmArdbtqdx6qfQzEQNoQo+AZmH59bWMGiL0ts8FhWoVBo3Btkvic6+t7jwPA2Xr/sck3q194wSqAgmIP8BgglARI/leGl4OBhsnBsGzK4mCCJ8Nj+RczxsBYn8qCbS86Cs4rUW4ujXNe12wuLmx50/DdZbcFry6vusmXzDI8zvPKtv5eFmJlRoHik/0nVi5XxyvDyIxvnR87m5FsV3nBd2cmPAE4azgXh6P1PmOVwu6Iy+ev+Kn+7efPf/y6/5ItPzxP809fPxxONn3LV16H0LBa3PbUhtznvHoyeJmxipcjgCuxruQRBDhdlFWV8Yo3ugUvFgs0n0v7VjT8T3bWUkSziESy5co7NyN8Zo1g+zPezEg+Mr5monmRXY6tR5aMV0JiSNqdOA4TY1ud8YuoMebGr5av5z5hJw8MfG+AEneBsiCMFqELSopmOPIKZXwJJQpsKDFyQYl8QRl2gjJndOH0ymhO2WzhE0ragtLhlTBwQAkjX1CSbhOcRd+Y4HEykwPxCGXSgjKOLCipA0kCH4gnKKP/CZQ4tL3SCaUvn4wtIB8eHiws5ejkjaR5VS5raZlLVFijgOW1eDTdFNAKiFKu9yPTcV0WhWpMt5t8XtbLT2yhBoRPli9mjNiio+a1+mbDRS7ymb6EYmbDy1poFEgq3xKXLJBuRuRtZvIzPH2Wb9W9ERmv5anzUlPJ8q3Ysa3ok+TkOpK9xXBqkSydfBIDOgGjKZgQMEKA4oH120ZJx4LjZD3yxHpix8hJAigBdKzIT8dgNAGTCCQESEDlAVWWH7RjyH5Ut2VglCkPkRBT/f1EdkI/Dr7SyVdwEF76Cryzrxyv/59L89AVs85Ve4S+Yi2EFpJqKg3B9rYTCLYmEIkt2qNeJ1Cn6v0dTSAc0GPWfrcp1K18f0dYxvcORnb1vt8PwchzMMLQNYWc4Qj7It7WGoa6rnvW1p7eLp7jXnl2CCGOJD8EKQWjsU7kp8OE7+wI8eWEf5UM75a+2zKO4lpGeRrpgylIkV3Ywbcsq/dTxQn8d1Ucwj5VM2grKtfg/aY05h3hTe0o1zPetpYxLGedacattMWRrfYaxdAVIkTDn+qCFQbl3aoU7FFSpFp3Tb6Rtn/Q/emcuXX/GSUh8an74++UKfxtRiFbp9CRixjBj2rNT2UOUzCCWh6EumaQsUwex7opBWk0zMKOntFWMq5c3PxNQ4eUoYTfVC9uMqeUtWNopw4D7X3sqaLQF+sO0eWQt1BdN9CRCQOykpCxYaIrjIR8lxsEgxt8yw1o8hDb2Va/nuB45MO5cTSixiWSsVolVJOMEeHgErfdPQ6wQ2Xo1yMcT65YK4Kdqw0rQh+Phvhj/TptaYgDPfnDteWZN39wiUxDhtC3G5Dw7suBS/1ql4V2gdCpdCfqz7mpp1/Gfc7sh5dHYsKgncHbW9CuvQDsrW5zPfDTpuXGisr7pwWj+MpNGm/EYFvXGtTL7jy31UvXZtyNHrOUH0+/LdFtZz/QwZO/AQ==&lt;/diagram&gt;&lt;diagram id=&quot;aZ1KDHrGwNsS7cA1ze4n&quot; name=&quot;信息层级2.0&quot;&gt;7VvRkqI4FP2aVO0+rEUIgfAIiDsPuzVVbdVOvyJEZRfBxfRo79dvgrFVkpmmmw46U9hWF9wENOeem9x7ggBFm8PvdbJd/1lltAC2lR0AmgLb9i2b/xeG56OBOP7RsKrz7GiCZ8M8/49KoyWtT3lGd1cdWVUVLN9eG9OqLGnKrmxJXVf7627Lqrj+1G2yoophniaFav2SZ2wtR2F7Z/snmq/Wp0+GrhzfJjl1liPZrZOs2l+YUAxQVFcVOx5tDhEtBHYnXKz686fN49eQRuHnxb/PRe38Vfx2vNnsLZe8DKGmJXv3rb84h/SBPv7tsrlVlnOcPTy68hLra1I8SbzkWNnzCcA12xT8CAIULvOiiKqiqpsWtFwu7TTl9h2rq3/oRUvmLlzs8hZ5e1ozemj545XBwBeEOTNptaGsfubXne5y8pJkJcRyJPuzjx1f2tYX/rWJNCaSV6uXe5+x4wcSvjdACftAmWFKMkcHJbEXyDUKpXcNpW2pUCJbB6VtCkq7F5QJJUstK92U0MXSJJSkBaWGldDSQAldU1CifgFO3W8EuOcv+EAMQum3oPRcBUqiQRLDCTYEpfOTQIkclZVaKE1xEitATiYTBUuOAv8iYVLkq5JbUg4BrQWwVcnmspsAWgCW8/U+kB03eZaJxnC3TdK8XP1Bl2JA6Gx5kGNEijvKqhRX1hVLWLJoPkJ4ZlvlJWtQwCF/c1wii9MM868Z8XN4Pudv0b1mUVXyWyd54zea7Nie7tiQTva7OdnYHO6q0RL7gGBApiD2QDgFQQxiF/guCH1xEEBACBxp8LHTpmYF0tLANUQDrysNMOCA8gMiLL+INr6YEtK0RSCIQMx7cIo01/u8k/3ryJVeXEGWc80VeGOukB807bM7BJ2uFnFMzb3+u+ZeFe0xnt4UT7AVT9hTaOAOGU+wV3V/RwGFLHLK6m8VUrBfeX9HWHo3npygprrvMDuhcXb60NkJQV1MaecnZIoJqjgxFoL9s7p2vOv87A3qZ41yool4B4QEBNMm0Z+BMeD7EsG7DvgXjfFW6T1UdR/haxID4jYHMxDaauGnSgJ3KaNj+LqMDuGQMhvUSTCv4/2mvOaO8CbqLDcw3qrWMS5nvd2MWmmLJn0ddhbroFLU1VOZ0UyivF/njM65i0Trvk623PadjQKSUv1GwYJgB5vcKEDv1DHM7V5BnZKBReZwFARJowmKzGEmqgQhH0IQzGT1QLymKQShO0ZhT2a0pY2Oi5uxMLQ12oYQhsNmceM5ZQwCZ9xNuM0mrO2Y8rpGhTnmLaSpG0ggpwFeSfC5IW4qDB83hODMcN7FB2vkw7f4QPyJp6Zdw1Kiq5wUEMkNfyqWi5ESRiiBLKSRG4ZlhOaZF2VpUJO2cWkY4qESc17vJjKN88BAfOhapxnjg05tGlOFm/EBOzdfF3R6WLtQVEuGXsU8Fn/afb/mJelzYT++DDrGsdo5vbpLrdsdQMYqOd0jQm23fLDGcv9uQbbXcdvGnGNUpWvUM/v7ua1n6rbnPuhJTX56/nlK03bxGx8U/w8=&lt;/diagram&gt;&lt;/mxfile&gt;"><defs/><g><rect x="0" y="0" width="490" height="280" fill="#fff2cc" stroke="#d6b656" pointer-events="all"/><rect x="10" y="50" width="320" height="220" fill="#d5e8d4" stroke="#82b366" pointer-events="all"/><rect x="20" y="100" width="100" height="160" fill="#dae8fc" stroke="#6c8ebf" pointer-events="all"/><rect x="30" y="126" width="80" height="51.5" fill="#ffe6cc" stroke="#d79b00" pointer-events="all"/><rect x="30" y="190" width="80" height="50" fill="#ffe6cc" stroke="#d79b00" pointer-events="all"/><rect x="30" y="240" width="80" height="20" fill="none" stroke="none" pointer-events="all"/><g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px"><text x="69.5" y="254.5">...</text></g><rect x="30" y="100" width="80" height="26" fill="none" stroke="none" pointer-events="all"/><g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px"><text x="69.5" y="117.5">配置方案1</text></g><rect x="135" y="60" width="80" height="26" fill="none" stroke="none" pointer-events="all"/><g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px"><text x="174.5" y="77.5">配置数据(版本层面)</text></g><rect x="130" y="100" width="90" height="40" fill="#dae8fc" stroke="#6c8ebf" pointer-events="all"/><rect x="145" y="107" width="60" height="26" fill="none" stroke="none" pointer-events="all"/><g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px"><text x="174.5" y="124.5">配置方案2</text></g><rect x="130" y="158.5" width="90" height="40" fill="#dae8fc" stroke="#6c8ebf" pointer-events="all"/><rect x="130" y="220" width="90" height="40" fill="#dae8fc" stroke="#6c8ebf" pointer-events="all"/><rect x="145" y="168.5" width="60" height="23" fill="none" stroke="none" pointer-events="all"/><g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px"><text x="174.5" y="184.5">配置方案3</text></g><rect x="140" y="228.5" width="70" height="23" fill="none" stroke="none" pointer-events="all"/><g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px"><text x="174.5" y="244.5">...</text></g><rect x="205" y="10" width="80" height="26" fill="none" stroke="none" pointer-events="all"/><g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px"><text x="244.5" y="27.5">配置中心</text></g><rect x="350" y="50" width="110" height="50" fill="#d5e8d4" stroke="#82b366" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 75px; margin-left: 405px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: nowrap;">历史版本1</div></div></div></foreignObject><text x="405" y="79" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">历史版本1</text></switch></g><rect x="350" y="135" width="110" height="50" fill="#d5e8d4" stroke="#82b366" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 160px; margin-left: 405px;"><div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: nowrap;">历史版本2</div></div></div></foreignObject><text x="405" y="164" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">历史版本2</text></switch></g><rect x="365" y="220" width="80" height="26" fill="none" stroke="none" pointer-events="all"/><g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px"><text x="404.5" y="237.5">...</text></g><rect x="230" y="100" width="90" height="160" fill="#f8cecc" stroke="#b85450" pointer-events="all"/><rect x="225" y="100" width="110" height="26" fill="none" stroke="none" pointer-events="all"/><g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px"><text x="279.5" y="117.5">公共信息文件</text></g><rect x="30" y="126" width="80" height="24" fill="none" stroke="none" pointer-events="all"/><g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px"><text x="69.5" y="142.5">集群1</text></g><rect x="30" y="139.75" width="80" height="24" fill="none" stroke="none" pointer-events="all"/><g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px"><text x="69.5" y="156.25">服务清单组</text></g><rect x="30" y="153.5" width="80" height="24" fill="none" stroke="none" pointer-events="all"/><g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px"><text x="69.5" y="170">配置模板组</text></g><rect x="30" y="190" width="80" height="24" fill="none" stroke="none" pointer-events="all"/><g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px"><text x="69.5" y="206.5">集群2</text></g><rect x="30" y="220" width="80" height="24" fill="none" stroke="none" pointer-events="all"/><g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px"><text x="69.5" y="236.5">配置模板组</text></g><rect x="30" y="204.5" width="80" height="24" fill="none" stroke="none" pointer-events="all"/><g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px"><text x="69.5" y="221">服务清单组</text></g><rect x="240" y="127" width="70" height="36" fill="#f5f5f5" stroke="#666666" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 68px; height: 1px; padding-top: 145px; margin-left: 241px;"><div data-drawio-colors="color: #333333; " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(51, 51, 51); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">文件1</div></div></div></foreignObject><text x="275" y="149" fill="#333333" font-family="Helvetica" font-size="12px" text-anchor="middle">文件1</text></switch></g><rect x="240" y="177.5" width="70" height="36" fill="#f5f5f5" stroke="#666666" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 68px; height: 1px; padding-top: 196px; margin-left: 241px;"><div data-drawio-colors="color: #333333; " style="box-sizing: border-box; font-size: 0px; text-align: center;"><div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(51, 51, 51); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">文件2</div></div></div></foreignObject><text x="275" y="199" fill="#333333" font-family="Helvetica" font-size="12px" text-anchor="middle">文件2</text></switch></g><rect x="235" y="228.5" width="80" height="20" fill="none" stroke="none" pointer-events="all"/><g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px"><text x="274.5" y="243">...</text></g></g><switch><g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/><a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank"><text text-anchor="middle" font-size="10px" x="50%" y="100%">Viewer does not support full SVG 1.1</text></a></switch></svg>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" width="491px"
+     height="281px" viewBox="-0.5 -0.5 491 281"
+     content="&lt;mxfile pages=&quot;2&quot;&gt;&lt;diagram id=&quot;5ghxl-pbiyIqiedONPmC&quot; name=&quot;交互方&quot;&gt;5Vndj5s4EP9rLLUPuwoYCDySj20f7nQn7cO1jw44xKoD1HG++tffGAzBmLTpXrKJdNIqa8/Yg/2b8W8Gg/B0ffgkSLn6s0gpR+4oPSA8Q64bjVz4VYJjLQi9qBZkgqW1yDkJXtkPqoUjLd2ylG6MgbIouGSlKUyKPKeJNGREiGJvDlsW3HxqSTJqCV4Twm3pPyyVK70Ld3ySf6YsWzVPdgK9vzVpBuudbFYkLfYdEZ4jPBVFIevW+jClXGHX4FLPezmjbRcmaC4vmqCXvCN8qzenFyaPzW5Fsc1TqiaMEJ7sV0zS15IkSrsH94JsJdcceg407QXoNe2okPTQEekFfaLFmkpxhCGNNtTg6OgIdHd/ghpjLVt1YPbGWki0e7PW9AkBaGgQzgAS2oDMIxT6KJyh+RhNZiieo3mAomklAXmMYucnoDnvAlp7NjRo2LVRc8cDqAXXAC2yQEs4g83s8IdMlAnMX0lZfrRQonkaq/MIvYSTzYYlJjAbSYS0R1TiF8Z/id+m2IqEmp6FuRnVwxqQaGoceBvlDor+AIiNTFBOJNuZNDGErH7C3wWDFbdOxNHYcGJrtzFR70fP6h7rniE/MA15rm8aqkGwDFWObrd9ke8bCA0GCbhUbipJbvg7+L5VxDZJCl4IhGOFWLb4ABbgD5406rQ+qqZyLdBzLp+WZM34sZ4Dhsi6rJQYeypiKN9RyRJiaUwjmyqTKBOOWx56unqVSpkXYk24qd5rbyu9V6+zUnIqJRVPsNWE5dngfDjB8olwluW1OoEopcJUMyCLXJsfdZZWKaUg+WYJRhvzOW0H7AuRmk/vTl+Q5FtWUdFTD3PXC1usXZV+m7bfQT5lm5ITjTrLOes8eMkLIrsLapwLrUz9pzJJm0iAIKqDoVZZPABpsFTN5MgVEgL/mjMXNcH+sWgF7V7/2spqqZpD6vLB8a9DtNjxzaPl2UQbDFBEeAWebVd7Oms1vf4mra4KwX5AVJNBnq3c+UaSdcOHIlTgvWfTXa73RkrFvarESpxXpFT3LKUqLhqk1D6/YcUC/SM5VMl4aBKiuKpkJi8oxJ0jWz/szJFVzNRP1qL4Rqc1zzRRtIQA6ok0Fc40D+KJOnxA3jzWijVLU/WYQQowq9GrHGgzV4b2efYDO0Lda5xnPFBsWqUl+CqeoPhFSSJH+U05DSQemodqQDitvAfD/GpW1dZuXIjGg8ky24jdwxWqzkCh6gyV99coVF3vPQj0fKEKsInjl27nqwrkZ7/pzg46sOvesekdmPzSaXdmQe80SXWaOZfx9dguip3H4nDfMwMG9zPppQzu4X4ywKPbcbg/wOHvHWWdwPra1Z2JsrMRY7wy4YeKDnfcc2mfly+OjigwDeHbxUYwQPt2Zm5p/wVNICOEWgUpAAYD7U98a0x0d3rH/gX07t6K3gdus1Q+xRWwAQrnKB4PlTx3Bs0Pz1Dcu4Bm33jRfFcc745KP5Tcdw0l+0pLXWHdncNHl1YKbXXQMv9/rBSCgVzwWJVCMPKfx47nhn79G5pMFL0xMwSjXhzeLjM0lu9en96kcnisaPHO3Zj/bny01+rnAu2K8WFfAKksBtVCXGU6KBLg1e96L4zqq9rd80A/Ow59ELpZHsD2Xcz/+40RD5zsR3tjjMyA8d7+TtCjiKvd+UH39JG3Hn76Uo7n/wI=&lt;/diagram&gt;&lt;diagram id=&quot;tY_HG1pgy65-itY2Arw2&quot; name=&quot;信息层级&quot;&gt;7VvRjuI2FP0aS+3DjmI7TpxHEmArdbtqdx6qfQzEQNoQo+AZmH59bWMGiL0ts8FhWoVBo3Btkvic6+t7jwPA2Xr/sck3q194wSqAgmIP8BgglARI/leGl4OBhsnBsGzK4mCCJ8Nj+RczxsBYn8qCbS86Cs4rUW4ujXNe12wuLmx50/DdZbcFry6vusmXzDI8zvPKtv5eFmJlRoHik/0nVi5XxyvDyIxvnR87m5FsV3nBd2cmPAE4azgXh6P1PmOVwu6Iy+ev+Kn+7efPf/y6/5ItPzxP809fPxxONn3LV16H0LBa3PbUhtznvHoyeJmxipcjgCuxruQRBDhdlFWV8Yo3ugUvFgs0n0v7VjT8T3bWUkSziESy5co7NyN8Zo1g+zPezEg+Mr5monmRXY6tR5aMV0JiSNqdOA4TY1ud8YuoMebGr5av5z5hJw8MfG+AEneBsiCMFqELSopmOPIKZXwJJQpsKDFyQYl8QRl2gjJndOH0ymhO2WzhE0ragtLhlTBwQAkjX1CSbhOcRd+Y4HEykwPxCGXSgjKOLCipA0kCH4gnKKP/CZQ4tL3SCaUvn4wtIB8eHiws5ejkjaR5VS5raZlLVFijgOW1eDTdFNAKiFKu9yPTcV0WhWpMt5t8XtbLT2yhBoRPli9mjNiio+a1+mbDRS7ymb6EYmbDy1poFEgq3xKXLJBuRuRtZvIzPH2Wb9W9ERmv5anzUlPJ8q3Ysa3ok+TkOpK9xXBqkSydfBIDOgGjKZgQMEKA4oH120ZJx4LjZD3yxHpix8hJAigBdKzIT8dgNAGTCCQESEDlAVWWH7RjyH5Ut2VglCkPkRBT/f1EdkI/Dr7SyVdwEF76Cryzrxyv/59L89AVs85Ve4S+Yi2EFpJqKg3B9rYTCLYmEIkt2qNeJ1Cn6v0dTSAc0GPWfrcp1K18f0dYxvcORnb1vt8PwchzMMLQNYWc4Qj7It7WGoa6rnvW1p7eLp7jXnl2CCGOJD8EKQWjsU7kp8OE7+wI8eWEf5UM75a+2zKO4lpGeRrpgylIkV3Ywbcsq/dTxQn8d1Ucwj5VM2grKtfg/aY05h3hTe0o1zPetpYxLGedacattMWRrfYaxdAVIkTDn+qCFQbl3aoU7FFSpFp3Tb6Rtn/Q/emcuXX/GSUh8an74++UKfxtRiFbp9CRixjBj2rNT2UOUzCCWh6EumaQsUwex7opBWk0zMKOntFWMq5c3PxNQ4eUoYTfVC9uMqeUtWNopw4D7X3sqaLQF+sO0eWQt1BdN9CRCQOykpCxYaIrjIR8lxsEgxt8yw1o8hDb2Va/nuB45MO5cTSixiWSsVolVJOMEeHgErfdPQ6wQ2Xo1yMcT65YK4Kdqw0rQh+Phvhj/TptaYgDPfnDteWZN39wiUxDhtC3G5Dw7suBS/1ql4V2gdCpdCfqz7mpp1/Gfc7sh5dHYsKgncHbW9CuvQDsrW5zPfDTpuXGisr7pwWj+MpNGm/EYFvXGtTL7jy31UvXZtyNHrOUH0+/LdFtZz/QwZO/AQ==&lt;/diagram&gt;&lt;diagram id=&quot;aZ1KDHrGwNsS7cA1ze4n&quot; name=&quot;信息层级2.0&quot;&gt;7VvRkqI4FP2aVO0+rEUIgfAIiDsPuzVVbdVOvyJEZRfBxfRo79dvgrFVkpmmmw46U9hWF9wENOeem9x7ggBFm8PvdbJd/1lltAC2lR0AmgLb9i2b/xeG56OBOP7RsKrz7GiCZ8M8/49KoyWtT3lGd1cdWVUVLN9eG9OqLGnKrmxJXVf7627Lqrj+1G2yoophniaFav2SZ2wtR2F7Z/snmq/Wp0+GrhzfJjl1liPZrZOs2l+YUAxQVFcVOx5tDhEtBHYnXKz686fN49eQRuHnxb/PRe38Vfx2vNnsLZe8DKGmJXv3rb84h/SBPv7tsrlVlnOcPTy68hLra1I8SbzkWNnzCcA12xT8CAIULvOiiKqiqpsWtFwu7TTl9h2rq3/oRUvmLlzs8hZ5e1ozemj545XBwBeEOTNptaGsfubXne5y8pJkJcRyJPuzjx1f2tYX/rWJNCaSV6uXe5+x4wcSvjdACftAmWFKMkcHJbEXyDUKpXcNpW2pUCJbB6VtCkq7F5QJJUstK92U0MXSJJSkBaWGldDSQAldU1CifgFO3W8EuOcv+EAMQum3oPRcBUqiQRLDCTYEpfOTQIkclZVaKE1xEitATiYTBUuOAv8iYVLkq5JbUg4BrQWwVcnmspsAWgCW8/U+kB03eZaJxnC3TdK8XP1Bl2JA6Gx5kGNEijvKqhRX1hVLWLJoPkJ4ZlvlJWtQwCF/c1wii9MM868Z8XN4Pudv0b1mUVXyWyd54zea7Nie7tiQTva7OdnYHO6q0RL7gGBApiD2QDgFQQxiF/guCH1xEEBACBxp8LHTpmYF0tLANUQDrysNMOCA8gMiLL+INr6YEtK0RSCIQMx7cIo01/u8k/3ryJVeXEGWc80VeGOukB807bM7BJ2uFnFMzb3+u+ZeFe0xnt4UT7AVT9hTaOAOGU+wV3V/RwGFLHLK6m8VUrBfeX9HWHo3npygprrvMDuhcXb60NkJQV1MaecnZIoJqjgxFoL9s7p2vOv87A3qZ41yool4B4QEBNMm0Z+BMeD7EsG7DvgXjfFW6T1UdR/haxID4jYHMxDaauGnSgJ3KaNj+LqMDuGQMhvUSTCv4/2mvOaO8CbqLDcw3qrWMS5nvd2MWmmLJn0ddhbroFLU1VOZ0UyivF/njM65i0Trvk623PadjQKSUv1GwYJgB5vcKEDv1DHM7V5BnZKBReZwFARJowmKzGEmqgQhH0IQzGT1QLymKQShO0ZhT2a0pY2Oi5uxMLQ12oYQhsNmceM5ZQwCZ9xNuM0mrO2Y8rpGhTnmLaSpG0ggpwFeSfC5IW4qDB83hODMcN7FB2vkw7f4QPyJp6Zdw1Kiq5wUEMkNfyqWi5ESRiiBLKSRG4ZlhOaZF2VpUJO2cWkY4qESc17vJjKN88BAfOhapxnjg05tGlOFm/EBOzdfF3R6WLtQVEuGXsU8Fn/afb/mJelzYT++DDrGsdo5vbpLrdsdQMYqOd0jQm23fLDGcv9uQbbXcdvGnGNUpWvUM/v7ua1n6rbnPuhJTX56/nlK03bxGx8U/w8=&lt;/diagram&gt;&lt;/mxfile&gt;">
+    <defs/>
+    <g>
+        <rect x="0" y="0" width="490" height="280" fill="#fff2cc" stroke="#d6b656" pointer-events="all"/>
+        <rect x="10" y="50" width="320" height="220" fill="#d5e8d4" stroke="#82b366" pointer-events="all"/>
+        <rect x="20" y="100" width="100" height="160" fill="#dae8fc" stroke="#6c8ebf" pointer-events="all"/>
+        <rect x="30" y="126" width="80" height="51.5" fill="#ffe6cc" stroke="#d79b00" pointer-events="all"/>
+        <rect x="30" y="190" width="80" height="50" fill="#ffe6cc" stroke="#d79b00" pointer-events="all"/>
+        <rect x="30" y="240" width="80" height="20" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px">
+            <text x="69.5" y="254.5">...</text>
+        </g>
+        <rect x="30" y="100" width="80" height="26" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px">
+            <text x="69.5" y="117.5">配置方案1</text>
+        </g>
+        <rect x="135" y="60" width="80" height="26" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px">
+            <text x="174.5" y="77.5">配置数据(版本层面)</text>
+        </g>
+        <rect x="130" y="100" width="90" height="40" fill="#dae8fc" stroke="#6c8ebf" pointer-events="all"/>
+        <rect x="145" y="107" width="60" height="26" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px">
+            <text x="174.5" y="124.5">配置方案2</text>
+        </g>
+        <rect x="130" y="158.5" width="90" height="40" fill="#dae8fc" stroke="#6c8ebf" pointer-events="all"/>
+        <rect x="130" y="220" width="90" height="40" fill="#dae8fc" stroke="#6c8ebf" pointer-events="all"/>
+        <rect x="145" y="168.5" width="60" height="23" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px">
+            <text x="174.5" y="184.5">配置方案3</text>
+        </g>
+        <rect x="140" y="228.5" width="70" height="23" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px">
+            <text x="174.5" y="244.5">...</text>
+        </g>
+        <rect x="205" y="10" width="80" height="26" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px">
+            <text x="244.5" y="27.5">配置中心</text>
+        </g>
+        <rect x="350" y="50" width="110" height="50" fill="#d5e8d4" stroke="#82b366" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%"
+                               requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
+                               style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml"
+                         style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 75px; margin-left: 405px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); "
+                             style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: nowrap;">
+                                历史版本1
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="405" y="79" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    历史版本1
+                </text>
+            </switch>
+        </g>
+        <rect x="350" y="135" width="110" height="50" fill="#d5e8d4" stroke="#82b366" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%"
+                               requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
+                               style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml"
+                         style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 160px; margin-left: 405px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); "
+                             style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: nowrap;">
+                                历史版本2
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="405" y="164" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    历史版本2
+                </text>
+            </switch>
+        </g>
+        <rect x="365" y="220" width="80" height="26" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px">
+            <text x="404.5" y="237.5">...</text>
+        </g>
+        <rect x="230" y="100" width="90" height="160" fill="#f8cecc" stroke="#b85450" pointer-events="all"/>
+        <rect x="225" y="100" width="110" height="26" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px">
+            <text x="279.5" y="117.5">公共信息文件</text>
+        </g>
+        <rect x="30" y="126" width="80" height="24" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px">
+            <text x="69.5" y="142.5">集群1</text>
+        </g>
+        <rect x="30" y="139.75" width="80" height="24" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="69.5" y="156.25">服务清单组</text>
+        </g>
+        <rect x="30" y="153.5" width="80" height="24" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="69.5" y="170">配置模板组</text>
+        </g>
+        <rect x="30" y="190" width="80" height="24" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px">
+            <text x="69.5" y="206.5">集群2</text>
+        </g>
+        <rect x="30" y="220" width="80" height="24" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="69.5" y="236.5">配置模板组</text>
+        </g>
+        <rect x="30" y="204.5" width="80" height="24" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="69.5" y="221">服务清单组</text>
+        </g>
+        <rect x="240" y="127" width="70" height="36" fill="#f5f5f5" stroke="#666666" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%"
+                               requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
+                               style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml"
+                         style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 68px; height: 1px; padding-top: 145px; margin-left: 241px;">
+                        <div data-drawio-colors="color: #333333; "
+                             style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(51, 51, 51); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                文件1
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="275" y="149" fill="#333333" font-family="Helvetica" font-size="12px" text-anchor="middle">文件1
+                </text>
+            </switch>
+        </g>
+        <rect x="240" y="177.5" width="70" height="36" fill="#f5f5f5" stroke="#666666" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%"
+                               requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
+                               style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml"
+                         style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 68px; height: 1px; padding-top: 196px; margin-left: 241px;">
+                        <div data-drawio-colors="color: #333333; "
+                             style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(51, 51, 51); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                文件2
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="275" y="199" fill="#333333" font-family="Helvetica" font-size="12px" text-anchor="middle">文件2
+                </text>
+            </switch>
+        </g>
+        <rect x="235" y="228.5" width="80" height="20" fill="none" stroke="none" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" text-anchor="middle" font-size="12px">
+            <text x="274.5" y="243">...</text>
+        </g>
+    </g>
+    <switch>
+        <g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/>
+        <a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems"
+           target="_blank">
+            <text text-anchor="middle" font-size="10px" x="50%" y="100%">Viewer does not support full SVG 1.1</text>
+        </a>
+    </switch>
+</svg>

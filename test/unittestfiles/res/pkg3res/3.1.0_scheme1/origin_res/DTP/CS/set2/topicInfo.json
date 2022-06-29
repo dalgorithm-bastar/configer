@@ -1,0 +1,139 @@
+{
+  "inner": [
+    {
+      "topicName": "follow",
+      "pubCluster": "DTP.CS.set2",
+      "pubSetId": 2,
+      "pubSetIndex": 2,
+      "subCluster": "",
+      "subSetId": 0,
+      "subSetIndex": 0,
+      "listenPort": "2010",
+      "topicId": 11,
+      "endPoint": "156.10.1.11:10010",
+      "nodeId": 2,
+      "nodeIndex": 1,
+      "isRMB": 0,
+      "net": {
+        "name": "intranet",
+        "adapter": "a4",
+        "ipv4": "197.3.2.2",
+        "ipv6": ""
+      }
+    },
+    {
+      "topicName": "main",
+      "pubCluster": "DTP.CS.set2",
+      "pubSetId": 2,
+      "pubSetIndex": 2,
+      "subCluster": "",
+      "subSetId": 0,
+      "subSetIndex": 0,
+      "listenPort": "",
+      "topicId": 12,
+      "endPoint": "156.10.1.12:10010",
+      "nodeId": 0,
+      "nodeIndex": 0,
+      "isRMB": 0,
+      "net": {
+        "name": "",
+        "adapter": "",
+        "ipv4": "",
+        "ipv6": ""
+      }
+    }
+  ],
+  "pub_extern": {
+    "biz_topic": null,
+    "set_topic": [
+      {
+        "topicName": "DTP.MC",
+        "pubCluster": "DTP.CS.set2",
+        "pubSetId": 2,
+        "pubSetIndex": 2,
+        "subCluster": "DTP.MC.set1",
+        "subSetId": 3,
+        "subSetIndex": 1,
+        "listenPort": "",
+        "topicId": 3,
+        "endPoint": "156.10.1.3:10010",
+        "nodeId": 2,
+        "nodeIndex": 1,
+        "isRMB": 1,
+        "net": {
+          "name": "extranet",
+          "adapter": "a5",
+          "ipv4": "10.112.3.2",
+          "ipv6": ""
+        }
+      },
+      {
+        "topicName": "DTP.MC",
+        "pubCluster": "DTP.CS.set2",
+        "pubSetId": 2,
+        "pubSetIndex": 2,
+        "subCluster": "DTP.MC.set2",
+        "subSetId": 4,
+        "subSetIndex": 2,
+        "listenPort": "",
+        "topicId": 4,
+        "endPoint": "156.10.1.4:10010",
+        "nodeId": 2,
+        "nodeIndex": 1,
+        "isRMB": 1,
+        "net": {
+          "name": "extranet",
+          "adapter": "a5",
+          "ipv4": "10.112.3.2",
+          "ipv6": ""
+        }
+      },
+      {
+        "topicName": "MTP.RC",
+        "pubCluster": "DTP.CS.set2",
+        "pubSetId": 2,
+        "pubSetIndex": 2,
+        "subCluster": "MTP.RC.set1",
+        "subSetId": 5,
+        "subSetIndex": 1,
+        "listenPort": "",
+        "topicId": 7,
+        "endPoint": "156.10.1.7:10010",
+        "nodeId": 2,
+        "nodeIndex": 1,
+        "isRMB": 1,
+        "net": {
+          "name": "extranet",
+          "adapter": "a5",
+          "ipv4": "10.112.3.2",
+          "ipv6": ""
+        }
+      },
+      {
+        "topicName": "MTP.RC",
+        "pubCluster": "DTP.CS.set2",
+        "pubSetId": 2,
+        "pubSetIndex": 2,
+        "subCluster": "MTP.RC.set2",
+        "subSetId": 6,
+        "subSetIndex": 2,
+        "listenPort": "",
+        "topicId": 8,
+        "endPoint": "156.10.1.8:10010",
+        "nodeId": 2,
+        "nodeIndex": 1,
+        "isRMB": 1,
+        "net": {
+          "name": "extranet",
+          "adapter": "a5",
+          "ipv4": "10.112.3.2",
+          "ipv6": ""
+        }
+      }
+    ]
+  },
+  "sub_extern": {
+    "biz_topic": null,
+    "set_topic": null
+  }
+}

@@ -60,7 +60,7 @@ func TestStream_AcidCommit(t *testing.T) {
             s := &Stream{
                 c: tt.fields.c,
             }
-            if err := s.AcidCommit(tt.args.putMap, tt.args.deleteMap); (err != nil) != tt.wantErr {
+            if err := s.AtomicCommit(tt.args.putMap, tt.args.deleteMap); (err != nil) != tt.wantErr {
                 t.Errorf("AcidCommit() error = %v, wantErr %v", err, tt.wantErr)
             }
         })

@@ -18,15 +18,19 @@ service ConfigCenter{
   rpc PUT(CfgReq) returns (CfgResp){
 
   }
+
+  rpc GetLatestConfigByEnvNum(EnvNumReq) returns (CfgResp){
+
+  }
 }
 
 message CfgReq{
   string UserName = 1;
   string EnvNum = 2;
   string Target = 3;
-  string Action =4;
+  string Action = 4;
   AnyFile File = 5;
-  string Version =6;
+  string Version = 6;
   string Scheme = 7;
   string Type = 8;
   string Platform = 9;
@@ -48,11 +52,16 @@ message AnyFile{
 
 message VersionInfo{
   string Name = 1;
-  string User =2;
-  string Time =3;
+  string User = 2;
+  string Time = 3;
 }
 
 message ArgRange{
   repeated string TopicIp = 1;
   repeated string TopicPort = 2;
+  repeated string TcpPort =3;
+}
+
+message EnvNumReq{
+  string envNum =1;
 }

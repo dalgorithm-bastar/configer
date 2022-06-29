@@ -1,6 +1,0 @@
-artifact: 
-  url: ""
-  deployPath: "/User/sseadmin/CS/set1"
-  configPath: ""
-node:
-  - hostName: "host1"

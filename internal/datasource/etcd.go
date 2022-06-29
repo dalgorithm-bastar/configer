@@ -140,7 +140,7 @@ func (e *EtcdType) GetSourceDataorOperator() interface{} {
     return e.client
 }
 
-func (e *EtcdType) AcidCommit(putMap map[string]string, deleteSlice []string) error {
+func (e *EtcdType) AtomicCommit(putMap map[string]string, deleteSlice []string) error {
     var operationSlice []clientv3.Op
     if putMap != nil && len(putMap) > 0 {
         for k, v := range putMap {

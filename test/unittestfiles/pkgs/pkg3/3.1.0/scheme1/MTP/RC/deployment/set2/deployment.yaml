@@ -1,0 +1,7 @@
+artifact:
+  url: ""
+  deployPath: "/User/sseadmin/RC/set2"
+  configPath: ""
+node:
+  - hostName: "host3"
+  - hostName: "host4"

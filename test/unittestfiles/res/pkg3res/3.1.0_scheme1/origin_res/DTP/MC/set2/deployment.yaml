@@ -1,0 +1,45 @@
+artifact:
+  url: ""
+  deployPath: /User/sseadmin/MC/set2
+  configPath: ""
+node:
+  - nodeId: 5
+    nodeIndex: 1
+    hostName: host3
+    location: jinqiao
+    network:
+      - name: intranet
+        adapter: a7
+        ipv4: 197.3.2.3
+        ipv6: ""
+      - name: extranet
+        adapter: a8
+        ipv4: 10.112.3.3
+        ipv6: ""
+      - name: biznet
+        adapter: a9
+        ipv4: 224.1.2.3
+        ipv6: ""
+    user:
+      - name: cfgu
+      - name: xwang3
+  - nodeId: 6
+    nodeIndex: 2
+    hostName: host4
+    location: jinqiao
+    network:
+      - name: intranet
+        adapter: a10
+        ipv4: 197.3.2.4
+        ipv6: ""
+      - name: extranet
+        adapter: a11
+        ipv4: 10.112.3.4
+        ipv6: ""
+      - name: biznet
+        adapter: a12
+        ipv4: 224.1.2.4
+        ipv6: ""
+    user:
+      - name: cfgu
+      - name: xwang3

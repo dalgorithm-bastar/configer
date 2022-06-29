@@ -1,4 +1,3 @@
-
 # 1.基本语法
 
 ## 1.1 填充语法
@@ -9,34 +8,40 @@
 
 使用"."取结构体当前作用域中的值，使用with、range等关键字改变当前作用域，配合使用end关键字退出当前作用域
 
-示例：
-源结构体：
+示例： 源结构体：
 
 ```json
 {
-    "replicator_number": "2",
-    "deployment_info": [
-      {
-        "NODE_ID":"1",
-        "hostname": "hostforMCtest1",
-        "BIND_IP": "{ip}"
-      },
-      {
-        "NODE_ID":"2",
-        "hostname": "hostforMCtest2",
-        "BIND_IP": "{ip}"
-      }
-    ]
+  "replicator_number": "2",
+  "deployment_info": [
+    {
+      "NODE_ID": "1",
+      "hostname": "hostforMCtest1",
+      "BIND_IP": "{ip}"
+    },
+    {
+      "NODE_ID": "2",
+      "hostname": "hostforMCtest2",
+      "BIND_IP": "{ip}"
+    }
+  ]
 }
 ```
 
 模板：
 
 ```json
-{{.replicator_number}} 
+{{
+  .replicator_number
+}}
 {{range .deployment_info}}
-{{.NODE_ID}}
-{{end}}
+{{.NODE_ID}
+}
+{
+{
+end
+}
+}
 ```
 
 填充结果：
@@ -59,10 +64,18 @@
 模板：
 
 ```json
-{{.replicator_number}} 
+{{
+  .replicator_number
+}}
 {{range .deployment_info -}}
-{{.NODE_ID}}
-{{end}}
+{{.NODE_ID
+}
+}
+{
+{
+end
+}
+}
 ```
 
 填充结果：
@@ -91,15 +104,24 @@ $j:=(function)
 
 使用if、else、end关键字实现条件判断
 
-示例：
-模板：
+示例： 模板：
 
 ```json
-{{$i:=1 -}} 
+{{
+  $i: =1
+  -
+}}
 {{range .deployment_info -}}
 {{if eq i .NODE_ID}}         #注意"."的作用域变化
-{{.NODE_ID}}
-{{end}}
+{{
+.NODE_ID
+}
+}
+{
+{
+end
+}
+}
 ```
 
 填充结果：
@@ -159,11 +181,17 @@ ge arg1 arg2：
 
 使用一个空格将函数的多个参数分隔，使用()实现函数嵌套。
 
-示例：
-模板：
+示例： 模板：
 
 ```json
-{{$i:=1 -}} 
+{{
+  $i: =1
+  -
+}}
 {{if ne (index .deployment_info 1) i}}
-{{end}}
+{
+{
+end
+}
+}
 ```

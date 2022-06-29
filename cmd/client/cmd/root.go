@@ -10,19 +10,20 @@ import (
 
 // Object 用于接收参数的公用结构体，不同指令下初始化不同的变量
 type Object struct {
-    UserName  string
-    Env       string
-    Target    string
-    Type      string
-    Platform  string
-    NodeType  string
-    Version   string
-    Scheme    string
-    Set       string
-    PathIn    string
-    PathOut   string
-    IpRange   string
-    PortRange string
+    UserName       string
+    Env            string
+    Target         string
+    Type           string
+    Platform       string
+    NodeType       string
+    Version        string
+    Scheme         string
+    Set            string
+    PathIn         string
+    PathOut        string
+    TopicIpRange   string
+    TopicPortRange string
+    TcpPortRange   string
 }
 
 var (
