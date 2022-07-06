@@ -1,0 +1,61 @@
+host:
+  - hostName: host1
+    location: jinqiao
+    network:
+      - name: intranet
+        adapter: a1
+        ipv4: "197.3.2.1"
+      - name: extranet
+        adapter: a2
+        ipv4: "10.112.3.1"
+      - name: biznet
+        adapter: a3
+        ipv4: "224.1.2.1"
+    user:
+      - name: cfgu
+      - name: xwang3
+  - hostName: host2
+    location: jinqiao
+    network:
+      - name: intranet
+        adapter: a4
+        ipv4: "197.3.2.2"
+      - name: extranet
+        adapter: a5
+        ipv4: "10.112.3.2"
+      - name: biznet
+        adapter: a6
+        ipv4: "224.1.2.2"
+    user:
+      - name: cfgu
+      - name: xwang3
+  - hostName: host3
+    location: jinqiao
+    network:
+      - name: intranet
+        adapter: a7
+        ipv4: "197.3.2.3"
+      - name: extranet
+        adapter: a8
+        ipv4: "10.112.3.3"
+      - name: biznet
+        adapter: a9
+        ipv4: "224.1.2.3"
+    user:
+      - name: cfgu
+      - name: xwang3
+  - hostName: host4
+    location: jinqiao
+    network:
+      - name: intranet
+        adapter: a10
+        ipv4: "197.3.2.4"
+      - name: extranet
+        adapter: a11
+        ipv4: "10.112.3.4"
+      - name: biznet
+        adapter: a12
+        ipv4: "224.1.2.4"
+    user:
+      - name: cfgu
+      - name: xwang3

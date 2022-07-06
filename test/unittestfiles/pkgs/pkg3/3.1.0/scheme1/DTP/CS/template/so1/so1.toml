@@ -1,2 +1,2 @@
 [Information]
-platName = "{{.PlatName}}"
+platName="{{.PlatName}}"

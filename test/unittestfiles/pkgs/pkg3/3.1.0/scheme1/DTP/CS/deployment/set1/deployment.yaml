@@ -1,6 +1,6 @@
-artifact:
-  url: ""
+artifact: 
+  url: "127.0.0.1:8080"
   deployPath: "/User/sseadmin/CS/set1"
-  configPath: ""
+  configPath: "config"
 node:
   - hostName: "host1"
