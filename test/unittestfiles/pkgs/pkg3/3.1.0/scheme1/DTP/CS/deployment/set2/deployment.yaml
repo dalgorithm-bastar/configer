@@ -1,4 +1,4 @@
-artifact: 
+artifact:
   url: "127.0.0.1:8080"
   deployPath: "/User/sseadmin/CS/set2"
   configPath: "config"

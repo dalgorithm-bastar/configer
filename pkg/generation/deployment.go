@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/configcenter/pkg/repository"
+	"github.com/configcenter/pkg/define"
 	"github.com/configcenter/pkg/util"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 func GenerateDeploymentInfo(infrastructure []byte, rawSlice []RawFile) ([]ChartDeployMain, error) {
@@ -16,23 +16,24 @@ func GenerateDeploymentInfo(infrastructure []byte, rawSlice []RawFile) ([]ChartD
 	var chartDeployMain []ChartDeployMain
 	//解析基础设施信息
 	var infraStruct InfraMain
-	err := yaml.Unmarshal(infrastructure, &infraStruct)
-	if err != nil {
-		return nil, fmt.Errorf("load infrastructure err: %s", err.Error())
-	}
-	//校验基础设施信息的键值是否符合预期
-	infraDecode, _ := yaml.Marshal(infraStruct)
-	keysOk := util.CheckYaml(infrastructure, infraDecode)
-	if !keysOk {
-		return nil, errors.New("unexpected keys on infrastructure")
-	}
+	//已经校验过，不存在错误
+	_ = yaml.Unmarshal(infrastructure, &infraStruct)
+	/*if err != nil {
+	      return nil, fmt.Errorf("load infrastructure err: %s", err.Error())
+	  }
+	  //校验基础设施信息的键值是否符合预期
+	  infraDecode, _ := yaml.Marshal(infraStruct)
+	  keysOk := util.CheckYaml(infrastructure, infraDecode)
+	  if !keysOk {
+	      return nil, errors.New("unexpected keys on infrastructure")
+	  }*/
 	//分配和构建部署信息
 	var setId, nodeId uint16 = 1, 1
 	for _, fileInfo := range rawSlice {
 		path := fileInfo.Path
 		data := fileInfo.Data
 		//找出deploment.yaml文件
-		if strings.Contains(path, repository.Deployment) {
+		if strings.Contains(path, define.Deployment) {
 			//校验长度
 			pathSlice := strings.SplitN(path, "/", 7)
 			if len(pathSlice) != 7 {

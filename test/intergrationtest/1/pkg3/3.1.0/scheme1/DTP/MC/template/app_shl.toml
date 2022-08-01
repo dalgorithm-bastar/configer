@@ -1,11 +1,11 @@
 [Information]
 platName = "{{.PlatName}}"
 nodeType = "{{.NodeType}}"
-nodeId = {{ .NodeId }}
-nodeNum = {{ .NodeNum }}
-nodeIndex = {{ .NodeIndex }}
-setID = {{ .SetId }}
+nodeId = {{ .NodeId } }
+nodeNum = {{ .NodeNum } }
+nodeIndex = {{ .NodeIndex } }
+setID = {{ .SetId } }
 setName = "{{.SetName}}"
-setIndex = {{ .SetIndex }}
-ip="{{GetIpByNet "intranet"}}"
-nextTcpPort="{{GetNextTcpPort}}"
+setIndex = {{ .SetIndex } }
+ip = "{{GetIpByNet "intranet"}}"
+nextTcpPort = "{{GetNextTcpPort}}"

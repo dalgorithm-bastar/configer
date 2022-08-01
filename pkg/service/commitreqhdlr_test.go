@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"log"
 	"reflect"
 	"testing"
 
@@ -12,7 +11,6 @@ import (
 	"github.com/configcenter/pkg/generation"
 	"github.com/configcenter/pkg/pb"
 	"github.com/configcenter/pkg/repository"
-	"github.com/coreos/etcd/embed"
 	"github.com/golang/mock/gomock"
 )
 
@@ -21,13 +19,13 @@ func InitTestEtcd() {
 }
 
 func Test_commit(t *testing.T) {
-	cfg := embed.NewConfig()
-	cfg.Dir = "default.etcd"
-	e, err := embed.StartEtcd(cfg)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer e.Close()
+	/*cfg := embed.NewConfig()
+	  cfg.Dir = "default.etcd"
+	  e, err := embed.StartEtcd(cfg)
+	  if err != nil {
+	      log.Fatal(err)
+	  }
+	  defer e.Close()*/
 	/*select {
 	  case <-e.Server.ReadyNotify():
 	      log.Printf("Server is ready!")

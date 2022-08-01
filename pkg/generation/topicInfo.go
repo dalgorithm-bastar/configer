@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/configcenter/pkg/repository"
+	"github.com/configcenter/pkg/define"
 	"github.com/configcenter/pkg/util"
 	"gopkg.in/yaml.v3"
 )
@@ -55,7 +55,7 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, env
 		path := fileInfo.Path
 		data := fileInfo.Data
 		//找出service.yaml
-		if !strings.Contains(path, repository.Service) {
+		if !strings.Contains(path, define.Service) {
 			continue
 		}
 		//校验长度
@@ -65,16 +65,8 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, env
 		}
 		//读取并归档当前文件的服务声明
 		var srvStruct SrvMain
-		err := yaml.Unmarshal(data, &srvStruct)
-		if err != nil {
-			return nil, nil, nil, fmt.Errorf("load service.yaml err, file path:%s, err:%s", path, err.Error())
-		}
-		//校验服务信息的键值是否符合预期
-		srvDecode, _ := yaml.Marshal(srvStruct)
-		srvOk := util.CheckYaml(data, srvDecode)
-		if !srvOk {
-			return nil, nil, nil, fmt.Errorf("unexpected keys on %s, please checkout carefully", path)
-		}
+		//已经校验过，不会有错误
+		_ = yaml.Unmarshal(data, &srvStruct)
 		//检测当前平台或节点类型是否收录过
 		isPlatExist, isNodeTypeExist, platIdx, nodeTypeIdx := false, false, 0, 0
 		for i, _ := range mainSlice {
@@ -381,7 +373,7 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, env
 							}
 						}
 						if !isNetExt {
-							return nil, nil, nil, fmt.Errorf("innerTopic net out of host adapter list, path:%s", util.Join("/", platName, nodeTypeName, repository.Service))
+							return nil, nil, nil, fmt.Errorf("innerTopic net out of host adapter list, path:%s", util.Join("/", platName, nodeTypeName, define.Service))
 						}
 					} else if i == len(setIns.Deployment.Node) {
 						topicName = "extra1"

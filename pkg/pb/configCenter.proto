@@ -59,9 +59,9 @@ message VersionInfo{
 message ArgRange{
   repeated string TopicIp = 1;
   repeated string TopicPort = 2;
-  repeated string TcpPort =3;
+  repeated string TcpPort = 3;
 }
 
 message EnvNumReq{
-  string envNum =1;
+  string envNum = 1;
 }

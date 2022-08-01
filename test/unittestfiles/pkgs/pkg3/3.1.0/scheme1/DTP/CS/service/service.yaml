@@ -1,8 +1,8 @@
 innerTopicNet: intranet
-pubTopic: 
- - netName: extranet
-   setTopic:
-    - topicName: DTP.MC
-      isRMB: 1
-    - topicName: MTP.RC
-      isRMB: 1
+pubTopic:
+  - netName: extranet
+    setTopic:
+      - topicName: DTP.MC
+        isRMB: 1
+      - topicName: MTP.RC
+        isRMB: 1

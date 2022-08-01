@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/configcenter/internal/log"
+	"github.com/configcenter/pkg/define"
 	"github.com/configcenter/pkg/generation"
 	"github.com/configcenter/pkg/pb"
 	"github.com/configcenter/pkg/repository"
@@ -27,7 +28,7 @@ func commit(ctxRoot context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, 
 		if req.File == nil || req.File.FileData == nil || len(req.File.FileData) == 0 {
 			return errors.New("infrastructure.yaml with err content,please checkout"), nil, nil
 		}
-		err := repository.Src.Put(repository.Infrastructure, string(req.File.FileData))
+		err := repository.Src.Put(define.Infrastructure, string(req.File.FileData))
 		if err != nil {
 			return err, nil, nil
 		}
@@ -101,7 +102,7 @@ func commit(ctxRoot context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, 
 	} else {
 		newVersionStr = util.Join(",", newVersion, req.UserName, timeStamp)
 	}
-	fileMap[repository.Versions] = newVersionStr
+	fileMap[define.Versions] = newVersionStr
 	var deleteKeySlice []string
 	for path, _ := range rawData {
 		deleteKeySlice = append(deleteKeySlice, path)
@@ -133,9 +134,9 @@ func getNextVersion(version string) (string, string, error) {
 		return "", "", errors.New(fmt.Sprintf("err version input:%s", version))
 	}
 	//获取历史版本号
-	versionStr, err := repository.Src.Get(repository.Versions)
+	versionStr, err := repository.Src.Get(define.Versions)
 	if err != nil {
-		log.Sugar().Errorf("get former versions from repository err of %v, under path %s", err, repository.Versions)
+		log.Sugar().Errorf("get former versions from repository err of %v, under path %s", err, define.Versions)
 		return "", "", err
 	}
 	if versionStr == nil || len(versionStr) <= 0 {

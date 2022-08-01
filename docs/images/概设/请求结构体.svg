@@ -15,7 +15,8 @@
                                 <p style="margin: 0px ; margin-top: 4px ; text-align: center">
                                     <b>CfgReq</b>
                                 </p>
-                                <hr size="1"/>+UserName: string<br/>+Target: string[]<br/>+File: byte[]<br/>
+                                <hr size="1"/>+UserName: string<br/>+Target: string[]<br/>+File: byte[]
+                                <br/>
                                 +CfgVersions:CfgVersion[]
                                 <br/>
                                 <div style="height: 2px">
