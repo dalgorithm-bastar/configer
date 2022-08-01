@@ -159,17 +159,3 @@ type ChartTpc struct {
 }
 
 /**********************************************/
-
-/****************** 权限记录文件 ******************/
-
-type PermFile struct {
-	FilePerms []PermUnit `yaml:"filePerms"`
-}
-
-type PermUnit struct {
-	Path  string `yaml:"path"`
-	IsDir string `yaml:"isDir"`
-	Perm  string `yaml:"perm"`
-}
-
-/**********************************************/

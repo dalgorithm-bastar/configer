@@ -11,6 +11,10 @@ LDFLAGS="-X 'main.Version=${VERSION}' -X 'main.GoVersion=${GO_VERSION}' \
 
 all: buildProxima buildProxctl
 
+testgo:
+	go test ./... -coverprofile=cover.out
+	go tool cover -func cover.out
+
 buildProxima:
 	go build -o cmd/server/proxima -ldflags ${LDFLAGS} -a  cmd/server/main.go
 
