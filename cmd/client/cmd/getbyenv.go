@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -40,18 +41,24 @@ func init() {
 }
 
 func getConfigByEnvNum(cmd *cobra.Command, args []string) {
+	if object.UserName == "" {
+		fmt.Println("nil username detected, please input username with option -u")
+		os.Exit(1)
+	}
 	object.PathOut = filepath.Clean(object.PathOut)
 	//新建客户端
 	//读取grpc配置信息
 	err := GetGrpcClient()
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 		return
 	}
 	//新建grpc客户端
 	conn, err := grpc.Dial(GrpcInfo.Socket, grpc.WithInsecure())
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 		return
 	}
 	defer conn.Close()
@@ -61,16 +68,19 @@ func getConfigByEnvNum(cmd *cobra.Command, args []string) {
 	})
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 		return
 	}
 	if resp.Status != "ok" {
 		fmt.Println(resp.Status)
+		os.Exit(1)
 		return
 	}
 
 	dataMap, err := util.DecompressFromStream(resp.File.FileName, resp.File.FileData)
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 		return
 	}
 	//从环境号获取时，要先从结果获取版本和方案
@@ -82,6 +92,7 @@ func getConfigByEnvNum(cmd *cobra.Command, args []string) {
 		versionSchemeSlice := strings.Split(pathSlice[0], "_")
 		if len(versionSchemeSlice) != 2 {
 			fmt.Printf("got err file name:%s", path)
+			os.Exit(1)
 			return
 		}
 		object.Version, object.Scheme = versionSchemeSlice[0], versionSchemeSlice[1]
@@ -89,17 +100,20 @@ func getConfigByEnvNum(cmd *cobra.Command, args []string) {
 	}
 	if _, ok := dataMap[object.Version+"/"+define.Perms]; !ok {
 		fmt.Printf("err: get no permission file from remote, file path:%s", object.Version+"/"+define.Perms)
+		os.Exit(1)
 		return
 	}
 	permStruct, err := generatePermStruct(dataMap[object.Version+"/"+define.Perms])
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 		return
 	}
 	delete(dataMap, object.Version+"/"+define.Perms)
 	err = WriteFilesToLocal(dataMap, permStruct, object.Version+"/"+object.Scheme)
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 		return
 	}
 }

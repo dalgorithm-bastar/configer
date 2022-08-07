@@ -1,9 +1,12 @@
 package util
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"os/exec"
 	"reflect"
 	"testing"
 
@@ -132,7 +135,7 @@ func TestDecompressFromPath(t *testing.T) {
 		{Values: gomonkey.Params{nil, errors.New("read err")}},
 		{Values: gomonkey.Params{nil, errors.New("read err")}},
 	}
-	patchesRead := gomonkey.ApplyFuncSeq(os.Open, outputsRead)
+	patchesRead := gomonkey.ApplyFuncSeq(ioutil.ReadAll, outputsRead)
 	defer patchesRead.Reset()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -349,6 +352,21 @@ mem3: "test"`)
 }
 
 func TestLoadDirWithPermFile(t *testing.T) {
+	var outInfo bytes.Buffer
+	cmd := exec.Command("chmod", "644", "../../test/unittestfiles/pkgs/permission/1.0.0/scheme1/DTP/MC/template/tmpl1/t1.toml")
+	cmd.Stdout = &outInfo
+	cmd.Stderr = &outInfo
+	if err := cmd.Run(); err != nil {
+		fmt.Println(outInfo.String())
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	cmd = exec.Command("chmod", "755", "../../test/unittestfiles/pkgs/permission/1.0.0/scheme1/DTP/MC/template/tmpl1")
+	if err := cmd.Run(); err != nil {
+		fmt.Println(outInfo.String())
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	type args struct {
 		dirPath    string
 		separator  string

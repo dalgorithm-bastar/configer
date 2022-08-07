@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	etcdConfigLocation = "../../test/unittestfiles/config/etcdClientv3.json"
+	etcdConfigLocation = "../../test/unittestfiles/config/configcenter.json"
 	fileLocation       = "../../test/unittestfiles/config/"
 )
 

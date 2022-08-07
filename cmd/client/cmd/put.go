@@ -41,11 +41,16 @@ func init() {
 }
 
 func Put(cmd *cobra.Command, args []string) {
+	if object.UserName == "" {
+		fmt.Println("nil username detected, please input username with option -u")
+		os.Exit(1)
+	}
 	//检测是否为文件夹
 	object.PathIn = filepath.Clean(object.PathIn)
 	s, err := os.Stat(object.PathIn)
 	if err != nil || !s.IsDir() {
 		fmt.Println("please specify input path to directory")
+		os.Exit(1)
 		return
 	}
 	/*fileMap := make(map[string][]byte)
@@ -81,14 +86,21 @@ func Put(cmd *cobra.Command, args []string) {
 	      return
 	  }*/
 	fileMap, _, err := util.LoadDirWithPermFile(object.PathIn, util.Separator, define.Template)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+		return
+	}
 	compressedFileData, err := util.CompressToStream("cfgpkg.tar.gz", fileMap)
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 		return
 	}
 	err = checkInputPackage(fileMap)
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 		return
 	}
 	//新建客户端
@@ -96,12 +108,14 @@ func Put(cmd *cobra.Command, args []string) {
 	err = GetGrpcClient()
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 		return
 	}
 	//新建grpc客户端
 	conn, err := grpc.Dial(GrpcInfo.Socket, grpc.WithInsecure())
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 		return
 	}
 	defer conn.Close()
@@ -115,10 +129,12 @@ func Put(cmd *cobra.Command, args []string) {
 	})
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 		return
 	}
 	if resp.Status != "ok" {
 		fmt.Println("resp err: " + resp.Status)
+		os.Exit(1)
 		return
 	}
 	fmt.Println(fmt.Sprintf("Put cfgpkg to remote succeed"))

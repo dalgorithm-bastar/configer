@@ -1,4 +1,4 @@
-VERSION="v3.1.0"
+VERSION=3.1.0
 GO_VERSION=`go version`
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 GIT_COMMIT=`git rev-parse HEAD`
@@ -11,7 +11,7 @@ LDFLAGS="-X 'main.Version=${VERSION}' -X 'main.GoVersion=${GO_VERSION}' \
 
 all: buildProxima buildProxctl
 
-testgo:
+gotest:
 	go test ./... -coverprofile=cover.out
 	go tool cover -func cover.out
 

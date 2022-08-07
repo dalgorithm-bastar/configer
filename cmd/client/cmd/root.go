@@ -45,8 +45,7 @@ var rootCmd = &cobra.Command{
 	Long: `	This is the commandline tool for configcenter client
 		The tool enables you to:
 		create configurefile locally
-		get servicelist or publicinfofile or template from remote
-		find particular info from remote by go template function`,
+		get configdata or infrastructure from remote`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -64,7 +63,7 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	//rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cfgtool.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ../config/client.json)")
 	rootCmd.PersistentFlags().StringVarP(&object.UserName, "user", "u", "", "current userName(required)")
 
 	rootCmd.Flags().String(define.GrpcSocket, "", "set grpc socket")
@@ -75,7 +74,7 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	//rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	rootCmd.MarkPersistentFlagRequired("user")
+	//rootCmd.MarkPersistentFlagRequired("user")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -92,7 +91,7 @@ func initConfig() {
 		//viper.AddConfigPath("config")
 		//viper.SetConfigType("json")
 		//viper.SetConfigName("configcenter")
-		viper.SetConfigFile("config/configcenter.json")
+		viper.SetConfigFile("../config/client.json")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

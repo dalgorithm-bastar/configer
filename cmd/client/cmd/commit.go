@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/configcenter/pkg/define"
@@ -28,12 +29,17 @@ func init() {
 	postCmd.Flags().StringVarP(&object.Target, "target", "t", "", "select raw or infrastructure to commit")
 	postCmd.Flags().StringVarP(&object.PathIn, "pathin", "i", "", "assign input path, only for infrastructure")
 	postCmd.Flags().StringVarP(&object.Version, "version", "v", "", "put version number here if you want")
-	clusterCmd.MarkFlagRequired("target")
+	getCmd.MarkFlagRequired("target")
 }
 
 func Post(cmd *cobra.Command, args []string) {
+	if object.UserName == "" {
+		fmt.Println("nil username detected, please input username with option -u")
+		os.Exit(1)
+	}
 	if object.Target != service.TargetRaw && object.Target != service.TargetInfrastructure {
 		fmt.Printf("err commit type:%s, please input target within raw or infra", object.Target)
+		os.Exit(1)
 		return
 	}
 	//新建客户端
@@ -41,12 +47,14 @@ func Post(cmd *cobra.Command, args []string) {
 	err := GetGrpcClient()
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 		return
 	}
 	//新建grpc客户端
 	conn, err := grpc.Dial(GrpcInfo.Socket, grpc.WithInsecure())
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 		return
 	}
 	defer conn.Close()
@@ -67,6 +75,7 @@ func Post(cmd *cobra.Command, args []string) {
 		f, err := ioutil.ReadFile(filePath)
 		if err != nil {
 			fmt.Println(err)
+			os.Exit(1)
 			return
 		}
 		configReq.File = &pb.AnyFile{
@@ -78,10 +87,12 @@ func Post(cmd *cobra.Command, args []string) {
 	resp, err := client.COMMIT(context.Background(), &configReq)
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 		return
 	}
 	if resp.Status != "ok" {
 		fmt.Println(resp.Status)
+		os.Exit(1)
 		return
 	}
 	fmt.Println(fmt.Sprintf("Commit succeed, possibly new version for raw num %+v", resp.VersionList))

@@ -30,41 +30,46 @@ const _separator = string(os.PathSeparator)
 
 var mode string
 
-// clusterCmd represents the cluster command
-var clusterCmd = &cobra.Command{
+// getCmd represents the cluster command
+var getCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get file from remote or local",
 	Run:   Get,
 }
 
 func init() {
-	rootCmd.AddCommand(clusterCmd)
-	clusterCmd.Flags().StringVarP(&object.Target, "target", "t", "", "assign target file Type within raw,cache,infra,version,config")
-	clusterCmd.Flags().StringVarP(&object.Type, "type", "y", "", "assign data type within deployment,service,template")
-	clusterCmd.Flags().StringVarP(&object.PathIn, "pathin", "i", "", "assign input path")
-	clusterCmd.Flags().StringVarP(&object.Version, "version", "v", "", "assign a config version")
-	clusterCmd.Flags().StringVarP(&object.Env, "env", "e", "", "assign an env num of 2 bits(required)")
-	clusterCmd.Flags().StringVarP(&object.Scheme, "scheme", "s", "", "assign config scheme")
-	clusterCmd.Flags().StringVarP(&object.Platform, "platform", "l", "", "assign platform")
-	clusterCmd.Flags().StringVarP(&object.NodeType, "nodetype", "n", "", "assign config nodetype")
-	clusterCmd.Flags().StringVarP(&object.Set, "cluster(set)", "c", "", "assign a cluster(set) name")
-	clusterCmd.Flags().StringVarP(&object.PathOut, "pathout", "o", "", "assign output path(required)")
-	clusterCmd.Flags().StringVarP(&mode, "mode", "m", "", "input \"remote\" or \"local\" to choose creating from remote or local(required)")
-	clusterCmd.Flags().StringVarP(&object.TopicIpRange, "topicIp", "", "", "assign Topic IP range(required)")
-	clusterCmd.Flags().StringVarP(&object.TopicPortRange, "topicPort", "", "", "assign Topic Port range(required)")
-	clusterCmd.Flags().StringVarP(&object.TcpPortRange, "tcpPort", "", "", "assign TCP Port range(required)")
-	clusterCmd.MarkFlagRequired("mode")
-	/*clusterCmd.MarkFlagRequired("version")
-	  clusterCmd.MarkFlagRequired("env")
-	  clusterCmd.MarkFlagRequired("scheme")
-	  clusterCmd.MarkFlagRequired("pathout")
-	  clusterCmd.MarkFlagRequired("ip")
-	  clusterCmd.MarkFlagRequired("port")*/
+	rootCmd.AddCommand(getCmd)
+	getCmd.Flags().StringVarP(&object.Target, "target", "t", "", "assign target file Type within raw,cache,infra,version,config")
+	getCmd.Flags().StringVarP(&object.Type, "type", "y", "", "assign data type within deployment,service,template")
+	getCmd.Flags().StringVarP(&object.PathIn, "pathin", "i", "", "assign input path")
+	getCmd.Flags().StringVarP(&object.Version, "version", "v", "", "assign a config version")
+	getCmd.Flags().StringVarP(&object.Env, "env", "e", "", "assign an env num of 2 bits(required)")
+	getCmd.Flags().StringVarP(&object.Scheme, "scheme", "s", "", "assign config scheme")
+	getCmd.Flags().StringVarP(&object.Platform, "platform", "l", "", "assign platform")
+	getCmd.Flags().StringVarP(&object.NodeType, "nodetype", "n", "", "assign config nodetype")
+	getCmd.Flags().StringVarP(&object.Set, "cluster(set)", "c", "", "assign a cluster(set) name")
+	getCmd.Flags().StringVarP(&object.PathOut, "pathout", "o", "", "assign output path(required)")
+	getCmd.Flags().StringVarP(&mode, "mode", "m", "", "input \"remote\" or \"local\" to choose creating from remote or local(required)")
+	getCmd.Flags().StringVarP(&object.TopicIpRange, "topicIp", "", "", "assign Topic IP range(required)")
+	getCmd.Flags().StringVarP(&object.TopicPortRange, "topicPort", "", "", "assign Topic Port range(required)")
+	getCmd.Flags().StringVarP(&object.TcpPortRange, "tcpPort", "", "", "assign TCP Port range(required)")
+	getCmd.MarkFlagRequired("mode")
+	/*getCmd.MarkFlagRequired("version")
+	  getCmd.MarkFlagRequired("env")
+	  getCmd.MarkFlagRequired("scheme")
+	  getCmd.MarkFlagRequired("pathout")
+	  getCmd.MarkFlagRequired("ip")
+	  getCmd.MarkFlagRequired("port")*/
 }
 
 func Get(cmd *cobra.Command, args []string) {
+	if object.UserName == "" {
+		fmt.Println("nil username detected, please input username with option -u")
+		os.Exit(1)
+	}
 	if mode != "local" && mode != "remote" {
 		fmt.Println("please input correct arg mode, within \"remote\" or \"local\"")
+		os.Exit(1)
 		return
 	}
 	object.PathIn = filepath.Clean(object.PathIn)
@@ -75,16 +80,19 @@ func Get(cmd *cobra.Command, args []string) {
 			if object.Target == "" || object.Version == "" || object.Env == "" || object.PathIn == "" || object.TcpPortRange == "" ||
 				object.Scheme == "" || object.PathOut == "" || object.TopicIpRange == "" || object.TopicPortRange == "" {
 				fmt.Println("lack of args within target,version,env,scheme,pathout,pathin,topicIp,topicPort,tcpPort")
+				os.Exit(1)
 				return
 			}
 			//校验环境号是否合法
 			envNumFormat, err := regexp.Compile(service.EnvNumString)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			if !envNumFormat.MatchString(object.Env) {
 				fmt.Printf("illegal envNum of %s, please input num of 2 bits like 00 or 01 .etc", object.Env)
+				os.Exit(1)
 				return
 			}
 			mask := syscall.Umask(0)
@@ -93,6 +101,7 @@ func Get(cmd *cobra.Command, args []string) {
 			s, err := os.Stat(object.PathIn)
 			if err != nil || !s.IsDir() {
 				fmt.Printf("open input path err:%s", err.Error())
+				os.Exit(1)
 				return
 			}
 			/*permData, err := generatePermFile()
@@ -105,38 +114,45 @@ func Get(cmd *cobra.Command, args []string) {
 			infraData, err := ioutil.ReadFile(infraPath)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			err = repository.NewStorage(context.Background(), define.DirType, object.PathIn)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			var permData []byte
 			permData, err = repository.Src.Get(filepath.Base(object.PathIn) + "/" + define.Perms)
 			if err != nil || permData == nil {
-				fmt.Printf("get no permData from dir,err:%s", err.Error())
+				fmt.Printf("get no permData from dir,err:%v", err)
+				os.Exit(1)
 				return
 			}
 			permStruct, err := generatePermStruct(permData)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			rawData, err := repository.Src.GetbyPrefix(filepath.Base(object.PathIn) + "/" + object.Scheme)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			if rawData == nil || len(rawData) == 0 {
 				fmt.Printf("get nil rawdata from input args: %s",
 					filepath.FromSlash(filepath.Base(object.PathIn)+"/"+object.Scheme))
+				os.Exit(1)
 				return
 			}
 			//校验配置包目录结构
 			err = checkInputPackage(rawData)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			tpcIpSlice, tpcPortSlice, tcpPortSlice := strings.Split(object.TopicIpRange, ","),
@@ -144,11 +160,13 @@ func Get(cmd *cobra.Command, args []string) {
 			configData, err := generation.Generate(infraData, rawData, object.Env, tpcIpSlice, tpcPortSlice, tcpPortSlice)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			err = WriteFilesToLocal(configData, permStruct, object.Scheme)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			fmt.Printf("get %s success", object.Target)
@@ -164,12 +182,14 @@ func Get(cmd *cobra.Command, args []string) {
 		err := GetGrpcClient()
 		if err != nil {
 			fmt.Println(err)
+			os.Exit(1)
 			return
 		}
 		//新建grpc客户端
 		conn, err := grpc.Dial(GrpcInfo.Socket, grpc.WithInsecure())
 		if err != nil {
 			fmt.Println(err)
+			os.Exit(1)
 			return
 		}
 		defer conn.Close()
@@ -183,6 +203,7 @@ func Get(cmd *cobra.Command, args []string) {
 			resp, err := GetResp(configReq, conn)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			fmt.Printf("%+v", &resp.VersionList)
@@ -202,26 +223,31 @@ func Get(cmd *cobra.Command, args []string) {
 			resp, err := GetResp(configReq, conn)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			dataMap, err := util.DecompressFromStream(resp.File.FileName, resp.File.FileData)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			if _, ok := dataMap[object.Version+"/"+define.Perms]; !ok {
 				fmt.Println("err: get no permission file from remote")
+				os.Exit(1)
 				return
 			}
 			permStruct, err := generatePermStruct(dataMap[object.Version+"/"+define.Perms])
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			delete(dataMap, object.Version+"/"+define.Perms)
 			err = ChmodForRawOrCache(dataMap, permStruct, object.Version)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 		case service.TargetCache:
@@ -233,26 +259,31 @@ func Get(cmd *cobra.Command, args []string) {
 			resp, err := GetResp(configReq, conn)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			dataMap, err := util.DecompressFromStream(resp.File.FileName, resp.File.FileData)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			if _, ok := dataMap[object.UserName+"/"+define.Perms]; !ok {
 				fmt.Println("err: get no permission file from remote")
+				os.Exit(1)
 				return
 			}
 			permStruct, err := generatePermStruct(dataMap[object.UserName+"/"+define.Perms])
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			delete(dataMap, object.UserName+"/"+define.Perms)
 			err = ChmodForRawOrCache(dataMap, permStruct, object.UserName)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 		case service.TargetInfrastructure:
@@ -263,18 +294,21 @@ func Get(cmd *cobra.Command, args []string) {
 			resp, err := GetResp(configReq, conn)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			dataMap := map[string][]byte{resp.File.FileName: resp.File.FileData}
 			err = WriteFilesToLocal(dataMap, util.PermFile{}, "")
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 		case service.TargetConfig:
 			if object.Target == "" || object.Version == "" || object.Env == "" || object.PathIn == "" || object.TcpPortRange == "" ||
 				object.Scheme == "" || object.PathOut == "" || object.TopicIpRange == "" || object.TopicPortRange == "" {
 				fmt.Println("lack of args within target,version,env,scheme,pathout,pathin,topicIp,topicPort,tcpPort")
+				os.Exit(1)
 				return
 			}
 			configReq := pb.CfgReq{
@@ -292,26 +326,31 @@ func Get(cmd *cobra.Command, args []string) {
 			resp, err := GetResp(configReq, conn)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			dataMap, err := util.DecompressFromStream(resp.File.FileName, resp.File.FileData)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			if _, ok := dataMap[object.Version+"/"+define.Perms]; !ok {
 				fmt.Printf("err: get no permission file from remote, file path:%s", object.Version+"/"+define.Perms)
+				os.Exit(1)
 				return
 			}
 			permStruct, err := generatePermStruct(dataMap[object.Version+"/"+define.Perms])
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 			delete(dataMap, object.Version+"/"+define.Perms)
 			err = WriteFilesToLocal(dataMap, permStruct, object.Scheme)
 			if err != nil {
 				fmt.Println(err)
+				os.Exit(1)
 				return
 			}
 		}

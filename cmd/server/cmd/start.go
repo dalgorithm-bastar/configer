@@ -68,7 +68,8 @@ func Start(cmd *cobra.Command, args []string) {
 	//初始化日志文件
 	err := log.NewLogger()
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 	gracefully.Log = log.Zap()
 	processCtx, processCancel := context.WithCancel(gracefully.Background())
@@ -77,20 +78,23 @@ func Start(cmd *cobra.Command, args []string) {
 	//初始化repository，服务端为etcd模式
 	err = repository.NewStorage(processCtx, define.EtcdType, "")
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
 	//初始化manager
 	err = service.NewManager(processCtx)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
 	//监听grpc端口
 	manager := service.GetManager()
 	listen, err := net.Listen("tcp", service.GetGrpcInfo().Socket)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 	srv := grpc.NewServer()
 	pb.RegisterConfigCenterServer(srv, manager)
