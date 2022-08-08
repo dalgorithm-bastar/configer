@@ -30,23 +30,16 @@
 
 模板：
 
-```json
-{{
-  .replicator_number
-}}
+```shell
+{{.replicator_number}}
 {{range .deployment_info}}
-{{.NODE_ID}
-}
-{
-{
-end
-}
-}
+{{.NODE_ID}}
+{{end}}
 ```
 
 填充结果：
 
-```json
+```shell
 2
 
 1
@@ -63,24 +56,16 @@ end
 
 模板：
 
-```json
-{{
-  .replicator_number
-}}
+```shell
+{{.replicator_number}}
 {{range .deployment_info -}}
-{{.NODE_ID
-}
-}
-{
-{
-end
-}
-}
+{{.NODE_ID}}
+{{end}}
 ```
 
 填充结果：
 
-```json
+```shell
 2
 1
 2
@@ -106,27 +91,17 @@ $j:=(function)
 
 示例： 模板：
 
-```json
-{{
-  $i: =1
-  -
-}}
+```shell
+{{$i: =1 -}}
 {{range .deployment_info -}}
 {{if eq i .NODE_ID}}         #注意"."的作用域变化
-{{
-.NODE_ID
-}
-}
-{
-{
-end
-}
-}
+{{.NODE_ID}}
+{{end}}
 ```
 
 填充结果：
 
-```json
+```shell
 1
 
 ```
@@ -183,15 +158,8 @@ ge arg1 arg2：
 
 示例： 模板：
 
-```json
-{{
-  $i: =1
-  -
-}}
+```shell
+{{$i: =1 -}}
 {{if ne (index .deployment_info 1) i}}
-{
-{
-end
-}
-}
+{{end}}
 ```
