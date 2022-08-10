@@ -62,7 +62,7 @@ func checkFileContent(infrastructure []byte, rawData map[string][]byte, topicIpR
 			if len(pathSli) < 5 || pathSli[4] != define.TemplateFlag {
 				return fmt.Errorf("err template file path of:%s, please checkout input path or pkg format", filePath)
 			}
-		} else {
+		} else if !strings.Contains(filePath, define.Perms) {
 			//处理剩余情况
 			return fmt.Errorf("a file should not be here with filepath: %s", filePath)
 		}

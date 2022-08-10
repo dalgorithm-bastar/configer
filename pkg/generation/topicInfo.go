@@ -330,7 +330,7 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, env
 				//构建集群内组播通道
 				innerNet := SrvIns.InnerTopicNet
 				//依次取节点添加组内通道，越界时添加main，其余时间添加follow
-				for i := 0; i < len(setIns.Deployment.Node)+2; i++ {
+				for i := 0; i < len(setIns.Deployment.Node)+1; i++ {
 					seedIdx, seed, portIdx, actPort, coverPort, endPoint, overflow = getNextEndPoint(seedIdx, seedRanges, seed, topicPortRanges, portIdx, envNum, actPort, coverPort, ipMap, portMap)
 					if overflow {
 						return nil, nil, nil, errors.New("endPoint used up")
@@ -375,11 +375,8 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, env
 						if !isNetExt {
 							return nil, nil, nil, fmt.Errorf("innerTopic net out of host adapter list, path:%s", util.Join("/", platName, nodeTypeName, define.Service))
 						}
-					} else if i == len(setIns.Deployment.Node) {
-						topicName = "extra1"
-						nodeId, nodeIndex = 0, 0
 					} else {
-						topicName = "extra2"
+						topicName = "main"
 						nodeId, nodeIndex = 0, 0
 					}
 					expTpcMain.Inner = append(expTpcMain.Inner, ExpTpcTopicUnit{
