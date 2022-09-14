@@ -105,6 +105,9 @@ func checkInfra(infrastructure []byte) error {
 				return fmt.Errorf("repeating IP in infrastructure on host: %s, IP: %s",
 					infraStruct.Host[ih].HostName, infraStruct.Host[ih].Network[in].Ipv4)
 			}
+			if !isIpv4Legal(infraStruct.Host[ih].Network[in].Ipv4) {
+				return fmt.Errorf("illegal ipv4 input:%s, on host:%s", infraStruct.Host[ih].Network[in].Ipv4, infraStruct.Host[ih].HostName)
+			}
 			netNameMap[infraStruct.Host[ih].Network[in].Name] = 0
 			adapterMap[infraStruct.Host[ih].Network[in].Adaptor] = 0
 			IPMap[infraStruct.Host[ih].Network[in].Ipv4] = 0

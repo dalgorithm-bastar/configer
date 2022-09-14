@@ -46,8 +46,10 @@ type DeployMain struct {
 /****************** 服务信息 ******************/
 
 type SrvTpcStatUnit struct {
-	TpcName string `json:"topicName" yaml:"topicName,omitempty"`
-	IsRMB   uint16 `json:"isRMB" yaml:"isRMB,omitempty"`
+	TpcName   string  `json:"topicName" yaml:"topicName,omitempty"`
+	IsRMB     *uint16 `json:"isRMB" yaml:"isRMB,omitempty"`
+	UnaidedIO *bool   `json:"unaidedIO" yaml:"unaidedIO,omitempty"`
+	Priority  *uint16 `json:"priority" yaml:"priority,omitempty"`
 }
 
 type SrvStatementUnit struct {
@@ -92,7 +94,9 @@ type ExpTpcTopicUnit struct {
 	EndPoint    string       `json:"endPoint"`
 	NodeId      uint16       `json:"nodeId"`
 	NodeIndex   uint16       `json:"nodeIndex"`
-	IsRMB       uint16       `json:"isRMB"`
+	IsRMB       *uint16      `json:"isRMB,omitempty"`
+	UnaidedIO   *bool        `json:"unaidedIO,omitempty"`
+	Priority    *uint16      `json:"priority,omitempty"`
 	Net         InfraNetUnit `json:"net"`
 }
 

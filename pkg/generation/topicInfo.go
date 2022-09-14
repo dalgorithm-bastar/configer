@@ -203,6 +203,8 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, env
 										NodeId:      pubNodeIns.NodeId,
 										NodeIndex:   pubNodeIns.NodeIndex,
 										IsRMB:       bizUnit.IsRMB,
+										UnaidedIO:   bizUnit.UnaidedIO,
+										Priority:    bizUnit.Priority,
 										Net:         pubNodeIns.Network[netIdx],
 									}
 									pubTpcInfo.PubExtern.BizTopic = append(pubTpcInfo.PubExtern.BizTopic, pubTpcUnit)
@@ -237,6 +239,8 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, env
 												NodeId:      subNodeIns.NodeId,
 												NodeIndex:   subNodeIns.NodeIndex,
 												IsRMB:       bizUnit.IsRMB,
+												UnaidedIO:   bizUnit.UnaidedIO,
+												Priority:    bizUnit.Priority,
 												Net:         subNodeIns.Network[netIdx],
 											}
 											subTpcInfo.SubExtern.BizTopic = append(subTpcInfo.SubExtern.BizTopic, subTpcUnit)
@@ -290,6 +294,8 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, env
 									NodeId:      pubNode.NodeId,
 									NodeIndex:   pubNode.NodeIndex,
 									IsRMB:       setUnit.IsRMB,
+									UnaidedIO:   setUnit.UnaidedIO,
+									Priority:    setUnit.Priority,
 									Net:         pubNode.Network[netIdx],
 								})
 							}
@@ -315,6 +321,8 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, env
 									NodeId:      subNode.NodeId,
 									NodeIndex:   subNode.NodeIndex,
 									IsRMB:       setUnit.IsRMB,
+									UnaidedIO:   setUnit.UnaidedIO,
+									Priority:    setUnit.Priority,
 									Net:         subNode.Network[netIdx],
 								})
 							}
@@ -429,8 +437,14 @@ func MergeSrvStruct(TgtSrv, curtSrv SrvMain) (SrvMain, error) {
 				isBizUnitExist := false
 				for _, stdBizUnit := range TgtSrv.PubTopic[netIdx].BizTopic {
 					if bizUnit.TpcName == stdBizUnit.TpcName {
-						if bizUnit.IsRMB != stdBizUnit.IsRMB {
+						if !util.IsEqualPtrUint16(bizUnit.IsRMB, stdBizUnit.IsRMB) {
 							return TgtSrv, errors.New(fmt.Sprintf("different isRMB value of pub biztopic name: %s", stdBizUnit.TpcName))
+						}
+						if !util.IsEqualPtrBool(bizUnit.UnaidedIO, bizUnit.UnaidedIO) {
+							return TgtSrv, fmt.Errorf("different unaidedIO value of pub biztopic name: %s", stdBizUnit.TpcName)
+						}
+						if !util.IsEqualPtrUint16(bizUnit.Priority, bizUnit.Priority) {
+							return TgtSrv, fmt.Errorf("different priority value of pub biztopic name: %s", stdBizUnit.TpcName)
 						}
 						isBizUnitExist = true
 						break
@@ -448,8 +462,14 @@ func MergeSrvStruct(TgtSrv, curtSrv SrvMain) (SrvMain, error) {
 				isSetUnitExist := false
 				for _, stdSetUnit := range TgtSrv.PubTopic[netIdx].SetTopic {
 					if setUnit.TpcName == stdSetUnit.TpcName {
-						if setUnit.IsRMB != stdSetUnit.IsRMB {
+						if !util.IsEqualPtrUint16(setUnit.IsRMB, stdSetUnit.IsRMB) {
 							return TgtSrv, errors.New(fmt.Sprintf("different isRMB value of pub settopic name: %s", stdSetUnit.TpcName))
+						}
+						if !util.IsEqualPtrBool(setUnit.UnaidedIO, setUnit.UnaidedIO) {
+							return TgtSrv, fmt.Errorf("different unaidedIO value of pub settopic name: %s", stdSetUnit.TpcName)
+						}
+						if !util.IsEqualPtrUint16(setUnit.Priority, setUnit.Priority) {
+							return TgtSrv, fmt.Errorf("different priority value of pub settopic name: %s", stdSetUnit.TpcName)
 						}
 						isSetUnitExist = true
 						break
@@ -484,9 +504,12 @@ func MergeSrvStruct(TgtSrv, curtSrv SrvMain) (SrvMain, error) {
 				isBizUnitExist := false
 				for _, stdBizUnit := range TgtSrv.SubTopic[netIdx].BizTopic {
 					if bizUnit.TpcName == stdBizUnit.TpcName {
-						if bizUnit.IsRMB != stdBizUnit.IsRMB {
-							return TgtSrv, errors.New(fmt.Sprintf("different isRMB value of sub biztopic name: %s", stdBizUnit.TpcName))
-						}
+						/*if *bizUnit.IsRMB != *stdBizUnit.IsRMB {
+						      return TgtSrv, errors.New(fmt.Sprintf("different isRMB value of sub biztopic name: %s", stdBizUnit.TpcName))
+						  }
+						  if *bizUnit.UnaidedIO != *bizUnit.UnaidedIO {
+						      return TgtSrv, fmt.Errorf("different unaidedIO value of sub biztopic name: %s", stdBizUnit.TpcName)
+						  }*/
 						isBizUnitExist = true
 						break
 					}

@@ -469,6 +469,7 @@ func WriteFilesToLocal(fileMap map[string][]byte, permStruct util.PermFile, vers
 						err = io.ErrShortWrite
 						return fmt.Errorf("write filedata to disk err of short write")
 					}
+					f.Sync()
 					f.Close()
 				}
 			}
@@ -500,6 +501,7 @@ func WriteFilesToLocal(fileMap map[string][]byte, permStruct util.PermFile, vers
 			err = io.ErrShortWrite
 			return fmt.Errorf("write filedata to disk err of short write")
 		}
+		f.Sync()
 		f.Close()
 	}
 	return nil
