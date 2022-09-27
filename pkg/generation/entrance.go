@@ -65,10 +65,10 @@ func Generate(infrastructure []byte, rawData map[string][]byte, envNum string, t
 		return nil, err
 	}
 	//处理第三方文件生成
-	/*err = addThirdPartFiles(resMap, infrastructure, dplyStructList, versionHead)
-	  if err != nil {
-	  	return nil, err
-	  }*/
+	err = addThirdPartFiles(resMap, infrastructure, dplyStructList, versionHead)
+	if err != nil {
+		return nil, err
+	}
 	return resMap, nil
 }
 

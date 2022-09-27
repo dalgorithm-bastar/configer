@@ -504,12 +504,15 @@ func MergeSrvStruct(TgtSrv, curtSrv SrvMain) (SrvMain, error) {
 				isBizUnitExist := false
 				for _, stdBizUnit := range TgtSrv.SubTopic[netIdx].BizTopic {
 					if bizUnit.TpcName == stdBizUnit.TpcName {
-						/*if *bizUnit.IsRMB != *stdBizUnit.IsRMB {
-						      return TgtSrv, errors.New(fmt.Sprintf("different isRMB value of sub biztopic name: %s", stdBizUnit.TpcName))
-						  }
-						  if *bizUnit.UnaidedIO != *bizUnit.UnaidedIO {
-						      return TgtSrv, fmt.Errorf("different unaidedIO value of sub biztopic name: %s", stdBizUnit.TpcName)
-						  }*/
+						if !util.IsEqualPtrUint16(bizUnit.IsRMB, stdBizUnit.IsRMB) {
+							return TgtSrv, errors.New(fmt.Sprintf("different isRMB value of pub biztopic name: %s", stdBizUnit.TpcName))
+						}
+						if !util.IsEqualPtrBool(bizUnit.UnaidedIO, bizUnit.UnaidedIO) {
+							return TgtSrv, fmt.Errorf("different unaidedIO value of pub biztopic name: %s", stdBizUnit.TpcName)
+						}
+						if !util.IsEqualPtrUint16(bizUnit.Priority, bizUnit.Priority) {
+							return TgtSrv, fmt.Errorf("different priority value of pub biztopic name: %s", stdBizUnit.TpcName)
+						}
 						isBizUnitExist = true
 						break
 					}
