@@ -1,7 +1,9 @@
-artifact:
+artifact: 
   url: "127.0.0.1:8080"
   deployPath: "/User/sseadmin/MC/set2"
   configPath: "config"
+setID: 104
+userName: xitp_@@
 node:
   - hostName: "host3"
   - hostName: "host4"

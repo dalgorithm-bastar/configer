@@ -51,8 +51,8 @@ func commit(ctxRoot context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, 
 	if err != nil {
 		return err, nil, nil
 	}
-	_, err = generation.Generate(file.FileData, rawData, "01", []string{"0.0.0.0", "255.255.255.255"},
-		[]string{"1024", "65535"}, []string{"1024", "65535"})
+	_, err = generation.Generate(file.FileData, rawData, "01", "", []string{"0.0.0.0", "255.255.255.255"},
+		[]string{"1024", "65535"}, []string{"1024", "65535"}, []string{})
 	if err != nil {
 		return errors.New(fmt.Sprintf("generate cfgFile err:%s,please checkout cache under username:%s", err, req.UserName)), nil, nil
 	}

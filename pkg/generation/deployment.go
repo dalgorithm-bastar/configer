@@ -11,7 +11,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func GenerateDeploymentInfo(infrastructure []byte, rawSlice []RawFile) ([]ChartDeployMain, error) {
+func GenerateDeploymentInfo(infrastructure []byte, rawSlice []RawFile, envNum string) ([]ChartDeployMain, error) {
 	//返回值
 	var chartDeployMain []ChartDeployMain
 	//解析基础设施信息
@@ -28,7 +28,7 @@ func GenerateDeploymentInfo(infrastructure []byte, rawSlice []RawFile) ([]ChartD
 	      return nil, errors.New("unexpected keys on infrastructure")
 	  }*/
 	//分配和构建部署信息
-	var setId, nodeId uint16 = 1, 1
+	var nodeId uint16 = 1
 	for _, fileInfo := range rawSlice {
 		path := fileInfo.Path
 		data := fileInfo.Data
@@ -54,6 +54,12 @@ func GenerateDeploymentInfo(infrastructure []byte, rawSlice []RawFile) ([]ChartD
 			dpOk := util.CheckYaml(data, deployDecode)
 			if !dpOk {
 				return nil, fmt.Errorf("unexpected keys on %s, please checkout carefully", path)
+			}
+			if deployStruct.UserName != "" {
+				deployStruct.UserName = strings.ReplaceAll(deployStruct.UserName, "@@", envNum)
+			}
+			if deployStruct.SetID == 0 {
+				return nil, fmt.Errorf("lack of arg: setID, filepath:%s", path)
 			}
 			for i1, node := range deployStruct.Node {
 				isHostExist := false
@@ -97,14 +103,13 @@ func GenerateDeploymentInfo(infrastructure []byte, rawSlice []RawFile) ([]ChartD
 					NodeTypeList: []ChartDeployNodeType{{
 						NodeType: pathSlice[3],
 						SetList: []ChartDeploySet{{
-							SetID:      setId,
+							SetID:      deployStruct.SetID,
 							SetIndex:   setIndex,
 							SetName:    pathSlice[5],
 							Deployment: deployStruct,
 						}}},
 					},
 				})
-				setId++
 			}
 			if isPlatExist && !isNodeTypeExist {
 				//添加一个新的节点类型
@@ -113,24 +118,22 @@ func GenerateDeploymentInfo(infrastructure []byte, rawSlice []RawFile) ([]ChartD
 				chartDeployMain[platIndex].NodeTypeList = append(chartDeployMain[platIndex].NodeTypeList, ChartDeployNodeType{
 					NodeType: pathSlice[3],
 					SetList: []ChartDeploySet{{
-						SetID:      setId,
+						SetID:      deployStruct.SetID,
 						SetIndex:   setIndex,
 						SetName:    pathSlice[5],
 						Deployment: deployStruct,
 					}},
 				})
-				setId++
 			}
 			if isPlatExist && isNodeTypeExist {
 				//添加一个新集群
 				setIndex := len(chartDeployMain[platIndex].NodeTypeList[nodeTypeIndex].SetList) + 1
 				chartDeployMain[platIndex].NodeTypeList[nodeTypeIndex].SetList = append(chartDeployMain[platIndex].NodeTypeList[nodeTypeIndex].SetList, ChartDeploySet{
-					SetID:      setId,
+					SetID:      deployStruct.SetID,
 					SetIndex:   uint16(setIndex),
 					SetName:    pathSlice[5],
 					Deployment: deployStruct,
 				})
-				setId++
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 innerTopicNet: intranet
-pubTopic:
-  - netName: extranet
-    setTopic:
-      - topicName: DTP.MC
-        isRMB: 1
+pubTopic: 
+ - netName: extranet
+   setTopic:
+    - topicName: DTP.MC
+      isRMB: 1
+      unaidedIO: true

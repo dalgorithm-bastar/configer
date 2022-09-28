@@ -53,6 +53,8 @@ func init() {
 	getCmd.Flags().StringVarP(&object.TopicIpRange, "topicIp", "", "", "assign Topic IP range(required)")
 	getCmd.Flags().StringVarP(&object.TopicPortRange, "topicPort", "", "", "assign Topic Port range(required)")
 	getCmd.Flags().StringVarP(&object.TcpPortRange, "tcpPort", "", "", "assign TCP Port range(required)")
+	getCmd.Flags().StringVarP(&object.EzeiInner, "ezeiInner", "", "", "assign clusters within EzEI, using csv format")
+	getCmd.Flags().StringVarP(&object.EzeiEnv, "ezeiEnv", "", "", "assign envNum within EzEI")
 	getCmd.MarkFlagRequired("mode")
 	/*getCmd.MarkFlagRequired("version")
 	  getCmd.MarkFlagRequired("env")
@@ -155,9 +157,9 @@ func Get(cmd *cobra.Command, args []string) {
 				os.Exit(1)
 				return
 			}
-			tpcIpSlice, tpcPortSlice, tcpPortSlice := strings.Split(object.TopicIpRange, ","),
-				strings.Split(object.TopicPortRange, ","), strings.Split(object.TcpPortRange, ",")
-			configData, err := generation.Generate(infraData, rawData, object.Env, tpcIpSlice, tpcPortSlice, tcpPortSlice)
+			tpcIpSlice, tpcPortSlice, tcpPortSlice, ezeiCluster := strings.Split(object.TopicIpRange, ","),
+				strings.Split(object.TopicPortRange, ","), strings.Split(object.TcpPortRange, ","), strings.Split(object.EzeiInner, ",")
+			configData, err := generation.Generate(infraData, rawData, object.Env, object.EzeiEnv, tpcIpSlice, tpcPortSlice, tcpPortSlice, ezeiCluster)
 			if err != nil {
 				fmt.Println(err)
 				os.Exit(1)

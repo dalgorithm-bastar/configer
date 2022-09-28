@@ -25,7 +25,7 @@ type RawFile struct {
 }
 
 // Generate 由标准输入生成标准输出
-func Generate(infrastructure []byte, rawData map[string][]byte, envNum string, topicIpRange, topicPortRange, tcpPortRange []string) (map[string][]byte, error) {
+func Generate(infrastructure []byte, rawData map[string][]byte, envNum string, ezeiEnvNum string, topicIpRange, topicPortRange, tcpPortRange, ezeiCluster []string) (map[string][]byte, error) {
 	err := checkFileContent(infrastructure, rawData, topicIpRange, topicPortRange, tcpPortRange)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func Generate(infrastructure []byte, rawData map[string][]byte, envNum string, t
 	//构造返回结果文件包
 	resMap := make(map[string][]byte)
 	//扩充部署信息
-	dplyStructList, err := GenerateDeploymentInfo(infrastructure, rawSlice)
+	dplyStructList, err := GenerateDeploymentInfo(infrastructure, rawSlice, envNum)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func Generate(infrastructure []byte, rawData map[string][]byte, envNum string, t
 		return resMap, nil
 	}
 	//生成topicInfo总表
-	topicInfoList, hostTcpPortMap, tcpRangeSli, err := GenerateTopicInfo(dplyStructList, rawSlice, envNum, topicIpRange, topicPortRange, tcpPortRange)
+	topicInfoList, hostTcpPortMap, tcpRangeSli, err := GenerateTopicInfo(dplyStructList, rawSlice, envNum, ezeiEnvNum, topicIpRange, topicPortRange, tcpPortRange, ezeiCluster)
 	if err != nil {
 		return nil, err
 	}

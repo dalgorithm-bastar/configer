@@ -40,9 +40,11 @@ func TestGenerateTopicInfo(t *testing.T) {
 		dplyStructList []ChartDeployMain
 		rawSlice       []RawFile
 		envNum         string
+		ezeiEnvNum     string
 		topicIpRange   []string
 		topicPortRange []string
 		tcpPortRange   []string
+		ezeiInner      []string
 	}
 	tests := []struct {
 		name    string
@@ -56,7 +58,8 @@ func TestGenerateTopicInfo(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1, got2, err := GenerateTopicInfo(tt.args.dplyStructList, tt.args.rawSlice, tt.args.envNum, tt.args.topicIpRange, tt.args.topicPortRange, tt.args.tcpPortRange)
+			got, got1, got2, err := GenerateTopicInfo(tt.args.dplyStructList, tt.args.rawSlice, tt.args.envNum, tt.args.ezeiEnvNum,
+				tt.args.topicIpRange, tt.args.topicPortRange, tt.args.tcpPortRange, tt.args.ezeiInner)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GenerateTopicInfo() error = %v, wantErr %v", err, tt.wantErr)
 				return

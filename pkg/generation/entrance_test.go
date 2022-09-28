@@ -50,9 +50,11 @@ func TestGenerate(t *testing.T) {
 		infrastructure []byte
 		rawData        map[string][]byte
 		envNum         string
+		ezeiEnvNum     string
 		topicIpRange   []string
 		topicPortRange []string
 		tcpPortRange   []string
+		ezeiInner      []string
 	}
 	tests := []struct {
 		name    string
@@ -66,9 +68,11 @@ func TestGenerate(t *testing.T) {
 				infrastructure: infraData,
 				rawData:        rawData,
 				envNum:         "01",
+				ezeiEnvNum:     "22",
 				topicIpRange:   []string{"156.10.1.1", "156.10.11.2"},
 				topicPortRange: []string{"10000", "32768"},
 				tcpPortRange:   []string{"10000", "32768"},
+				ezeiInner:      []string{"RC", "MC"},
 			},
 			want:    resMap,
 			wantErr: false,
@@ -76,7 +80,8 @@ func TestGenerate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := Generate(tt.args.infrastructure, tt.args.rawData, tt.args.envNum, tt.args.topicIpRange, tt.args.topicPortRange, tt.args.tcpPortRange)
+			_, err := Generate(tt.args.infrastructure, tt.args.rawData, tt.args.envNum, tt.args.ezeiEnvNum, tt.args.topicIpRange,
+				tt.args.topicPortRange, tt.args.tcpPortRange, tt.args.ezeiInner)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Generate() error = %v, wantErr %v", err, tt.wantErr)
 				return

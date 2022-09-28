@@ -38,6 +38,8 @@ type DeployArtifactUnit struct {
 
 type DeployMain struct {
 	Artifact DeployArtifactUnit `json:"artifact" yaml:"artifact,omitempty"`
+	UserName string             `json:"userName" yaml:"userName,omitempty"`
+	SetID    uint16             `json:"setID" yaml:"setID,omitempty"`
 	Node     []InfraHostUnit    `json:"node" yaml:"node,omitempty"`
 }
 

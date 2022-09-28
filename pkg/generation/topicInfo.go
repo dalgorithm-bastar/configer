@@ -43,7 +43,8 @@ type hostTcpUnit struct {
 	coverTcpMap   map[int]int
 }
 
-func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, envNum string, topicIpRange, topicPortRange, tcpPortRange []string) (map[string]map[string]map[string]ExpTpcMain, map[string]hostTcpUnit, []int, error) {
+func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, envNum string, ezeiEnvNum string,
+	topicIpRange, topicPortRange, tcpPortRange, ezeiCluster []string) (map[string]map[string]map[string]ExpTpcMain, map[string]hostTcpUnit, []int, error) {
 	//初始化参数和返回结果
 	topicInfoMap := make(map[string]map[string]map[string]ExpTpcMain)
 	//netMap，网络-biztopic名称&处理状态-接收方
@@ -161,6 +162,8 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, env
 			if !isPubDeployed {
 				continue
 			}
+			//判断发布方是否属于ezei内部集群
+			isPubEzei := util.ContainforSliceInOrder(ezeiCluster, nodeTypeName)
 			//整体循环srv的结构，最外层为网络
 			for _, netUnit := range SrvIns.PubTopic {
 				netName := netUnit.NetName
@@ -178,11 +181,31 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, env
 							if netMap[netName][i].IsProc == true {
 								return nil, nil, nil, errors.New(fmt.Sprintf("multi nodeType pubs the same biztopic: %s", bizTpcName))
 							}
+							//biztpc，若发送方为ezei内部集群，则接收方只能全为或全不为ezei内部集群
+							isSubEzei := false
+							if isPubEzei {
+								for idxSub, subNodeType := range netMap[netName][i].Sub {
+									if idxSub == 0 {
+										isSubEzei = util.ContainforSliceInOrder(ezeiCluster, subNodeType.NodeType)
+										continue
+									}
+									isCurrentEzei := util.ContainforSliceInOrder(ezeiCluster, subNodeType.NodeType)
+									if isCurrentEzei != isSubEzei {
+										return nil, nil, nil, fmt.Errorf("err biztopic sub clusters,"+
+											" composed of ezei and other nodetype, topicNmae:%s, pubNodeType:%s", bizTpcName, nodeTypeName)
+									}
+								}
+							}
+							usingEnv := envNum
+							if isPubEzei && isSubEzei {
+								usingEnv = ezeiEnvNum
+							}
 							//biztpc，发送方每个集群只处理一次，在最外层循环
 							for _, pubSetIns := range dplyStructList[pubPi].NodeTypeList[pubNi].SetList {
 								pubTpcInfo := getTpcInfo(topicInfoMap, platName, nodeTypeName, pubSetIns.SetName)
 								//获取endpoint,作为该set的biztpc组播endpoint
-								seedIdx, seed, portIdx, actPort, coverPort, endPoint, overflow = getNextEndPoint(seedIdx, seedRanges, seed, topicPortRanges, portIdx, envNum, actPort, coverPort, ipMap, portMap)
+								seedIdx, seed, portIdx, actPort, coverPort, endPoint, overflow =
+									getNextEndPoint(seedIdx, seedRanges, seed, topicPortRanges, portIdx, usingEnv, actPort, coverPort, ipMap, portMap)
 								if overflow {
 									return nil, nil, nil, errors.New("endPoint used up")
 								}
@@ -269,8 +292,18 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, env
 					//为每一对发送方和接收方的set对，分配tpcid，endpoint
 					for _, pubSetIns := range dplyStructList[pubPi].NodeTypeList[pubNi].SetList {
 						for _, subSetIns := range dplyStructList[subpi].NodeTypeList[subni].SetList {
+							//判断接收方是否为ezei集群
+							isSubEzei := false
+							if isPubEzei {
+								isSubEzei = util.ContainforSliceInOrder(ezeiCluster, dplyStructList[subpi].NodeTypeList[subni].NodeType)
+							}
+							usingEnv := envNum
+							if isPubEzei && isSubEzei {
+								usingEnv = ezeiEnvNum
+							}
 							//获取endpoint,作为该set对的settpc组播endpoint
-							seedIdx, seed, portIdx, actPort, coverPort, endPoint, overflow = getNextEndPoint(seedIdx, seedRanges, seed, topicPortRanges, portIdx, envNum, actPort, coverPort, ipMap, portMap)
+							seedIdx, seed, portIdx, actPort, coverPort, endPoint, overflow =
+								getNextEndPoint(seedIdx, seedRanges, seed, topicPortRanges, portIdx, usingEnv, actPort, coverPort, ipMap, portMap)
 							if overflow {
 								return nil, nil, nil, errors.New("endPoint used up")
 							}
@@ -334,6 +367,10 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, env
 			}
 			//以set为单位循环生成集群内组播通道
 			for _, setIns := range dplyStructList[pubPi].NodeTypeList[pubNi].SetList {
+				//若为ezei集群，直接跳过
+				if isPubEzei {
+					break
+				}
 				expTpcMain := getTpcInfo(topicInfoMap, platName, nodeTypeName, setIns.SetName)
 				//构建集群内组播通道
 				innerNet := SrvIns.InnerTopicNet
@@ -772,8 +809,8 @@ func getNextPort(ports []int, idx int, envNum string, actualPort int) (int, int,
 		actualPort = ports[2*idx]
 	}
 	env, _ := strconv.Atoi(envNum)
-	env = env * 10
-	coverPort := actualPort/1000*1000 + env + actualPort%10
+	env = env * 100
+	coverPort := actualPort/10000*10000 + env + actualPort%100
 	return idx, actualPort + 1, coverPort, false
 }
 
@@ -781,7 +818,7 @@ func getNextPort(ports []int, idx int, envNum string, actualPort int) (int, int,
 func getNextListenPort(ports []int, idxin int, inputPort int, envNum string, listenPortMap map[int]int) (actualListenPort int, coverPort string, idx int, overFlow bool) {
 	idx = idxin
 	env, _ := strconv.Atoi(envNum)
-	env = env * 10
+	env = env * 100
 	isCoverPortInRange := false
 	for !isCoverPortInRange {
 		if inputPort > ports[2*idx+1] {
@@ -791,7 +828,7 @@ func getNextListenPort(ports []int, idxin int, inputPort int, envNum string, lis
 			idx++
 			inputPort = ports[2*idx]
 		}
-		coverPortInt := inputPort/1000*1000 + env + inputPort%10
+		coverPortInt := inputPort/10000*10000 + env + inputPort%100
 		//环境号替换后越界，取下一个
 		if coverPortInt < 1024 || coverPortInt > 65535 {
 			inputPort++

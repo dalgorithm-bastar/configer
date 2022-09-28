@@ -24,6 +24,8 @@ type Object struct {
 	TopicIpRange   string
 	TopicPortRange string
 	TcpPortRange   string
+	EzeiInner      string
+	EzeiEnv        string
 }
 
 var (

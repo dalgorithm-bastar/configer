@@ -23,7 +23,7 @@ const (
 	Template           = "template"
 	Infrastructure     = "infrastructure.yaml"
 	Deployment         = "deployment.yaml"
-	TopicInfo          = "topicInfo.json"
+	TopicInfo          = "topic_info.json"
 	Manipulations      = "manipulations"
 	Versions           = "versions"
 	Perms              = "perm.yaml"
