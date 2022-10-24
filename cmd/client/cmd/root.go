@@ -26,6 +26,7 @@ type Object struct {
 	TcpPortRange   string
 	EzeiInner      string
 	EzeiEnv        string
+	EnvCover       bool
 }
 
 var (

@@ -11,6 +11,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const (
+	_srvCov = "@@"
+	_ezCov  = "$$"
+)
+
 //描述biztopic订阅者信息
 type idtfy struct {
 	Plat     string
@@ -43,7 +48,7 @@ type hostTcpUnit struct {
 	coverTcpMap   map[int]int
 }
 
-func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, envNum string, ezeiEnvNum string,
+func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, envCover bool, envNum string, ezeiEnvNum string,
 	topicIpRange, topicPortRange, tcpPortRange, ezeiCluster []string) (map[string]map[string]map[string]ExpTpcMain, map[string]hostTcpUnit, []int, error) {
 	//初始化参数和返回结果
 	topicInfoMap := make(map[string]map[string]map[string]ExpTpcMain)
@@ -209,6 +214,13 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, env
 								if overflow {
 									return nil, nil, nil, errors.New("endPoint used up")
 								}
+								if envCover {
+									if isPubEzei && isSubEzei {
+										endPoint = endPoint[0:len(endPoint)-4] + _ezCov + endPoint[len(endPoint)-2:]
+									} else {
+										endPoint = endPoint[0:len(endPoint)-4] + _srvCov + endPoint[len(endPoint)-2:]
+									}
+								}
 								//处理发送方，添加集群内每个节点的tpcUnit
 								for _, pubNodeIns := range pubSetIns.Deployment.Node {
 									//检测节点上是否具有该网络
@@ -307,6 +319,13 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, env
 							if overflow {
 								return nil, nil, nil, errors.New("endPoint used up")
 							}
+							if envCover {
+								if isPubEzei && isSubEzei {
+									endPoint = endPoint[0:len(endPoint)-4] + _ezCov + endPoint[len(endPoint)-2:]
+								} else {
+									endPoint = endPoint[0:len(endPoint)-4] + _srvCov + endPoint[len(endPoint)-2:]
+								}
+							}
 							pubTpcInfo := getTpcInfo(topicInfoMap, platName, nodeTypeName, pubSetIns.SetName)
 							for _, pubNode := range pubSetIns.Deployment.Node {
 								//检测节点上是否具有该网络
@@ -379,6 +398,9 @@ func GenerateTopicInfo(dplyStructList []ChartDeployMain, rawSlice []RawFile, env
 					seedIdx, seed, portIdx, actPort, coverPort, endPoint, overflow = getNextEndPoint(seedIdx, seedRanges, seed, topicPortRanges, portIdx, envNum, actPort, coverPort, ipMap, portMap)
 					if overflow {
 						return nil, nil, nil, errors.New("endPoint used up")
+					}
+					if envCover {
+						endPoint = endPoint[0:len(endPoint)-4] + _srvCov + endPoint[len(endPoint)-2:]
 					}
 					var topicName, listenPort string
 					var nodeId, nodeIndex uint16

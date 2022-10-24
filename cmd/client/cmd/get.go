@@ -55,6 +55,7 @@ func init() {
 	getCmd.Flags().StringVarP(&object.TcpPortRange, "tcpPort", "", "", "assign TCP Port range(required)")
 	getCmd.Flags().StringVarP(&object.EzeiInner, "ezeiInner", "", "", "assign clusters within EzEI, using csv format")
 	getCmd.Flags().StringVarP(&object.EzeiEnv, "ezeiEnv", "", "", "assign envNum within EzEI")
+	getCmd.Flags().BoolVarP(&object.EnvCover, "envCover", "", false, "whether cover real envNum by @@ and $$")
 	getCmd.MarkFlagRequired("mode")
 	/*getCmd.MarkFlagRequired("version")
 	  getCmd.MarkFlagRequired("env")
@@ -159,7 +160,7 @@ func Get(cmd *cobra.Command, args []string) {
 			}
 			tpcIpSlice, tpcPortSlice, tcpPortSlice, ezeiCluster := strings.Split(object.TopicIpRange, ","),
 				strings.Split(object.TopicPortRange, ","), strings.Split(object.TcpPortRange, ","), strings.Split(object.EzeiInner, ",")
-			configData, err := generation.Generate(infraData, rawData, object.Env, object.EzeiEnv, tpcIpSlice, tpcPortSlice, tcpPortSlice, ezeiCluster)
+			configData, err := generation.Generate(infraData, rawData, object.EnvCover, object.Env, object.EzeiEnv, tpcIpSlice, tpcPortSlice, tcpPortSlice, ezeiCluster)
 			if err != nil {
 				fmt.Println(err)
 				os.Exit(1)

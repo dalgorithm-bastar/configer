@@ -99,7 +99,7 @@ func getConfig(ctx context.Context, req *pb.CfgReq, infra []byte) (error, []*pb.
 		}
 	}
 	//todo
-	configData, err := generation.Generate(infraFile.FileData, rawData, req.EnvNum, "00", req.ArgRange.TopicIp,
+	configData, err := generation.Generate(infraFile.FileData, rawData, false, req.EnvNum, "00", req.ArgRange.TopicIp,
 		req.ArgRange.TopicPort, req.ArgRange.TcpPort, []string{})
 	if err != nil || configData == nil {
 		return fmt.Errorf("generate err:%s, or get nil generation files", err.Error()), nil, nil
