@@ -10,9 +10,14 @@ import (
 
 	"github.com/configcenter/pkg/define"
 	"github.com/configcenter/pkg/util"
+	"gopkg.in/yaml.v3"
 )
 
-func FillTemplates(dplyStructList []ChartDeployMain, rawFile []RawFile, hostTcpPortMap map[string]hostTcpUnit, tcpRangeSli []int, envNum string, resMap map[string][]byte) (string, error) {
+func FillTemplates(infrastructure []byte, dplyStructList []ChartDeployMain, rawFile []RawFile, hostTcpPortMap map[string]hostTcpUnit, tcpRangeSli []int, envNum string, resMap map[string][]byte) (string, error) {
+	//解析基础设施信息
+	var infraStruct InfraMain
+	//已经校验过，不存在错误
+	_ = yaml.Unmarshal(infrastructure, &infraStruct)
 	//按照部署信息，循环到node，生成每个node的配置
 	dirPrePath := ""
 	for _, platformIns := range dplyStructList {
@@ -39,6 +44,9 @@ func FillTemplates(dplyStructList []ChartDeployMain, rawFile []RawFile, hostTcpP
 							SetName:   setIns.SetName,
 							NodeId:    nodeIns.NodeId,
 							NodeIndex: nodeIns.NodeIndex,
+							Env:       envNum,
+							Scheme:    sli[1],
+							Public:    infraStruct.Public,
 						}
 						sli[4] = util.Join("_", nodeIns.HostName, strconv.Itoa(int(nodeIns.NodeId)))
 						resPath := util.Join("/", sli[0]+"_"+sli[1], _origin, sli[2], sli[3], setIns.SetName, sli[4], sli[5])

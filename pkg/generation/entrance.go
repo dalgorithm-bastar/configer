@@ -55,7 +55,7 @@ func Generate(infrastructure []byte, rawData map[string][]byte, envCover bool, e
 		return nil, err
 	}
 	//按照部署信息填充模板，同时获取文件夹前缀
-	versionHead, err := FillTemplates(dplyStructList, rawSlice, hostTcpPortMap, tcpRangeSli, envNum, resMap)
+	versionHead, err := FillTemplates(infrastructure, dplyStructList, rawSlice, hostTcpPortMap, tcpRangeSli, envNum, resMap)
 	if err != nil {
 		return nil, err
 	}

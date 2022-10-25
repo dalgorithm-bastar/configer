@@ -23,7 +23,8 @@ type InfraHostUnit struct {
 }
 
 type InfraMain struct {
-	Host []InfraHostUnit `json:"host" yaml:"host,omitempty"`
+	Host   []InfraHostUnit `json:"host" yaml:"host,omitempty"`
+	Public map[string]any  `json:"public" yaml:"public,omitempty"`
 }
 
 /********************************************/
@@ -77,6 +78,9 @@ type FillArgs struct {
 	SetName   string
 	NodeId    uint16
 	NodeIndex uint16
+	Scheme    string
+	Env       string
+	Public    map[string]any
 }
 
 /********************************************/
