@@ -17,6 +17,7 @@ import (
 	"github.com/configcenter/pkg/util"
 	"github.com/coreos/etcd/clientv3"
 	"github.com/coreos/etcd/clientv3/concurrency"
+	"go.uber.org/zap"
 )
 
 //post 提交函数post认为将要提交的对象是正确的，并在此基础上进一步执行提交操作。对象的正确性在put操作中保证。
@@ -41,7 +42,7 @@ func commit(ctxRoot context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, 
 	//获取已缓存的文件
 	rawData, err := repository.Src.GetbyPrefix(req.UserName)
 	if err != nil {
-		log.Sugar().Errorf("get rawData from repository err of %v, under path %s", err, req.UserName)
+		log.Logger.Error("get rawData from repository err", zap.Any("err", err), zap.String("path(user)", req.UserName))
 		return err, nil, nil
 	}
 	if rawData == nil || len(rawData) <= 0 {
@@ -62,7 +63,7 @@ func commit(ctxRoot context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, 
 	if _, ok := cliRes.(*clientv3.Client); !ok {
 		//获取etcd客户端失败，返回获取的类型
 		msg := fmt.Sprintf("get etcd clientv3 err, type of datasource: %v", reflect.TypeOf(cliRes))
-		log.Sugar().Infof(msg)
+		log.Logger.Error(msg)
 		return errors.New(msg), nil, nil
 	}
 	client, _ := cliRes.(*clientv3.Client)
@@ -72,19 +73,19 @@ func commit(ctxRoot context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, 
 	defer cancelFunc()
 	response, err := client.Grant(ctxTimeout, int64(manager.grpcInfo.LockTimeout))
 	if err != nil {
-		log.Sugar().Infof("get lease from etcd err:%v", err)
+		log.Logger.Error("get lease from etcd err", zap.Any("err", err))
 		return err, nil, nil
 	}
 	session, err := concurrency.NewSession(client, concurrency.WithLease(response.ID))
 	if err != nil {
-		log.Sugar().Infof("get session from etcd err:%v", err)
+		log.Logger.Error("get session from etcd err", zap.Any("err", err))
 		return err, nil, nil
 	}
 	defer func() {
 		if session != nil {
 			err := session.Close()
 			if err != nil {
-				log.Sugar().Warnf("Close session err:%v", err)
+				log.Logger.Warn("Close session err", zap.Any("err", err))
 			}
 		}
 	}()
@@ -92,7 +93,7 @@ func commit(ctxRoot context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, 
 	err = mutex.Lock(ctxTimeout)
 	session.Orphan()
 	if err != nil {
-		log.Sugar().Infof("lock etcd err:%v", err)
+		log.Logger.Info("lock etcd err", zap.Any("err", err))
 		return err, nil, nil
 	}
 	//加锁后进行操作
@@ -109,14 +110,14 @@ func commit(ctxRoot context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, 
 	}
 	err = repository.Src.AtomicCommit(fileMap, deleteKeySlice)
 	if err != nil {
-		log.Sugar().Errorf("AtomicCommit err of %v when posting, putmap:%+v, deleteSlice:%+v", err, fileMap, deleteKeySlice)
+		log.Logger.Error("AtomicCommit err when posting", zap.Any("err", err), zap.Any("filemap", fileMap), zap.Any("deleteKeySlice", deleteKeySlice))
 		return err, nil, nil
 	}
 	defer func() {
 		if mutex != nil {
 			err := mutex.Unlock(ctxTimeout)
 			if err != nil {
-				log.Sugar().Warnf("Close session err:%v", err)
+				log.Logger.Warn("Close session err", zap.Any("err", err))
 			}
 		}
 	}()
@@ -136,7 +137,7 @@ func getNextVersion(version string) (string, string, error) {
 	//获取历史版本号
 	versionStr, err := repository.Src.Get(define.Versions)
 	if err != nil {
-		log.Sugar().Errorf("get former versions from repository err of %v, under path %s", err, define.Versions)
+		log.Logger.Error("get former versions from repository err", zap.Any("err", err), zap.String("version(path)", define.Versions))
 		return "", "", err
 	}
 	if versionStr == nil || len(versionStr) <= 0 {

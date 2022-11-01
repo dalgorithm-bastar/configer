@@ -1,11 +1,34 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/configcenter/pkg/define"
 	manage "github.com/configcenter/pkg/service"
 	"github.com/spf13/cobra"
 
 	"github.com/spf13/viper"
+)
+
+const (
+	_target    = "target"
+	_type      = "type"
+	_pathin    = "pathin"
+	_version   = "version"
+	_env       = "env"
+	_scheme    = "scheme"
+	_platform  = "platform"
+	_nodeType  = "nodetype"
+	_cluster   = "cluster"
+	_pathout   = "pathout"
+	_mode      = "mode"
+	_topicIp   = "topicIp"
+	_topicPort = "topicPort"
+	_tcpPort   = "tcpPort"
+	_ezeiInner = "ezeiInner"
+	_ezeiEnv   = "ezeiEnv"
+	_envCover  = "envCover"
 )
 
 // Object 用于接收参数的公用结构体，不同指令下初始化不同的变量
@@ -27,6 +50,7 @@ type Object struct {
 	EzeiInner      string
 	EzeiEnv        string
 	EnvCover       bool
+	mode           string
 }
 
 var (
@@ -66,7 +90,7 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ../config/client.json)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ../config/client.yaml)")
 	rootCmd.PersistentFlags().StringVarP(&object.UserName, "user", "u", "", "current userName(required)")
 
 	rootCmd.Flags().String(define.GrpcSocket, "", "set grpc socket")
@@ -92,16 +116,20 @@ func initConfig() {
 
 		// Search config in home directory with name ".cfgsrv" (without extension).
 		//viper.AddConfigPath("config")
-		//viper.SetConfigType("json")
+		viper.SetConfigType("yaml")
 		//viper.SetConfigName("configcenter")
-		viper.SetConfigFile("../config/client.json")
+		viper.SetConfigFile("../config/client.yaml")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		//fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+		//fmt.Println(viper.AllSettings())
+	} else {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }
 
@@ -113,4 +141,24 @@ func GetGrpcClient() error {
 		LockTimeout: viper.GetInt(define.GrpcLockTimeout),
 	}
 	return nil
+}
+
+func transfermInput() {
+	object.Env = viper.GetString(_env)
+	object.Target = viper.GetString(_target)
+	object.Type = viper.GetString(_type)
+	object.Platform = viper.GetString(_platform)
+	object.NodeType = viper.GetString(_nodeType)
+	object.Version = viper.GetString(_version)
+	object.Scheme = viper.GetString(_scheme)
+	object.Set = viper.GetString(_cluster)
+	object.PathIn = viper.GetString(_pathin)
+	object.PathOut = viper.GetString(_pathout)
+	object.TopicIpRange = viper.GetString(_topicIp)
+	object.TopicPortRange = viper.GetString(_topicPort)
+	object.TcpPortRange = viper.GetString(_tcpPort)
+	object.EzeiEnv = viper.GetString(_ezeiEnv)
+	object.EzeiInner = viper.GetString(_ezeiInner)
+	object.EnvCover = viper.GetBool(_envCover)
+	object.mode = viper.GetString(_mode)
 }

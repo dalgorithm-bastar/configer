@@ -10,6 +10,7 @@ import (
 	"github.com/configcenter/pkg/pb"
 	"github.com/configcenter/pkg/repository"
 	"github.com/configcenter/pkg/util"
+	"go.uber.org/zap"
 )
 
 //put接口用于导入配置并缓存，缓存接口单独设置以便后续升级
@@ -21,11 +22,11 @@ func put(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.Any
 	//获取文件存储路径和内容
 	fileMap, err := util.DecompressFromStream(req.File.FileName, req.File.FileData)
 	if err != nil {
-		log.Sugar().Infof("Decompressed from file err:%v, filename:%s", err, req.File.FileName)
+		log.Logger.Error("Decompressed from file err", zap.Any("err", err), zap.String("filename", req.File.FileName))
 		return err, nil, nil
 	}
 	if fileMap == nil || len(fileMap) == 0 {
-		log.Sugar().Infof("Decompressed from file and get nil filedata, filename:%s", req.File.FileName)
+		log.Logger.Error("Decompressed from file and get nil filedata", zap.String("filename", req.File.FileName))
 		return errors.New("get no data from filedata, please checkout file uploaded"), nil, nil
 	}
 	//检查并替换根目录
@@ -33,7 +34,7 @@ func put(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.Any
 	//获取用户当前缓存的文件并删除，避免污染
 	oldData, err := repository.Src.GetbyPrefix(req.UserName)
 	if err != nil {
-		log.Sugar().Errorf("get rawData from repository err of %v, under path %s", err, util.Join(req.Version, req.Scheme))
+		log.Logger.Error("get rawData from repository err", zap.Error(err), zap.String("filepath", util.Join(req.Version, req.Scheme)))
 		return err, nil, nil
 	}
 	var deleteSlice []string
@@ -45,7 +46,7 @@ func put(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.Any
 	//直接缓存
 	err = repository.Src.AtomicCommit(newMap, deleteSlice)
 	if err != nil {
-		log.Sugar().Errorf("AtomicCommit err of %v when putting", err)
+		log.Logger.Error("AtomicCommit err when putting", zap.Error(err))
 		return err, nil, nil
 	}
 	return nil, nil, nil
@@ -59,11 +60,11 @@ func put(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.Any
     //获取文件存储路径和内容
     fileMap, err := util.DecompressFromStream(req.File.FileName, req.File.FileData)
     if err != nil {
-        log.Sugar().Infof("Decompressed from file err:%v, filename:%s", err, req.File.FileName)
+        log.Logger.Infof("Decompressed from file err:%v, filename:%s", err, req.File.FileName)
         return err, nil, nil
     }
     if fileMap == nil || len(fileMap) == 0 {
-        log.Sugar().Infof("Decompressed from file and get nil filedata, filename:%s", req.File.FileName)
+        log.Logger.Infof("Decompressed from file and get nil filedata, filename:%s", req.File.FileName)
         return errors.New("get no data from filedata, please checkout file uploaded"), nil, nil
     }
     //返回根目录(版本号)，不同环境号下对应的模板路径，不同环境号对应的集群名称，以及错误类型
@@ -78,24 +79,24 @@ func put(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.Any
         for _, templateFilePath := range templateFilePaths {
             templateIns, err := generation.NewTemplateImpl(srcForCheck, "00", "0", "0", "templateIns", rootPath, envNum)
             if err != nil {
-                log.Sugar().Errorf("init tmpl err when putting, err:%v", err)
+                log.Logger.Errorf("init tmpl err when putting, err:%v", err)
                 return err, nil, "", nil
             }
             content, err := srcForCheck.Get(templateFilePath)
             if err != nil {
-                log.Sugar().Infof("get tmpl err when putting, err:%v, tmplPath:%s", err, templateFilePath)
+                log.Logger.Infof("get tmpl err when putting, err:%v, tmplPath:%s", err, templateFilePath)
                 return err, nil, "", nil
             }
             pathSlice := strings.Split(templateFilePath, "/")
             srvPath := strings.Join(append(pathSlice[0:len(pathSlice)-2], repository.ServiceList), "/")
             srcContent, err := srcForCheck.Get(srvPath)
             if err != nil {
-                log.Sugar().Infof("get srvList err when putting, err:%v, srvPath:%s", err, srvPath)
+                log.Logger.Infof("get srvList err when putting, err:%v, srvPath:%s", err, srvPath)
                 return err, nil, "", nil
             }
             _, err = templateIns.Fill(content, templateFilePath, srcContent)
             if err != nil {
-                log.Sugar().Infof("fill tmpl err when putting, err:%v, tmplPath:%s, tmplContent:%s", err, templateFilePath, content)
+                log.Logger.Infof("fill tmpl err when putting, err:%v, tmplPath:%s, tmplContent:%s", err, templateFilePath, content)
                 return err, nil, "", nil
             }
         }
@@ -132,7 +133,7 @@ func put(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.Any
     //删除用户上次缓存的文件，避免污染
     userFileMap, err := repository.Src.GetbyPrefix(req.UserName)
     if err != nil {
-        log.Sugar().Infof("delete files under username %s err:%v", req.UserName, err)
+        log.Logger.Infof("delete files under username %s err:%v", req.UserName, err)
         return err, nil, "", nil
     }
     var deleteSlice []string
@@ -143,10 +144,10 @@ func put(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.Any
     }
     err = repository.Src.AcidCommit(putmap, deleteSlice)
     if err != nil {
-        log.Sugar().Errorf("AcidCommit err of %v when putting, putmap:%+v", err, putmap)
+        log.Logger.Errorf("AcidCommit err of %v when putting, putmap:%+v", err, putmap)
         return err, nil, "", nil
     }
-    log.Sugar().Info("commit success")
+    log.Logger.Info("commit success")
     return nil, nil, "", nil
 }
 
@@ -160,14 +161,14 @@ func checkFilePath(fileMap map[string][]byte) (string, map[string][]string, map[
         pathSlice := strings.SplitN(k, "/", 4)
         //根目录下不允许放文件
         if len(pathSlice) <= 1 {
-            log.Sugar().Infof("illegal file path of %s when putting, file is put under rootpath", k)
+            log.Logger.Infof("illegal file path of %s when putting, file is put under rootpath", k)
             return "", nil, nil, errors.New(fmt.Sprintf("can not put file under rootpath, filename: %s", k))
         }
         //检测是否存在多个根文件夹
         if _, ok := rootPathMap[pathSlice[0]]; !ok {
             rootPathMap[pathSlice[0]] = ""
             if len(rootPathMap) > 1 {
-                log.Sugar().Infof("multi rootpath found when putting, paths:%+v", rootPathMap)
+                log.Logger.Infof("multi rootpath found when putting, paths:%+v", rootPathMap)
                 return "", nil, nil, errors.New(fmt.Sprintf("multi rootPath found in compressed file: %v", rootPathMap))
             }
         }
@@ -185,13 +186,13 @@ func checkFilePath(fileMap map[string][]byte) (string, map[string][]string, map[
             for _, index := range subStringIndexs {
                 if index[0] == 0 {
                     err := fmt.Sprintf("key word \"template\" found as rootPath %s", k)
-                    log.Sugar().Info(err)
+                    log.Logger.Info(err)
                     return "", nil, nil, errors.New(err)
                 }
                 if k[index[0]-1] == '/' {
                     if existFlag {
                         err := fmt.Sprintf("key word \"template\" repeated in Path %s", k)
-                        log.Sugar().Info(err)
+                        log.Logger.Info(err)
                         return "", nil, nil, errors.New(err)
                     }
                     existFlag = true

@@ -11,6 +11,7 @@ import (
 	"github.com/configcenter/pkg/generation"
 	"github.com/configcenter/pkg/repository"
 	"github.com/configcenter/pkg/util"
+	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 
 	"github.com/configcenter/pkg/pb"
@@ -21,7 +22,7 @@ func Get(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.Any
 	//确定请求结构体内容是否合法
 	err := checkData(req)
 	if err != nil {
-		log.Sugar().Infof("checkData failed in GET req: %+v, err: %v", req, err)
+		log.Logger.Error("checkData failed in GET req", zap.Any("req", req), zap.Any("err", err))
 		return err, nil, nil
 	}
 	//根据约定常量确定要获取的资源类型
@@ -39,7 +40,7 @@ func Get(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.Any
 	//默认返回错误
 	default:
 		err := fmt.Sprintf("Target of %s can not be recognized in GET req", req.Target)
-		log.Sugar().Infof(err)
+		log.Logger.Error(err)
 		return errors.New(err), nil, nil
 	}
 }
@@ -76,7 +77,7 @@ func checkData(data *pb.CfgReq) error {
 func getConfig(ctx context.Context, req *pb.CfgReq, infra []byte) (error, []*pb.VersionInfo, *pb.AnyFile) {
 	rawData, err := repository.Src.GetbyPrefix(util.Join("/", req.Version, req.Scheme))
 	if err != nil {
-		log.Sugar().Errorf("get rawData from repository err of %v, under path %s", err, util.Join(req.Version, req.Scheme))
+		log.Logger.Error("get rawData from repository err", zap.Any("err", err), zap.String("path", util.Join(req.Version, req.Scheme)))
 		return err, nil, nil
 	}
 	if rawData == nil || len(rawData) <= 0 {
@@ -98,9 +99,9 @@ func getConfig(ctx context.Context, req *pb.CfgReq, infra []byte) (error, []*pb.
 			return err, nil, nil
 		}
 	}
-	//todo
-	configData, err := generation.Generate(infraFile.FileData, rawData, false, req.EnvNum, "00", req.ArgRange.TopicIp,
-		req.ArgRange.TopicPort, req.ArgRange.TcpPort, []string{})
+	//todo 新增参数校验
+	configData, err := generation.Generate(infraFile.FileData, rawData, req.EnvCover, req.EnvNum, req.EzeiEnv, req.ArgRange.TopicIp,
+		req.ArgRange.TopicPort, req.ArgRange.TcpPort, strings.Split(req.EzeiInner, ","))
 	if err != nil || configData == nil {
 		return fmt.Errorf("generate err:%s, or get nil generation files", err.Error()), nil, nil
 	}
@@ -125,7 +126,7 @@ func getConfig(ctx context.Context, req *pb.CfgReq, infra []byte) (error, []*pb.
 func getInfrastructure(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.AnyFile) {
 	file, err := repository.Src.Get(define.Infrastructure)
 	if err != nil {
-		log.Sugar().Errorf("get Infrastructure from repository err of %v, under path %s", err, define.Infrastructure)
+		log.Logger.Error("get Infrastructure from repository err", zap.Any("err", err), zap.String("path", define.Infrastructure))
 		return err, nil, nil
 	}
 	if file == nil || len(file) <= 0 {
@@ -140,7 +141,7 @@ func getInfrastructure(ctx context.Context, req *pb.CfgReq) (error, []*pb.Versio
 func getVersion(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.AnyFile) {
 	data, err := repository.Src.Get(define.Versions)
 	if err != nil {
-		log.Sugar().Errorf("get versions from repository err of %v, under path %s", err, define.Versions)
+		log.Logger.Error("get versions from repository err", zap.Any("err", err), zap.String("path", define.Versions))
 		return err, nil, nil
 	}
 	if data == nil || len(data) <= 0 {
@@ -164,7 +165,7 @@ func getVersion(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, 
 func getCache(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.AnyFile) {
 	cache, err := repository.Src.GetbyPrefix(req.UserName)
 	if err != nil {
-		log.Sugar().Errorf("get rawData from repository err of %v, under path %s", err, util.Join(req.Version, req.Scheme))
+		log.Logger.Error("get rawData from repository err", zap.Any("err", err), zap.String("path", util.Join(req.Version, req.Scheme)))
 		return err, nil, nil
 	}
 	if cache == nil || len(cache) <= 0 {
@@ -189,7 +190,7 @@ func getCache(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *p
 func getRaw(ctx context.Context, req *pb.CfgReq) (error, []*pb.VersionInfo, *pb.AnyFile) {
 	rawData, err := repository.Src.GetbyPrefix(req.Version)
 	if err != nil {
-		log.Sugar().Errorf("get rawData from repository err of %v, under path %s", err, util.Join(req.Version, req.Scheme))
+		log.Logger.Error("get rawData from repository err", zap.Any("err", err), zap.String("path", util.Join(req.Version, req.Scheme)))
 		return err, nil, nil
 	}
 	if rawData == nil || len(rawData) <= 0 {
@@ -225,6 +226,9 @@ func updateEnvNumFile(req *pb.CfgReq, infra []byte) error {
 		Version:        req.Version,
 		Scheme:         req.Scheme,
 		EnvNum:         req.EnvNum,
+		EzeiInner:      req.EzeiInner,
+		EzeiEnv:        req.EzeiEnv,
+		EnvCover:       req.EnvCover,
 		Ip:             strings.Join(req.ArgRange.TopicIp, ","),
 		CastPort:       strings.Join(req.ArgRange.TopicPort, ","),
 		TcpPort:        strings.Join(req.ArgRange.TcpPort, ","),

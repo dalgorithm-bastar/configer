@@ -2,119 +2,69 @@
 package log
 
 import (
+	"fmt"
 	"os"
 	"time"
-
-	"github.com/configcenter/pkg/define"
-	rotatelogs "github.com/lestrrat/go-file-rotatelogs"
-	"github.com/spf13/viper"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
-//仅在启动时初始化
 const (
-	_debugLevel     = "debug"
-	_encodeTypeJson = "json"
+	_logDir  string = "../log"
+	_logTail string = ".log"
 )
 
-var logRec *Logger
+var (
+	Logger  *zap.Logger
+	Version string = time.Now().Format("20060102_150405")
+)
 
-type LogInfo struct {
-	LogPath      string  `json:"logpath"`
-	RocordLevel  string  `json:"recordlevel"`
-	EncodingType string  `json:"encodingtype"`
-	FileName     string  `json:"filename"`
-	MaxAge       float64 `json:"maxage"`
-}
-
-// Logger Logger结构体封装zaplog、sugarlog、日志配置信息
-type Logger struct {
-	zapLog   *zap.Logger
-	sugarLog *zap.SugaredLogger
-	//zapFieldSlice []zapcore.Field //用于数据类型转换
-	logInfo LogInfo //读取配置数据
-}
-
-func NewLogger() error {
-	logRec = new(Logger)
-	logRec.setLogInfo()
-	err := logRec.Init()
+func init() {
+	err := os.MkdirAll(_logDir, os.FileMode(0755))
 	if err != nil {
-		return err
+		fmt.Printf("mkdir for %s err:%v \n", _logDir, err)
+		os.Exit(1)
 	}
-	//创建日志文件夹
-	err = os.MkdirAll(logRec.logInfo.LogPath, os.ModePerm)
+	f, err := os.OpenFile(_logDir+"/"+Version+_logTail, os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.FileMode(0644))
 	if err != nil {
-		return err
+		fmt.Printf("mkdir for %s err:%v \n", _logDir+"/"+Version, err)
+		os.Exit(1)
 	}
-	return nil
-}
-
-func (l *Logger) Init() error {
-	encoder := getEncoder(l.logInfo.EncodingType)
-
-	// 保存日志30天，每24小时分割一次日志
-	hook, err := rotatelogs.New(
-		l.logInfo.LogPath+l.logInfo.FileName+"_%Y%m%d.log",
-		rotatelogs.WithLinkName(l.logInfo.LogPath+l.logInfo.FileName),
-		rotatelogs.WithMaxAge(time.Hour*24*time.Duration(l.logInfo.MaxAge)),
-		rotatelogs.WithRotationTime(time.Hour*24),
-	)
+	err = f.Close()
 	if err != nil {
-		return err
+		fmt.Printf("close file for %s err:%v", _logDir+"/"+Version+_logTail, err)
+		os.Exit(1)
 	}
-	/*lumberJackLogger := &lumberjack.Logger{
-		Filename:   l.logInfo.LogPath + l.logInfo.FileName,
-		MaxSize:    int(l.logInfo.MaxSize), //MB
-		MaxBackups: int(l.logInfo.MaxBackups),
-		MaxAge:     int(l.logInfo.MaxAge), //day
-		Compress:   false,
-	}*/
-	writeSyncer := zapcore.AddSync(hook)
-	level := zapcore.InfoLevel
-	if l.logInfo.RocordLevel == _debugLevel {
-		level = zapcore.DebugLevel
+	encoderConfig := zapcore.EncoderConfig{
+		TimeKey:        "time",
+		LevelKey:       "level",
+		NameKey:        "logger",
+		CallerKey:      "caller",
+		MessageKey:     "msg",
+		StacktraceKey:  "stacktrace",
+		LineEnding:     zapcore.DefaultLineEnding,
+		EncodeLevel:    zapcore.LowercaseLevelEncoder,
+		EncodeTime:     zapcore.ISO8601TimeEncoder, // ISO8601 UTC 时间格式
+		EncodeDuration: zapcore.SecondsDurationEncoder,
+		//EncodeCaller:   zapcore.FullCallerEncoder, // 全路径编码器
+		EncodeCaller: zapcore.ShortCallerEncoder,
 	}
-	core := zapcore.NewCore(encoder, writeSyncer, level)
-	l.zapLog = zap.New(core, zap.AddCaller())
-	l.sugarLog = l.zapLog.Sugar()
-	return nil
-}
-
-func (l *Logger) setLogInfo() {
-	l.logInfo = LogInfo{
-		LogPath:      viper.GetString(define.LogLogPath),
-		RocordLevel:  viper.GetString(define.LogRecordLevel),
-		EncodingType: viper.GetString(define.LogEncodingType),
-		FileName:     viper.GetString(define.LogFileName),
-		MaxAge:       viper.GetFloat64(define.LogMaxAge),
+	// 设置日志级别
+	atom := zap.NewAtomicLevelAt(zap.InfoLevel)
+	config := zap.Config{
+		Level:         atom,          // 日志级别
+		Development:   true,          // 开发模式，堆栈跟踪
+		Encoding:      "console",     // 输出格式 console 或 json
+		EncoderConfig: encoderConfig, // 编码器配置
+		//InitialFields:    map[string]interface{}{"serviceName": "spikeProxy"}, // 初始化字段，如：添加一个服务器名称
+		OutputPaths:      []string{"stdout", _logDir + "/" + Version + _logTail}, // 输出到指定文档 stdout（标准输出，正常颜色） stderr（错误输出，红色）
+		ErrorOutputPaths: []string{"stderr", _logDir + "/" + Version + _logTail},
 	}
-}
-
-func getEncoder(encoderType string) zapcore.Encoder {
-	encoderConfig := zap.NewProductionEncoderConfig()
-	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
-	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
-	if encoderType == _encodeTypeJson {
-		return zapcore.NewJSONEncoder(encoderConfig)
+	// 构建日志
+	logger, err := config.Build()
+	Logger = logger
+	if err != nil {
+		panic(fmt.Sprintf("log 初始化失败: %v", err))
 	}
-	return zapcore.NewConsoleEncoder(encoderConfig)
-}
-
-// Zap 获取结构化输出日志实例
-func Zap() *zap.Logger {
-	if logRec == nil || logRec.zapLog == nil {
-		return zap.NewExample()
-	}
-	return logRec.zapLog
-}
-
-// Sugar 获取格式化输出日志实例
-func Sugar() *zap.SugaredLogger {
-	if logRec == nil || logRec.zapLog == nil {
-		return zap.NewExample().Sugar()
-	}
-	return logRec.sugarLog
 }

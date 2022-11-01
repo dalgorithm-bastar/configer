@@ -22,13 +22,12 @@ import (
 	"github.com/configcenter/pkg/service"
 	"github.com/configcenter/pkg/util"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"gopkg.in/yaml.v3"
 )
 
 const _separator = string(os.PathSeparator)
-
-var mode string
 
 // getCmd represents the cluster command
 var getCmd = &cobra.Command{
@@ -39,23 +38,40 @@ var getCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(getCmd)
-	getCmd.Flags().StringVarP(&object.Target, "target", "t", "", "assign target file Type within raw,cache,infra,version,config")
-	getCmd.Flags().StringVarP(&object.Type, "type", "y", "", "assign data type within deployment,service,template")
-	getCmd.Flags().StringVarP(&object.PathIn, "pathin", "i", "", "assign input path")
-	getCmd.Flags().StringVarP(&object.Version, "version", "v", "", "assign a config version")
-	getCmd.Flags().StringVarP(&object.Env, "env", "e", "", "assign an env num of 2 bits(required)")
-	getCmd.Flags().StringVarP(&object.Scheme, "scheme", "s", "", "assign config scheme")
-	getCmd.Flags().StringVarP(&object.Platform, "platform", "l", "", "assign platform")
-	getCmd.Flags().StringVarP(&object.NodeType, "nodetype", "n", "", "assign config nodetype")
-	getCmd.Flags().StringVarP(&object.Set, "cluster(set)", "c", "", "assign a cluster(set) name")
-	getCmd.Flags().StringVarP(&object.PathOut, "pathout", "o", "", "assign output path(required)")
-	getCmd.Flags().StringVarP(&mode, "mode", "m", "", "input \"remote\" or \"local\" to choose creating from remote or local(required)")
-	getCmd.Flags().StringVarP(&object.TopicIpRange, "topicIp", "", "", "assign Topic IP range(required)")
-	getCmd.Flags().StringVarP(&object.TopicPortRange, "topicPort", "", "", "assign Topic Port range(required)")
-	getCmd.Flags().StringVarP(&object.TcpPortRange, "tcpPort", "", "", "assign TCP Port range(required)")
-	getCmd.Flags().StringVarP(&object.EzeiInner, "ezeiInner", "", "", "assign clusters within EzEI, using csv format")
-	getCmd.Flags().StringVarP(&object.EzeiEnv, "ezeiEnv", "", "", "assign envNum within EzEI")
-	getCmd.Flags().BoolVarP(&object.EnvCover, "envCover", "", false, "whether cover real envNum by @@ and $$")
+	getCmd.Flags().StringP(_target, "t", "", "assign target file Type within raw,cache,infra,version,config")
+	_ = viper.BindPFlag(_target, getCmd.Flag(_target))
+	getCmd.Flags().StringP(_type, "y", "", "assign data type within deployment,service,template")
+	_ = viper.BindPFlag(_type, getCmd.Flag(_type))
+	getCmd.Flags().StringP(_pathin, "i", "", "assign input path")
+	_ = viper.BindPFlag(_pathin, getCmd.Flag(_pathin))
+	getCmd.Flags().StringP(_version, "v", "", "assign a config version")
+	_ = viper.BindPFlag(_version, getCmd.Flag(_version))
+	getCmd.Flags().StringP(_env, "e", "", "assign an env num of 2 bits(required)")
+	_ = viper.BindPFlag(_env, getCmd.Flag(_env))
+	getCmd.Flags().StringP(_scheme, "s", "", "assign config scheme")
+	_ = viper.BindPFlag(_scheme, getCmd.Flag(_scheme))
+	getCmd.Flags().StringP(_platform, "l", "", "assign platform")
+	_ = viper.BindPFlag(_platform, getCmd.Flag(_platform))
+	getCmd.Flags().StringP(_nodeType, "n", "", "assign config nodetype")
+	_ = viper.BindPFlag(_nodeType, getCmd.Flag(_nodeType))
+	getCmd.Flags().StringP(_cluster, "c", "", "assign a cluster(set) name")
+	_ = viper.BindPFlag(_cluster, getCmd.Flag(_cluster))
+	getCmd.Flags().StringP(_pathout, "o", "", "assign output path(required)")
+	_ = viper.BindPFlag(_pathout, getCmd.Flag(_pathout))
+	getCmd.Flags().StringP(_mode, "m", "", "input \"remote\" or \"local\" to choose creating from remote or local(required)")
+	_ = viper.BindPFlag(_mode, getCmd.Flag(_mode))
+	getCmd.Flags().StringP(_topicIp, "", "", "assign Topic IP range(required)")
+	_ = viper.BindPFlag(_topicIp, getCmd.Flag(_topicIp))
+	getCmd.Flags().StringP(_topicPort, "", "", "assign Topic Port range(required)")
+	_ = viper.BindPFlag(_topicPort, getCmd.Flag(_topicPort))
+	getCmd.Flags().StringP(_tcpPort, "", "", "assign TCP Port range(required)")
+	_ = viper.BindPFlag(_tcpPort, getCmd.Flag(_tcpPort))
+	getCmd.Flags().StringP(_ezeiInner, "", "", "assign clusters within EzEI, using csv format")
+	_ = viper.BindPFlag(_ezeiInner, getCmd.Flag(_ezeiInner))
+	getCmd.Flags().StringP(_ezeiEnv, "", "", "assign envNum within EzEI")
+	_ = viper.BindPFlag(_ezeiEnv, getCmd.Flag(_ezeiEnv))
+	getCmd.Flags().BoolP(_envCover, "", false, "whether cover real envNum by @@ and $$")
+	_ = viper.BindPFlag(_envCover, getCmd.Flag(_envCover))
 	getCmd.MarkFlagRequired("mode")
 	/*getCmd.MarkFlagRequired("version")
 	  getCmd.MarkFlagRequired("env")
@@ -66,18 +82,19 @@ func init() {
 }
 
 func Get(cmd *cobra.Command, args []string) {
+	transfermInput()
 	if object.UserName == "" {
 		fmt.Println("nil username detected, please input username with option -u")
 		os.Exit(1)
 	}
-	if mode != "local" && mode != "remote" {
+	if object.mode != "local" && object.mode != "remote" {
 		fmt.Println("please input correct arg mode, within \"remote\" or \"local\"")
 		os.Exit(1)
 		return
 	}
 	object.PathIn = filepath.Clean(object.PathIn)
 	object.PathOut = filepath.Clean(object.PathOut)
-	if mode == "local" {
+	if object.mode == "local" {
 		switch object.Target {
 		case service.TargetConfig:
 			if object.Target == "" || object.Version == "" || object.Env == "" || object.PathIn == "" || object.TcpPortRange == "" ||
@@ -179,7 +196,7 @@ func Get(cmd *cobra.Command, args []string) {
 		}
 		return
 	}
-	if mode == "remote" {
+	if object.mode == "remote" {
 		//新建客户端
 		//读取grpc配置信息
 		err := GetGrpcClient()
@@ -315,11 +332,14 @@ func Get(cmd *cobra.Command, args []string) {
 				return
 			}
 			configReq := pb.CfgReq{
-				UserName: object.UserName,
-				Target:   object.Target,
-				Version:  object.Version,
-				Scheme:   object.Scheme,
-				EnvNum:   object.Env,
+				UserName:  object.UserName,
+				Target:    object.Target,
+				Version:   object.Version,
+				Scheme:    object.Scheme,
+				EnvNum:    object.Env,
+				EzeiInner: object.EzeiInner,
+				EzeiEnv:   object.EzeiEnv,
+				EnvCover:  object.EnvCover,
 				ArgRange: &pb.ArgRange{
 					TopicIp:   strings.Split(object.TopicIpRange, ","),
 					TopicPort: strings.Split(object.TopicPortRange, ","),
@@ -486,6 +506,12 @@ func WriteFilesToLocal(fileMap map[string][]byte, permStruct util.PermFile, vers
 			err := os.MkdirAll(filepath.FromSlash(object.PathOut+"/"+dirPath), 0755)
 			if err != nil {
 				return fmt.Errorf("make dir err: %s, current dir: %s", err.Error(), object.PathOut+"/"+dirPath)
+			}
+		}
+		if strings.HasSuffix(path, define.Infrastructure) {
+			err := os.MkdirAll(filepath.FromSlash(object.PathOut), 0755)
+			if err != nil {
+				return fmt.Errorf("make dir err: %s, current dir: %s", err.Error(), object.PathOut)
 			}
 		}
 		filePath := filepath.FromSlash(object.PathOut + "/" + path)

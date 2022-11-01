@@ -32,11 +32,14 @@ func getLatestConfigByEnvNum(ctx context.Context, req *pb.EnvNumReq) (error, []*
 			continue
 		}
 		cfgReq := &pb.CfgReq{
-			UserName: genSrc.UserName,
-			Target:   TargetConfig,
-			EnvNum:   genSrc.EnvNum,
-			Version:  genSrc.Version,
-			Scheme:   genSrc.Scheme,
+			UserName:  genSrc.UserName,
+			Target:    TargetConfig,
+			EnvNum:    genSrc.EnvNum,
+			Version:   genSrc.Version,
+			Scheme:    genSrc.Scheme,
+			EzeiEnv:   genSrc.EzeiEnv,
+			EzeiInner: genSrc.EzeiInner,
+			EnvCover:  genSrc.EnvCover,
 			ArgRange: &pb.ArgRange{
 				TopicIp:   strings.Split(genSrc.Ip, ","),
 				TopicPort: strings.Split(genSrc.CastPort, ","),

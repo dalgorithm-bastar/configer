@@ -1,0 +1,26 @@
+"etcd":
+  "endpoints":
+    - "127.0.0.1:2379"
+  "username": "root"
+  "password": "chbw0011"
+  "operationtimeout": 3
+"grpc":
+  "socket": "127.0.0.1:2333"
+  "locktimeout": 30
+target: "config"
+type: "type"
+pathin :  "../../compressfiledemo/pkg3/3.1.0/"
+version:  "3.1.0"
+env:  "10"
+scheme:  "scheme1"
+platform:  "platform"
+nodeType: "nodetype"
+cluster: "cluster"
+pathout: "../../compressfiledemo/resyml1"
+mode: "local"
+topicIp: "156.10.1.1,156.10.11.2"
+topicPort: "10000,32768"
+tcpPort: "10000,32768"
+ezeiInner: ""
+ezeiEnv: "22"
+envCover: false

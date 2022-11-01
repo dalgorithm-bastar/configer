@@ -9,6 +9,7 @@ import (
 	"github.com/configcenter/pkg/define"
 	"github.com/configcenter/pkg/pb"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 //请求体中字段取值范围
@@ -55,6 +56,9 @@ type GenSrc struct {
 	Ip             string `yaml:"ip"`
 	CastPort       string `yaml:"castPort"`
 	TcpPort        string `yaml:"tcpPort"`
+	EzeiEnv        string `yaml:"ezeiEnv"`
+	EzeiInner      string `yaml:"ezeiInner"`
+	EnvCover       bool   `yaml:"envCover"`
 	Infrastructure string `yaml:"infrastructure"`
 }
 
@@ -148,7 +152,7 @@ func (m *Manager) SetGrpcInfo() {
 }
 
 func (m *Manager) GET(ctx context.Context, CfgReq *pb.CfgReq) (*pb.CfgResp, error) {
-	go log.Sugar().Infof("GET CfgReq Recieved: %+v", CfgReq)
+	go log.Logger.Info("GET CfgReq Recieved", zap.Any("CfgReq", CfgReq))
 	if CfgReq == nil {
 		return &pb.CfgResp{Status: "nil req deliverd"}, nil
 	}
@@ -164,12 +168,12 @@ func (m *Manager) GET(ctx context.Context, CfgReq *pb.CfgReq) (*pb.CfgResp, erro
 		VersionList: versionList,
 		File:        file,
 	}
-	log.Sugar().Infof("GET CfgResp Created: %+v", CfgResp)
+	log.Logger.Info("GET CfgResp Created", zap.Any("CfgRsep", CfgResp))
 	return CfgResp, nil
 }
 
 func (m *Manager) COMMIT(ctx context.Context, CfgReq *pb.CfgReq) (*pb.CfgResp, error) {
-	go log.Sugar().Infof("COMMIT CfgReq Recieved: %+v", CfgReq)
+	go log.Logger.Info("COMMIT CfgReq Recieved", zap.Any("CfgReq", CfgReq))
 	if CfgReq == nil {
 		return &pb.CfgResp{Status: "nil req deliverd"}, nil
 	}
@@ -185,12 +189,12 @@ func (m *Manager) COMMIT(ctx context.Context, CfgReq *pb.CfgReq) (*pb.CfgResp, e
 		VersionList: versionList,
 		File:        file,
 	}
-	log.Sugar().Infof("COMMIT CfgResp Created: %+v", CfgResp)
+	log.Logger.Info("COMMIT CfgResp Created", zap.Any("CfgRsep", CfgResp))
 	return CfgResp, nil
 }
 
 func (m *Manager) DELETE(ctx context.Context, CfgReq *pb.CfgReq) (*pb.CfgResp, error) {
-	go log.Sugar().Infof("DELETE CfgReq Recieved: %+v", CfgReq)
+	go log.Logger.Info("DELETE CfgReq Recieved", zap.Any("CfgReq", CfgReq))
 	if CfgReq == nil {
 		return &pb.CfgResp{Status: "nil req deliverd"}, nil
 	}
@@ -206,12 +210,12 @@ func (m *Manager) DELETE(ctx context.Context, CfgReq *pb.CfgReq) (*pb.CfgResp, e
 		VersionList: versionList,
 		File:        file,
 	}
-	log.Sugar().Infof("DELETE CfgResp Created: %+v", CfgResp)
+	log.Logger.Info("DELETE CfgResp Created", zap.Any("CfgRsep", CfgResp))
 	return CfgResp, nil
 }
 
 func (m *Manager) PUT(ctx context.Context, CfgReq *pb.CfgReq) (*pb.CfgResp, error) {
-	//go log.Sugar().Infof("PUT CfgReq Recieved: %+v", CfgReq)
+	go log.Logger.Info("PUT CfgReq Recieved", zap.Any("CfgReq", CfgReq))
 	if CfgReq == nil {
 		return &pb.CfgResp{Status: "nil req deliverd"}, nil
 	}
@@ -227,11 +231,12 @@ func (m *Manager) PUT(ctx context.Context, CfgReq *pb.CfgReq) (*pb.CfgResp, erro
 		VersionList: versionList,
 		File:        file,
 	}
-	log.Sugar().Infof("PUT CfgResp Created: %+v", CfgResp)
+	log.Logger.Info("PUT CfgResp Created", zap.Any("CfgRsep", CfgResp))
 	return CfgResp, nil
 }
 
 func (m *Manager) GetLatestConfigByEnvNum(ctx context.Context, envNumReq *pb.EnvNumReq) (*pb.CfgResp, error) {
+	go log.Logger.Info("GetLatestConfigByEnvNum Req Recieved", zap.Any("envNumReq", envNumReq))
 	if envNumReq == nil {
 		return &pb.CfgResp{Status: "nil req deliverd"}, nil
 	}
@@ -247,6 +252,6 @@ func (m *Manager) GetLatestConfigByEnvNum(ctx context.Context, envNumReq *pb.Env
 		VersionList: versionList,
 		File:        file,
 	}
-	log.Sugar().Infof("PUT CfgResp Created: %+v", CfgResp)
+	log.Logger.Info("GetLatestConfigByEnvNum CfgResp Created", zap.Any("CfgRsep", CfgResp))
 	return CfgResp, nil
 }

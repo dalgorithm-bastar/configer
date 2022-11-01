@@ -18,6 +18,7 @@ import (
 	"github.com/configcenter/pkg/define"
 	"github.com/mholt/archiver"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 )
 
@@ -47,7 +48,7 @@ func CompressToStream(stringWithFormat string, fileMap map[string][]byte) ([]byt
 	arcW, _ := arc.(archiver.Writer)
 	err := arcW.Create(out)
 	if err != nil {
-		log.Sugar().Infof("create archiever writer err of %v, input format %s", err, stringWithFormat)
+		log.Logger.Info("create archiever writer err", zap.Any("err", err), zap.String("stringwithformat", stringWithFormat))
 		return nil, err
 	}
 	//defer arcW.Close()
@@ -67,7 +68,7 @@ func CompressToStream(stringWithFormat string, fileMap map[string][]byte) ([]byt
 		}
 		err = arcW.Write(simuFile)
 		if err != nil {
-			log.Sugar().Infof("write archiever writer err of %v, input format %s", err, stringWithFormat)
+			log.Logger.Error("write archiever writer err of %v, input format %s", zap.Any("err", err), zap.String("stringwithformat", stringWithFormat))
 			return nil, err
 		}
 	}
@@ -93,7 +94,7 @@ func DecompressFromStream(stringWithFormat string, binaryFile []byte) (map[strin
 	}
 	arcImpl, ok := arc.(archiver.Reader)
 	if !ok {
-		log.Sugar().Infof("archiever reader err of %v, input format %s", err, stringWithFormat)
+		log.Logger.Error("archiever reader err", zap.Any("err", err), zap.String("stringwithformat", stringWithFormat))
 		return nil, errors.New("input compressed file format error")
 	}
 	err = arcImpl.Open(&b, int64(length))
@@ -139,17 +140,17 @@ func DecompressFromStream(stringWithFormat string, binaryFile []byte) (map[strin
 func DecompressFromPath(inputPath string) (map[string][]byte, error) {
 	file, err := os.Open(inputPath)
 	if err != nil {
-		log.Sugar().Infof("open file err of %v when Decompress, filepath %s", err, inputPath)
+		log.Logger.Info("open file err of %v when Decompress, filepath %s", zap.Any("err", err), zap.String("inputpath", inputPath))
 		return nil, err
 	}
 	binaryFlie, err := ioutil.ReadAll(file)
 	if err != nil {
-		log.Sugar().Infof("Read file err of %v when Decompress, filepath %s", err, inputPath)
+		log.Logger.Info("Read file err of %v when Decompress, filepath %s", zap.Any("err", err), zap.String("inputpath", inputPath))
 		return nil, err
 	}
 	err = file.Close()
 	if err != nil {
-		log.Sugar().Infof("close file err of %v when Decompress, filepath %s", err, inputPath)
+		log.Logger.Info("close file err of %v when Decompress, filepath %s", zap.Any("err", err), zap.String("inputpath", inputPath))
 		return nil, err
 	}
 	return DecompressFromStream(inputPath, binaryFlie)

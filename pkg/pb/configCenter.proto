@@ -37,6 +37,9 @@ message CfgReq{
   string NodeType = 10;
   string Set = 11;
   ArgRange ArgRange = 12;
+  string EzeiEnv =13;
+  string EzeiInner=14;
+  bool EnvCover=15;
 }
 
 message CfgResp{

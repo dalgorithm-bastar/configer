@@ -12,6 +12,7 @@ import (
 	"github.com/configcenter/pkg/util"
 	"github.com/coreos/etcd/clientv3"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 //type EtcdInfo struct {
@@ -65,7 +66,7 @@ func (e *EtcdType) ConnectToEtcd() error {
 	err = e.Put("testconn", "justfortest")
 	if err != nil {
 		msg := fmt.Sprintf("init etcd err: %v", err)
-		log.Sugar().Info(msg)
+		log.Logger.Error(msg)
 		return errors.New(msg)
 	}
 	e.Delete("testconn")
@@ -183,7 +184,7 @@ func (e *EtcdType) GracefullyClose(ctx context.Context) {
 			_ = e.client.Close()
 			defer func() {
 				if err := recover(); err != nil {
-					log.Sugar().Errorf("recover from:%v", err)
+					log.Logger.Error("gracefully exit err", zap.Any("recover from:%v", err))
 					fmt.Println(fmt.Sprintf("recover from:%v", err))
 				}
 			}()

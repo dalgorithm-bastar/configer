@@ -66,17 +66,11 @@ func init() {
 func Start(cmd *cobra.Command, args []string) {
 	//启动过程中出现错误直接panic
 	//初始化日志文件
-	err := log.NewLogger()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	gracefully.Log = log.Zap()
+	gracefully.Log = log.Logger
 	processCtx, processCancel := context.WithCancel(gracefully.Background())
-	log.Sugar().Debug("log init success")
 
 	//初始化repository，服务端为etcd模式
-	err = repository.NewStorage(processCtx, define.EtcdType, "")
+	err := repository.NewStorage(processCtx, define.EtcdType, "")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
