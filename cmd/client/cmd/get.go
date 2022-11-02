@@ -221,6 +221,10 @@ func Get(cmd *cobra.Command, args []string) {
 				Target:   object.Target,
 			}
 			resp, err := GetResp(configReq, conn)
+			if err != nil && err.Error() == "no versions on remote yet" {
+				fmt.Println(err.Error())
+				return
+			}
 			if err != nil {
 				fmt.Println(err)
 				os.Exit(1)

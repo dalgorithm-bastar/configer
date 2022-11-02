@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/configcenter/internal/log"
 	"github.com/configcenter/pkg/define"
 	manage "github.com/configcenter/pkg/service"
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
 
 	"github.com/spf13/viper"
 )
@@ -128,8 +130,7 @@ func initConfig() {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 		//fmt.Println(viper.AllSettings())
 	} else {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Logger.Warn("load cfg file failed, online function limited", zap.Error(err))
 	}
 }
 

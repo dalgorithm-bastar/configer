@@ -61,6 +61,7 @@ func GenerateDeploymentInfo(infrastructure []byte, rawSlice []RawFile, envNum st
 			}
 			if deployStruct.UserName != "" {
 				deployStruct.UserName = strings.ReplaceAll(deployStruct.UserName, "@@", envNum)
+				deployStruct.UserName = strings.ReplaceAll(deployStruct.UserName, "{{.EnvNum}}", envNum)
 			}
 			if deployStruct.SetID == 0 {
 				for ; setIdDispatched <= 65535; setIdDispatched++ {
